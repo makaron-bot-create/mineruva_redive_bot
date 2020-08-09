@@ -60,6 +60,10 @@ async def member_kick(message):
     global kick_cmd
     kick_cmd = True
     user = message.raw_mentions[0]
+    
+    if user == 490682682880163850:
+        return
+    
     kick_user = discord.utils.get(message.guild.members, id=user)
     member_log_ch = 741851689916825630
     channel = client.get_channel(member_log_ch)
