@@ -294,7 +294,7 @@ async def on_member_join(member):
 async def on_member_remove(member):
     global kick_cmd
 
-    if kick_cmd == True:
+    if kick_cmd is True:
         kick_cmd = False
         return
 
