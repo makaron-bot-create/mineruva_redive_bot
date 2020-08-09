@@ -20,7 +20,10 @@ pants_url = [
     "https://media.discordapp.net/attachments/599780162313256961/721356018789122104/127_20200613222952.png"
 ]
 # 変数 ######################
+kick_cmd = False
 date_now = datetime.datetime.now()
+now_ymd = f"{date_now.year}年{date_now.month}月{date_now.day}日"
+now_hms = f"{date_now.hour}時{date_now.minute}分{date_now.second}秒"
 cb_start_day = None
 cb_end_day = None
 BOSS_Ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699152199680, 680754056477671439]
@@ -52,6 +55,23 @@ async def pants_trade(message):
                 data = io.BytesIO(await resp.read())
                 await message.channel.send(file=discord.File(data, 'cool_image.png'))
 
+# メンバー追放
+async def member_kick(message):
+        kick_cmd = True
+        user = message.raw_mentions[0]
+        kick_user = discord.utils.get(message.guild.members, id=user)
+        member_log_ch = 741851689916825630
+        channel = client.get_channel(member_log_ch)
+        embed = discord.Embed(title="【下記のメンバーはサーバーから追放されました。】", color=0x00ff00)
+        embed.set_thumbnail(url=kick_user.avatar_url)
+        embed.add_field(name="アカウント名≫", value=kick_user.mention, inline=False)
+        embed.add_field(name="ニックネーム》", value=kick_user.display_name, inline=False)
+        embed.add_field(name="ユーザーID》", value=kick_user.id, inline=False)
+        embed.add_field(name="サーバー追放日時》", value=date_now.strftime(f"{now_ymd} {now_hms}"), inline=False)
+
+        await kick_user.kick()
+        await channel.send(embed=embed)
+
 
 # ボスの登録
 async def boss_ch_neme(message):
@@ -80,9 +100,6 @@ async def boss_ch_neme(message):
 
 # ロールメンバーリスト
 async def role_member_list(message):
-    r = message.content
-    r = r.split()
-    r.pop(0)  # コマンド部分の削除
     role = message.role_mentions[0].name
     role_m = message.role_mentions[0].mention
     member_list = message.role_mentions[0].members
@@ -171,7 +188,7 @@ async def noattack_role_remove(message):
             noattack_member = role.members
             x = len(clan_member) - len(noattack_member)
             i = ("本日の3凸お疲れ様です。\n"
-                 f"{message.author.mention} さんは本日「{x}人目」の3凸終了者です。\n\n")
+                 f"{message.author.mention} さんは本日「{x}人目」です。\n\n")
             i += "本日の凸は全員終了しました。" if len(noattack_member) == 0 else f"残りメンバーは「{len(noattack_member)}人」です。"
 
             if len(noattack_member) <= 10 and len(noattack_member) > 0:
@@ -250,14 +267,46 @@ async def on_ready():
         channel = client.get_channel(channel_id)
         BOSS_name.append(re.sub(r"[0-9]ボス》", "", channel.name))
 
-    bot_log_ch_id = 741851480868519966
-    channel = client.get_channel(bot_log_ch_id)
+    CHANNEL_ID = 676057664635142155
+    channel = client.get_channel(CHANNEL_ID)
     BOSS_names = "【現在のボス名】"
-
     for name in BOSS_name:
         BOSS_names += f"\n{name}"
 
     await channel.send(f"ミネルヴァ起動しました。\n\n{BOSS_names}")
+
+
+@client.event
+async def on_member_join(member):
+    member_log_ch = 741851689916825630
+    channel = client.get_channel(member_log_ch)
+    embed = discord.Embed(title="【新メンバー情報】", color=0x00ff00)
+    embed.set_thumbnail(url=member.avatar_url)
+    embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
+    embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
+    embed.add_field(name="ユーザーID》", value=member.id, inline=False)
+    embed.add_field(name="サーバー入室日時》", value=date_now.strftime(f"{now_ymd} {now_hms}"), inline=False)
+    await channel.send(embed=embed)
+
+
+@client.event
+async def on_member_remove(member):
+    global kick_cmd
+
+    if kick_cmd == True:
+        kick_cmd = False
+        return
+
+    member_log_ch = 741851689916825630
+    channel = client.get_channel(member_log_ch)
+    embed = discord.Embed(title="【サーバー退室者情報】", color=0x00ff00)
+    embed.set_thumbnail(url=member.avatar_url)
+    embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
+    embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
+    embed.add_field(name="ユーザーID》", value=member.id, inline=False)
+    embed.add_field(name="サーバー退室日時》", value=date_now.strftime(f"{now_ymd} {now_hms}"), inline=False)
+    await channel.send(embed=embed)
+
 
 # 未3凸ロール初期化
 @tasks.loop(seconds=30)
@@ -300,6 +349,9 @@ async def on_message(message):
         # メンバーリスト取得
         if r.startswith(("/list\n", "/list ")):
             await role_member_list(message)
+
+        if r.startswith(("/kick\n", "/kick ")):
+            await member_kick(message)
 
     # メッセージリンク展開
     await dispand(message)
