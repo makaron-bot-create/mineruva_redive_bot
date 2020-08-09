@@ -67,7 +67,7 @@ async def member_kick(message):
     kick_user = discord.utils.get(message.guild.members, id=user)
     member_log_ch = 741851689916825630
     channel = client.get_channel(member_log_ch)
-    embed = discord.Embed(title="【下記のメンバーはサーバーから追放されました。】", color="#ff0004")
+    embed = discord.Embed(title="【下記のメンバーはサーバーから追放されました。】", color=0xff0000)
     embed.set_thumbnail(url=kick_user.avatar_url)
     embed.add_field(name="アカウント名≫", value=kick_user.mention, inline=False)
     embed.add_field(name="ニックネーム》", value=kick_user.display_name, inline=False)
@@ -285,7 +285,7 @@ async def on_ready():
 async def on_member_join(member):
     member_log_ch = 741851689916825630
     channel = client.get_channel(member_log_ch)
-    embed = discord.Embed(title="【新メンバー情報】", color="#05fff6")
+    embed = discord.Embed(title="【新メンバー情報】", color=0x00ffee)
     embed.set_thumbnail(url=member.avatar_url)
     embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
     embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
@@ -304,7 +304,7 @@ async def on_member_remove(member):
 
     member_log_ch = 741851689916825630
     channel = client.get_channel(member_log_ch)
-    embed = discord.Embed(title="【サーバー退室者情報】", color="#ff6100")
+    embed = discord.Embed(title="【サーバー退室者情報】", color=0xffea00)
     embed.set_thumbnail(url=member.avatar_url)
     embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
     embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
