@@ -272,7 +272,7 @@ async def on_ready():
         channel = client.get_channel(channel_id)
         BOSS_name.append(re.sub(r"[0-9]ボス》", "", channel.name))
 
-    CHANNEL_ID = 676057664635142155
+    CHANNEL_ID = 741851480868519966
     channel = client.get_channel(CHANNEL_ID)
     BOSS_names = "【現在のボス名】"
     for name in BOSS_name:
