@@ -285,7 +285,7 @@ async def on_ready():
 async def on_member_join(member):
     member_log_ch = 741851689916825630
     channel = client.get_channel(member_log_ch)
-    embed = discord.Embed(title="【新メンバー情報】", color=05fff6)
+    embed = discord.Embed(title="【新メンバー情報】", color="#05fff6")
     embed.set_thumbnail(url=member.avatar_url)
     embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
     embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
