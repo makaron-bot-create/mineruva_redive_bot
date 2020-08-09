@@ -57,20 +57,21 @@ async def pants_trade(message):
 
 # メンバー追放
 async def member_kick(message):
-        kick_cmd = True
-        user = message.raw_mentions[0]
-        kick_user = discord.utils.get(message.guild.members, id=user)
-        member_log_ch = 741851689916825630
-        channel = client.get_channel(member_log_ch)
-        embed = discord.Embed(title="【下記のメンバーはサーバーから追放されました。】", color=0x00ff00)
-        embed.set_thumbnail(url=kick_user.avatar_url)
-        embed.add_field(name="アカウント名≫", value=kick_user.mention, inline=False)
-        embed.add_field(name="ニックネーム》", value=kick_user.display_name, inline=False)
-        embed.add_field(name="ユーザーID》", value=kick_user.id, inline=False)
-        embed.add_field(name="サーバー追放日時》", value=date_now.strftime(f"{now_ymd} {now_hms}"), inline=False)
+    global kick_cmd
+    kick_cmd = True
+    user = message.raw_mentions[0]
+    kick_user = discord.utils.get(message.guild.members, id=user)
+    member_log_ch = 741851689916825630
+    channel = client.get_channel(member_log_ch)
+    embed = discord.Embed(title="【下記のメンバーはサーバーから追放されました。】", color=0x00ff00)
+    embed.set_thumbnail(url=kick_user.avatar_url)
+    embed.add_field(name="アカウント名≫", value=kick_user.mention, inline=False)
+    embed.add_field(name="ニックネーム》", value=kick_user.display_name, inline=False)
+    embed.add_field(name="ユーザーID》", value=kick_user.id, inline=False)
+    embed.add_field(name="サーバー追放日時》", value=date_now.strftime(f"{now_ymd} {now_hms}"), inline=False)
 
-        await kick_user.kick()
-        await channel.send(embed=embed)
+    await kick_user.kick()
+    await channel.send(embed=embed)
 
 
 # ボスの登録
