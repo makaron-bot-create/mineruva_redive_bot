@@ -287,7 +287,7 @@ async def new_message(message):
             url=message.attachments[0].proxy_url
         )
 
-    embed.add_field(name="添付ファイル一覧》", value="\n".join(img_urls), inline=False)
+        embed.add_field(name="添付ファイル一覧》", value="\n".join(img_urls), inline=False)
 
     await channel.send(embed=embed)
 
