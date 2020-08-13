@@ -273,7 +273,7 @@ async def new_message(message):
     embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
     embed.add_field(name="メッセージID》", value=message.id, inline=False)
 
-    if message.content:   
+    if message.content:
         embed.add_field(name="メッセージ内容》", value=message.content, inline=False)
 
     if message.attachments and message.attachments[0].proxy_url:
@@ -288,7 +288,6 @@ async def new_message(message):
         )
 
     embed.add_field(name="添付ファイル一覧》", value="\n".join(img_urls), inline=False)
-        
 
     await channel.send(embed=embed)
 
