@@ -72,7 +72,7 @@ async def member_kick(message):
     embed.add_field(name="アカウント名≫", value=kick_user.mention, inline=False)
     embed.add_field(name="ニックネーム》", value=kick_user.display_name, inline=False)
     embed.add_field(name="ユーザーID》", value=kick_user.id, inline=False)
-    embed.add_field(name="サーバー追放日時》", value=date_now.strftime(f"{now_ymd} {now_hms}"), inline=False)
+    embed.add_field(name="サーバー追放日時》", value=f"{now_ymd} {now_hms}", inline=False)
 
     await kick_user.kick()
     await channel.send(embed=embed)
@@ -261,6 +261,36 @@ def compose_embed(message):
         )
     return embed
 
+# メッセージログ
+async def new_message(message):
+    CHANNEL_ID = 741851542503817226
+    channel = client.get_channel(CHANNEL_ID)
+    embed = discord.Embed(title="【メッセージログ】", color=0x00ffee)
+    embed.add_field(name="イベント内容≫", value="書き込み", inline=False)
+    embed.add_field(name="アカウント名≫", value=message.author.mention, inline=False)
+    embed.add_field(name="ニックネーム》", value=message.author.display_name, inline=False)
+    embed.add_field(name="ユーザーID》", value=message.author.id, inline=False)
+    embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
+    embed.add_field(name="メッセージID》", value=message.id, inline=False)
+
+    if message.content:   
+        embed.add_field(name="メッセージ内容》", value=message.content, inline=False)
+
+    if message.attachments and message.attachments[0].proxy_url:
+        img_urls = []
+        x = 1
+        for img in message.attachments:
+            img_urls.append(f"[ファイル {x}]({img.proxy_url})")
+            x += 1
+
+        embed.set_image(
+            url=message.attachments[0].proxy_url
+        )
+
+    embed.add_field(name="添付ファイル一覧》", value="\n".join(img_urls), inline=False)
+        
+
+    await channel.send(embed=embed)
 
 # BOTの起動
 @client.event
@@ -290,7 +320,7 @@ async def on_member_join(member):
     embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
     embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
     embed.add_field(name="ユーザーID》", value=member.id, inline=False)
-    embed.add_field(name="サーバー入室日時》", value=date_now.strftime(f"{now_ymd} {now_hms}"), inline=False)
+    embed.add_field(name="サーバー入室日時》", value=f"{now_ymd} {now_hms}", inline=False)
     await channel.send(embed=embed)
 
 
@@ -309,7 +339,7 @@ async def on_member_remove(member):
     embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
     embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
     embed.add_field(name="ユーザーID》", value=member.id, inline=False)
-    embed.add_field(name="サーバー退室日時》", value=date_now.strftime(f"{now_ymd} {now_hms}"), inline=False)
+    embed.add_field(name="サーバー退室日時》", value=f"{now_ymd} {now_hms}", inline=False)
     await channel.send(embed=embed)
 
 
@@ -369,6 +399,9 @@ async def on_message(message):
 
     # パンツ交換
     await pants_trade(message)
+
+    # メッセージログ
+    await new_message(message)
 
 
 client.run(TOKEN)
