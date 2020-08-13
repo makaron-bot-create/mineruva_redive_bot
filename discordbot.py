@@ -21,7 +21,7 @@ pants_url = [
 ]
 # 変数 ######################
 kick_cmd = False
-date_now = datetime.datetime.now()
+date_now = datetime.datetime.now(datetime.timezone.jst)
 now_ymd = f"{date_now.year}年{date_now.month}月{date_now.day}日"
 now_hms = f"{date_now.hour}時{date_now.minute}分{date_now.second}秒"
 cb_start_day = None
