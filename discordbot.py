@@ -271,6 +271,7 @@ async def new_message(message):
     embed.add_field(name="ニックネーム》", value=message.author.display_name, inline=False)
     embed.add_field(name="ユーザーID》", value=message.author.id, inline=False)
     embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
+    embed.add_field(name="チャンネル》", value=message.channel.mention, inline=False)
     embed.add_field(name="メッセージID》", value=message.id, inline=False)
 
     if message.content:
