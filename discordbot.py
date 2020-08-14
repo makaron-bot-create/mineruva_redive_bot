@@ -319,7 +319,7 @@ async def on_raw_message_edit(payload):
     if message.author.bot:
         return
 
-    elif now_time < 1 and new_message_id == payload.message_id:
+    elif now_time < 2 and new_message_id == payload.message_id:
         return
 
     channel = client.get_channel(CHANNEL_ID)
