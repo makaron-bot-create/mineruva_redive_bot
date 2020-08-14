@@ -264,6 +264,11 @@ def compose_embed(message):
 # メッセージログ
 # 書き込み
 async def new_message(message):
+
+    date_now = datetime.datetime.now()
+    now_ymd = f"{date_now.year}年{date_now.month}月{date_now.day}日"
+    now_hms = f"{date_now.hour}時{date_now.minute}分{date_now.second}秒"
+
     CHANNEL_ID = 741851542503817226
     channel = client.get_channel(CHANNEL_ID)
     embed = discord.Embed(title="【メッセージログ】", color=0x00ffee)
@@ -296,6 +301,10 @@ async def new_message(message):
 # メッセージ編集
 @client.event
 async def on_raw_message_edit(payload):
+
+    date_now = datetime.datetime.now()
+    now_ymd = f"{date_now.year}年{date_now.month}月{date_now.day}日"
+    now_hms = f"{date_now.hour}時{date_now.minute}分{date_now.second}秒"
 
     CHANNEL_ID = 741851542503817226
     channel_1 = client.get_channel(payload.channel_id)
@@ -332,6 +341,11 @@ async def on_raw_message_edit(payload):
 # メッセージ削除
 @client.event
 async def on_raw_message_delete(payload):
+
+    date_now = datetime.datetime.now()
+    now_ymd = f"{date_now.year}年{date_now.month}月{date_now.day}日"
+    now_hms = f"{date_now.hour}時{date_now.minute}分{date_now.second}秒"
+
     message_delete_channel = client.get_channel(payload.channel_id)
 
     CHANNEL_ID = 741851542503817226
