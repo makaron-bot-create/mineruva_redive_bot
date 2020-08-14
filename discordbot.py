@@ -333,7 +333,7 @@ async def on_raw_message_edit(payload):
 @client.event
 async def on_raw_message_delete(payload):
     message_delete_channel = client.get_channel(payload.channel_id)
-    
+
     CHANNEL_ID = 741851542503817226
     channel = client.get_channel(CHANNEL_ID)
     embed = discord.Embed(title="【メッセージログ】", color=0xff0000)
