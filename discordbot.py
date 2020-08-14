@@ -262,6 +262,7 @@ def compose_embed(message):
     return embed
 
 # メッセージログ
+## 書き込み
 async def new_message(message):
     CHANNEL_ID = 741851542503817226
     channel = client.get_channel(CHANNEL_ID)
@@ -291,6 +292,59 @@ async def new_message(message):
         embed.add_field(name="添付ファイル一覧》", value="\n".join(img_urls), inline=False)
 
     await channel.send(embed=embed)
+
+## メッセージ編集
+@client.event
+async def on_raw_message_edit(payload):
+
+    CHANNEL_ID = 741851542503817226
+    channel_1 = client.get_channel(payload.channel_id)
+    message = await channel_1.fetch_message(payload.message_id)
+
+    if message.author.bot:
+        return
+
+    channel = client.get_channel(CHANNEL_ID)
+    embed = discord.Embed(title="【メッセージログ】", color=0xffd700)
+    embed.add_field(name="イベント内容≫", value="メッセージ編集", inline=False)
+    embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
+    embed.add_field(name="チャンネル》", value=message.channel.mention, inline=False)
+    embed.add_field(name="メッセージID》", value=message.id, inline=False)
+
+    if message.content:
+        embed.add_field(name="メッセージ内容》", value=message.content, inline=False)
+
+    if message.attachments and message.attachments[0].proxy_url:
+        img_urls = []
+        x = 1
+        for img in message.attachments:
+            img_urls.append(f"[ファイル {x}]({img.proxy_url})")
+            x += 1
+
+        embed.set_image(
+            url=message.attachments[0].proxy_url
+        )
+        embed.add_field(name="添付ファイル一覧》", value="\n".join(img_urls), inline=False)
+
+    await channel.send(embed=embed)
+
+
+## メッセージ削除
+@client.event
+async def on_raw_message_delete(payload):
+    message_delete_channel = client.get_channel(payload.channel_id)
+    
+    CHANNEL_ID = 741851542503817226
+    channel = client.get_channel(CHANNEL_ID)
+    embed = discord.Embed(title="【メッセージログ】", color=0xff0000)
+    embed.add_field(name="イベント内容≫", value="メッセージ削除", inline=False)
+    embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
+    embed.add_field(name="チャンネル》", value=message_delete_channel.mention, inline=False)
+    embed.add_field(name="メッセージID》", value=payload.message_id, inline=False)
+    embed.add_field(name="メッセージ内容》", value="このメッセージは、削除されました。", inline=False)
+
+    await channel.send(embed=embed)
+
 
 # BOTの起動
 @client.event
