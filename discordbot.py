@@ -4,6 +4,7 @@ from discord import Embed
 from discord.ext import tasks
 import re
 import datetime
+import time
 import io
 import aiohttp
 import asyncio
@@ -21,9 +22,6 @@ pants_url = [
 ]
 # 変数 ######################
 kick_cmd = False
-date_now = datetime.datetime.now()
-now_ymd = f"{date_now.year}年{date_now.month}月{date_now.day}日"
-now_hms = f"{date_now.hour}時{date_now.minute}分{date_now.second}秒"
 cb_start_day = None
 cb_end_day = None
 BOSS_Ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699152199680, 680754056477671439]
@@ -61,6 +59,10 @@ async def member_kick(message):
     kick_cmd = True
     user = message.raw_mentions[0]
 
+    now = datetime.datetime.now()
+    now_ymd = f"{now.year}年{now.month}月{now.day}日"
+    now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
+
     if user == 490682682880163850:
         return
 
@@ -83,7 +85,7 @@ async def boss_ch_neme(message):
     global BOSS_name
     r = message.content
     role_m = discord.utils.get(message.guild.roles, name="クランメンバー")
-    M = date_now.strftime("%m")
+    M = datetime.datetime.now().strftime("%m")
     BOSS_name.clear()
     BOSS_name = r.split()
     BOSS_name.pop(0)
@@ -265,9 +267,9 @@ def compose_embed(message):
 # 書き込み
 async def new_message(message):
 
-    date_now = datetime.datetime.now()
-    now_ymd = f"{date_now.year}年{date_now.month}月{date_now.day}日"
-    now_hms = f"{date_now.hour}時{date_now.minute}分{date_now.second}秒"
+    now = datetime.datetime.now()
+    now_ymd = f"{now.year}年{now.month}月{now.day}日"
+    now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
     CHANNEL_ID = 741851542503817226
     channel = client.get_channel(CHANNEL_ID)
@@ -301,16 +303,23 @@ async def new_message(message):
 # メッセージ編集
 @client.event
 async def on_raw_message_edit(payload):
+    global start_time
+    global new_message_id
 
-    date_now = datetime.datetime.now()
-    now_ymd = f"{date_now.year}年{date_now.month}月{date_now.day}日"
-    now_hms = f"{date_now.hour}時{date_now.minute}分{date_now.second}秒"
+    now = datetime.datetime.now()
+    now_ymd = f"{now.year}年{now.month}月{now.day}日"
+    now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
     CHANNEL_ID = 741851542503817226
     channel_1 = client.get_channel(payload.channel_id)
     message = await channel_1.fetch_message(payload.message_id)
 
+    now_time = time.time() - start_time
+
     if message.author.bot:
+        return
+
+    elif now_time < 1 and new_message_id == payload.message_id:
         return
 
     channel = client.get_channel(CHANNEL_ID)
@@ -342,9 +351,9 @@ async def on_raw_message_edit(payload):
 @client.event
 async def on_raw_message_delete(payload):
 
-    date_now = datetime.datetime.now()
-    now_ymd = f"{date_now.year}年{date_now.month}月{date_now.day}日"
-    now_hms = f"{date_now.hour}時{date_now.minute}分{date_now.second}秒"
+    now = datetime.datetime.now()
+    now_ymd = f"{now.year}年{now.month}月{now.day}日"
+    now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
     message_delete_channel = client.get_channel(payload.channel_id)
 
@@ -381,6 +390,11 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
+
+    now = datetime.datetime.now()
+    now_ymd = f"{now.year}年{now.month}月{now.day}日"
+    now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
+
     member_log_ch = 741851689916825630
     channel = client.get_channel(member_log_ch)
     embed = discord.Embed(title="【新メンバー情報】", color=0x00ffee)
@@ -395,6 +409,10 @@ async def on_member_join(member):
 @client.event
 async def on_member_remove(member):
     global kick_cmd
+
+    now = datetime.datetime.now()
+    now_ymd = f"{now.year}年{now.month}月{now.day}日"
+    now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
     if kick_cmd is True:
         kick_cmd = False
@@ -430,10 +448,15 @@ loop.start()
 
 @client.event
 async def on_message(message):
+    global start_time
+    global new_message_id
 
     # BOT無視
     if message.author.bot:
         return
+
+    start_time = time.time()
+    new_message_id = message.id
 
     # ロールの判定
     userrole = False
