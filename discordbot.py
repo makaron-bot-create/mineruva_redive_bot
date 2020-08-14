@@ -262,7 +262,7 @@ def compose_embed(message):
     return embed
 
 # メッセージログ
-## 書き込み
+# 書き込み
 async def new_message(message):
     CHANNEL_ID = 741851542503817226
     channel = client.get_channel(CHANNEL_ID)
@@ -293,7 +293,7 @@ async def new_message(message):
 
     await channel.send(embed=embed)
 
-## メッセージ編集
+# メッセージ編集
 @client.event
 async def on_raw_message_edit(payload):
 
@@ -329,7 +329,7 @@ async def on_raw_message_edit(payload):
     await channel.send(embed=embed)
 
 
-## メッセージ削除
+# メッセージ削除
 @client.event
 async def on_raw_message_delete(payload):
     message_delete_channel = client.get_channel(payload.channel_id)
