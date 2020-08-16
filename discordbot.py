@@ -454,7 +454,7 @@ async def loop():
 
         for member in clan_member:
             await member.add_roles(role)
-        
+
         await channel.send("クランメンバーに「未3凸」ロールを付与しました。")
 
 loop.start()
