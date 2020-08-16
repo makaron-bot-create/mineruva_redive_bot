@@ -4,8 +4,6 @@ from discord import Embed
 from discord.ext import tasks
 import re
 import datetime
-from datetime import datetime as dt
-from datetime import timedelta
 import time
 import io
 import aiohttp
