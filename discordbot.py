@@ -4,6 +4,8 @@ from discord import Embed
 from discord.ext import tasks
 import re
 import datetime
+from datetime import datetime as dt
+from datetime import timedelta
 import time
 import io
 import aiohttp
@@ -22,8 +24,7 @@ pants_url = [
 ]
 # 変数 ######################
 kick_cmd = False
-cb_start_day = None
-cb_end_day = None
+clan_battle_day = ["2020/08/26 05:00", "2020/08/31 00:00"]
 BOSS_Ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699152199680, 680754056477671439]
 BOSS_name = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
 #############################
@@ -300,6 +301,7 @@ async def new_message(message):
 
     await channel.send(embed=embed)
 
+
 # メッセージ編集
 @client.event
 async def on_raw_message_edit(payload):
@@ -325,6 +327,9 @@ async def on_raw_message_edit(payload):
     channel = client.get_channel(CHANNEL_ID)
     embed = discord.Embed(title="【メッセージログ】", color=0xffd700)
     embed.add_field(name="イベント内容≫", value="メッセージ編集", inline=False)
+    embed.add_field(name="アカウント名≫", value=message.author.mention, inline=False)
+    embed.add_field(name="ニックネーム》", value=message.author.display_name, inline=False)
+    embed.add_field(name="ユーザーID》", value=message.author.id, inline=False)
     embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
     embed.add_field(name="チャンネル》", value=message.channel.mention, inline=False)
     embed.add_field(name="メッセージID》", value=message.id, inline=False)
@@ -432,16 +437,25 @@ async def on_member_remove(member):
 # 未3凸ロール初期化
 @tasks.loop(seconds=30)
 async def loop():
-    now = datetime.datetime.now().strftime('%H:%M')
+    guild = client.get_guild(599780162309062706)
+    channel = client.get_channel(741851480868519966)
+    role = guild.get_role(715250107058094100)  # 未3凸ロール
+    clan_member_role = guild.get_role(687433139345555456)  # クラメンロール
 
-    if now == '05:05':
-        guild = client.get_guild(599780162309062706)
-        role = guild.get_role(715250107058094100)  # 未3凸ロール
-        clan_member_role = guild.get_role(687433139345555456)  # クラメンロール
+    now = datetime.datetime.now()
+
+    clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
+    clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
+    if now < clan_battle_start_day or now > clan_battle_end_day:
+        return
+
+    if now.strftime('%H:%M') == '05:05':
         clan_member = clan_member_role.members
 
         for member in clan_member:
             await member.add_roles(role)
+        
+        await channel.send("クランメンバーに「未3凸」ロールを付与しました。")
 
 loop.start()
 
