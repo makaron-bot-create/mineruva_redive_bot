@@ -392,7 +392,7 @@ async def on_ready():
 
     clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
     clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
-    if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') > now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime('%Y-%m-%d %H:%M'):
+    if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') <= now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M'):
         text_1 = "現在クランバトル開催中です。"
 
     else:
