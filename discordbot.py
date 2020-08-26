@@ -446,6 +446,8 @@ async def on_member_remove(member):
 # 未3凸ロール初期化
 @tasks.loop(seconds=30)
 async def loop():
+    await client.wait_until_ready()
+
     guild = client.get_guild(599780162309062706)
     channel = client.get_channel(741851480868519966)
     role = guild.get_role(715250107058094100)  # 未3凸ロール
