@@ -364,6 +364,9 @@ async def on_raw_message_delete(payload):
     channel = client.get_channel(CHANNEL_ID)
     embed = discord.Embed(title="【メッセージログ】", color=0xff0000)
     embed.add_field(name="イベント内容≫", value="メッセージ削除", inline=False)
+    embed.add_field(name="アカウント名≫", value=message.author.mention, inline=False)
+    embed.add_field(name="ニックネーム》", value=message.author.display_name, inline=False)
+    embed.add_field(name="ユーザーID》", value=message.author.id, inline=False)
     embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
     embed.add_field(name="チャンネル》", value=message_delete_channel.mention, inline=False)
     embed.add_field(name="メッセージID》", value=payload.message_id, inline=False)
@@ -384,11 +387,22 @@ async def on_ready():
 
     CHANNEL_ID = 741851480868519966
     channel = client.get_channel(CHANNEL_ID)
+
+    now = datetime.datetime.now()
+
+    clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
+    clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
+    if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') > now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime('%Y-%m-%d %H:%M'):
+        text_1 = "現在クランバトル開催中です。"
+
+    else:
+        text_1 = "現在クランバトル期間外です。"
+
     BOSS_names = "【現在のボス名】"
     for name in BOSS_name:
         BOSS_names += f"\n{name}"
 
-    await channel.send(f"ミネルヴァ起動しました。\n\n{BOSS_names}")
+    await channel.send(f"ミネルヴァ起動しました。\n\n{text_1}\n\n{BOSS_names}")
 
 
 @client.event
@@ -444,7 +458,7 @@ async def loop():
 
     clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
     clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
-    if now < clan_battle_start_day or now > clan_battle_end_day:
+    if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') > now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime('%Y-%m-%d %H:%M'):
         return
 
     if now.strftime('%H:%M') == '05:05':
