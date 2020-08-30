@@ -408,6 +408,9 @@ async def on_member_join(member):
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
+    
+    guild = client.get_guild(599780162309062706)
+    new_member_role = guild.get_role(741896658408964108)
 
     member_log_ch = 741851689916825630
     channel = client.get_channel(member_log_ch)
@@ -418,6 +421,7 @@ async def on_member_join(member):
     embed.add_field(name="ユーザーID》", value=member.id, inline=False)
     embed.add_field(name="サーバー入室日時》", value=f"{now_ymd} {now_hms}", inline=False)
     await channel.send(embed=embed)
+    await member.add_roles(new_member_role)
 
 
 @client.event
