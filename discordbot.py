@@ -408,7 +408,7 @@ async def on_member_join(member):
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
-    
+
     guild = client.get_guild(599780162309062706)
     new_member_role = guild.get_role(741896658408964108)
 
