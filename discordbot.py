@@ -17,8 +17,8 @@ client = discord.Client()
 
 # オプション ################
 pants_url = [
-    "https://media.discordapp.net/attachments/599780162313256961/721356052083245086/127_20200613223037.png",
-    "https://media.discordapp.net/attachments/599780162313256961/721356018789122104/127_20200613222952.png"
+    "https://media.discordapp.net/attachments/599780162313256961/721356018789122104/127_20200613222952.png",
+    "https://media.discordapp.net/attachments/599780162313256961/721356052083245086/127_20200613223037.png"
 ]
 # 変数 ######################
 kick_cmd = False
@@ -36,7 +36,7 @@ regex_discord_message_url = (
 # パンツ交換
 async def pants_trade(message):
     if "パンツ交換" in message.content or "パンツ" in message.content or "ぱんつ交換" in message.content or "ぱんつ" in message.content:
-        if "パンツ交換" in message.content or "ぱんつ交換" in message.content:
+        if "パンツ" in message.content or "ぱんつ" in message.content:
             x = 0
 
             my_url = pants_url[x]
@@ -48,7 +48,7 @@ async def pants_trade(message):
                     data = io.BytesIO(await resp.read())
                     await message.channel.send(file=discord.File(data, 'cool_image.png'))
 
-        if "パンツ" in message.content or "ぱんつ" in message.content:
+        if "パンツ交換" in message.content or "ぱんつ交換" in message.content:
             x = 1
 
             my_url = pants_url[x]
