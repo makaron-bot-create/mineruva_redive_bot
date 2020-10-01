@@ -8,6 +8,7 @@ import time
 import io
 import aiohttp
 import asyncio
+import jaconv
 
 
 # BOTのトークン
@@ -35,8 +36,10 @@ regex_discord_message_url = (
 
 # パンツ交換
 async def pants_trade(message):
-    if "パンツ交換" in message.content or "パンツ" in message.content or "ぱんつ交換" in message.content or "ぱんつ" in message.content:
-        if "パンツ" in message.content or "ぱんつ" in message.content:
+    pantie_message = jaconv.hira2kata(pantie_message)
+
+    if "パンツ交換" in pantie_message:
+        if "パンツ" in pantie_message:
             x = 0
 
             my_url = pants_url[x]
@@ -48,7 +51,7 @@ async def pants_trade(message):
                     data = io.BytesIO(await resp.read())
                     await message.channel.send(file=discord.File(data, 'cool_image.png'))
 
-        if "パンツ交換" in message.content or "ぱんつ交換" in message.content:
+        if "パンツ交換" in pantie_message:
             x = 1
 
             my_url = pants_url[x]
