@@ -36,7 +36,7 @@ regex_discord_message_url = (
 
 # パンツ交換
 async def pants_trade(message):
-    pantie_message = jaconv.hira2kata(pantie_message)
+    pantie_message = jaconv.hira2kata(message.content)
 
     if "パンツ交換" in pantie_message:
         if "パンツ" in pantie_message:
