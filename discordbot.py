@@ -22,7 +22,7 @@ pants_url = [
 ]
 # 変数 ######################
 kick_cmd = False
-clan_battle_days = ["2020/10/26 05:00", "2020/10/29 00:00"]
+clan_battle_days = ["2020/10/26 05:00", "2020/10/30 00:00"]
 BOSS_Ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699152199680, 680754056477671439]
 BOSS_name = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
 #############################
@@ -472,7 +472,7 @@ async def loop():
     if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') > now.strftime('%Y-%m-%d %H:%M') or now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_day.strftime('%Y-%m-%d %H:%M'):
         return
 
-    if now.strftime('%H:%M') == '05:05':
+    if now.strftime('%H:%M') == '07:51':
         clan_member = clan_member_role.members
 
         for member in clan_member:
