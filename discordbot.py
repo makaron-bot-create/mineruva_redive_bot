@@ -472,10 +472,19 @@ async def loop():
     if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') > now.strftime('%Y-%m-%d %H:%M') or now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_day.strftime('%Y-%m-%d %H:%M'):
         return
 
+    if now.strftime('%H:%M') == '05:05':
+        clan_member = clan_member_role.members
+        for member in clan_member:
+            await member.add_roles(role)
+
+     await channel.send("クランメンバーに「未3凸」ロールを付与しました。")
+
     # サーバー案内不要メッセージの削除
     async for message in channel.history():
         if message.id != 749520003203596339:
             await message.delete()
+
+loop.start()
 
 
 # リアクション操作
@@ -494,21 +503,6 @@ async def on_raw_reaction_add(payload):
 
 リアクションの確認が取れましたので、各種機能の制限を解除いたします。""")
             await payload.member.add_roles(general_member_role)
-
-
-@client.event
-async def on_message(message):
-    global start_time
-
-    if now.strftime('%H:%M') == '05:05':
-        clan_member = clan_member_role.members
-
-        for member in clan_member:
-            await member.add_roles(role)
-
-        await channel.send("クランメンバーに「未3凸」ロールを付与しました。")
-
-loop.start()
 
 
 @client.event
