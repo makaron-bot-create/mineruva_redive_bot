@@ -22,7 +22,7 @@ pants_url = [
 ]
 # 変数 ######################
 kick_cmd = False
-clan_battle_days = ["2020/10/26 05:00", "2020/10/31 00:00"]
+clan_battle_days = ["2020/11/25 05:00", "2020/1/30 00:00"]
 BOSS_Ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699152199680, 680754056477671439]
 BOSS_name = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
 #############################
@@ -478,7 +478,7 @@ async def loop():
         for member in clan_member:
             await member.add_roles(role)
 
-        await channel.send("クランメンバーに「未3凸」ロールを付与しました。")
+     await channel.send("クランメンバーに「未3凸」ロールを付与しました。")
 
 loop.start()
 
