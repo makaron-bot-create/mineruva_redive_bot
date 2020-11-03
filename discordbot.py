@@ -463,7 +463,7 @@ async def loop():
     await client.wait_until_ready()
 
     guild = client.get_guild(599780162309062706)
-    server_rule_channel = guild.get_channel(741851480868519966)
+    server_rule_channel = guild.get_channel(741851480868519966)  # サーバー案内
     clan_battle_channel = guild.get_channel(741851480868519966)
     role = guild.get_role(715250107058094100)  # 未3凸ロール
     clan_member_role = guild.get_role(687433139345555456)  # クラメンロール
@@ -496,7 +496,7 @@ loop.start()
 async def on_raw_reaction_add(payload):
     guild = client.get_guild(payload.guild_id)
     channel = guild.get_channel(payload.channel_id)
-    general_member_role = guild.get_role(687433546775789770) # 一般メンバーロール
+    general_member_role = guild.get_role(687433546775789770)  # 一般メンバーロール
 
     # サーバー案内
     if channel.id == 749511208104755241:
