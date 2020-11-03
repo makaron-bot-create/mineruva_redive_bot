@@ -463,7 +463,7 @@ async def loop():
     await client.wait_until_ready()
 
     guild = client.get_guild(599780162309062706)
-    server_rule_channel = guild.get_channel(741851480868519966)  # サーバー案内
+    server_rule_channel = guild.get_channel(749511208104755241)  # サーバー案内
     clan_battle_channel = guild.get_channel(741851480868519966)
     role = guild.get_role(715250107058094100)  # 未3凸ロール
     clan_member_role = guild.get_role(687433139345555456)  # クラメンロール
