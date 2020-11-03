@@ -485,7 +485,6 @@ async def loop():
     async for message in server_rule_channel.history():
         if message.id != 749520003203596339:
             await message.delete()
-    
 
 loop.start()
 
@@ -495,7 +494,7 @@ loop.start()
 async def on_raw_reaction_add(payload):
     guild = client.get_guild(payload.guild_id)
     channel = guild.get_channel(payload.channel_id)
-    general_member_role = guild.get_role(687433546775789770)  # 一般メンバーロール
+    general_member_role = guild.get_role(687433546775789770) # 一般メンバーロール
 
     # サーバー案内
     if channel.id == 749511208104755241:
