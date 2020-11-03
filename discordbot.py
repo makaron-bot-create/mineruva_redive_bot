@@ -509,6 +509,11 @@ async def on_message(message):
         await channel.send("クランメンバーに「未3凸」ロールを付与しました。")
 
 loop.start()
+
+
+@client.event
+async def on_message(message):
+    global start_time
     global new_message_id
 
     # BOT無視
