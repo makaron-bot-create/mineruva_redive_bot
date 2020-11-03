@@ -42,6 +42,7 @@ async def pants_trade(message):
             my_url = pants_url[x]
             async with aiohttp.ClientSession() as session:
                 async with session.get(my_url) as resp:
+
                     if resp.status != 200:
                         return await message.channel.send('Could not download file...')
 
@@ -54,6 +55,7 @@ async def pants_trade(message):
             my_url = pants_url[x]
             async with aiohttp.ClientSession() as session:
                 async with session.get(my_url) as resp:
+
                     if resp.status != 200:
                         return await message.channel.send('Could not download file...')
 
@@ -498,7 +500,7 @@ async def on_raw_reaction_add(payload):
 
     # サーバー案内
     if channel.id == 749511208104755241:
-        if payload.emoji.name == \U00002705:
+        if payload.emoji.name == "\U00002705":
 
             await channel.send(f"""
 {payload.member.mention} さん　こんにちわ。
