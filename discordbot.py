@@ -60,6 +60,7 @@ async def pants_trade(message):
                     data = io.BytesIO(await resp.read())
                     await message.channel.send(file=discord.File(data, 'cool_image.png'))
 
+
 # メンバー追放
 async def member_kick(message):
     global kick_cmd
@@ -124,6 +125,7 @@ async def role_member_list(message):
     embed = discord.Embed(title=f"『{role}』ロール情報", description=f"【ロールメンション】\n{role_m}", color=0x00ff00)
     embed.add_field(name="【現在の人数】", value=f"{len(member_list)}人", inline=False)
     embed.add_field(name="【メンバーリスト】", value=member_names, inline=False)
+
     # 直前のメッセージを削除
     await message.delete()
     await message.channel.send(embed=embed)
@@ -188,9 +190,11 @@ async def noattack_role_remove(message):
     role = guild.get_role(715250107058094100)  # 未3凸ロール
     clan_member_role = guild.get_role(687433139345555456)  # クラメンロール
     clan_member = clan_member_role.members
+
     if channel == 695958348264374343:
         # ロールの判定
         userrole = False
+
         for role in message.author.roles:
             if role.id == 715250107058094100:
                 userrole = True
@@ -199,6 +203,7 @@ async def noattack_role_remove(message):
         if userrole is True:
             await message.author.remove_roles(role)
             await asyncio.sleep(0.5)
+
             noattack_member = role.members
             x = len(clan_member) - len(noattack_member)
             i = ("本日の3凸お疲れ様です。\n"
@@ -226,6 +231,7 @@ async def dispand(message):
     for m in messages:
         if message.content:
             await message.channel.send(embed=compose_embed(m))
+
         for embed in m.embeds:
             await message.channel.send(embed=embed)
 
@@ -270,10 +276,10 @@ def compose_embed(message):
         )
     return embed
 
+
 # メッセージログ
 # 書き込み
 async def new_message(message):
-
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
@@ -361,7 +367,6 @@ async def on_raw_message_edit(payload):
 # メッセージ削除
 @client.event
 async def on_raw_message_delete(payload):
-
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
@@ -397,6 +402,7 @@ async def on_ready():
 
     clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
     clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
+
     if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') <= now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M'):
         text_1 = "現在クランバトル開催中です。"
 
@@ -412,7 +418,6 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
-
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
@@ -422,12 +427,14 @@ async def on_member_join(member):
 
     member_log_ch = 741851689916825630
     channel = client.get_channel(member_log_ch)
+
     embed = discord.Embed(title="【新メンバー情報】", color=0x00ffee)
     embed.set_thumbnail(url=member.avatar_url)
     embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
     embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
     embed.add_field(name="ユーザーID》", value=member.id, inline=False)
     embed.add_field(name="サーバー入室日時》", value=f"{now_ymd} {now_hms}", inline=False)
+
     await channel.send(embed=embed)
     await member.add_roles(new_member_role)
 
@@ -446,12 +453,14 @@ async def on_member_remove(member):
 
     member_log_ch = 741851689916825630
     channel = client.get_channel(member_log_ch)
+
     embed = discord.Embed(title="【サーバー退室者情報】", color=0xffea00)
     embed.set_thumbnail(url=member.avatar_url)
     embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
     embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
     embed.add_field(name="ユーザーID》", value=member.id, inline=False)
     embed.add_field(name="サーバー退室日時》", value=f"{now_ymd} {now_hms}", inline=False)
+
     await channel.send(embed=embed)
 
 
@@ -461,7 +470,7 @@ async def loop():
     await client.wait_until_ready()
 
     guild = client.get_guild(599780162309062706)
-    channel = guild.get_channel(741851480868519966)
+    channel = client.get_channel(741851480868519966)
     role = guild.get_role(715250107058094100)  # 未3凸ロール
     clan_member_role = guild.get_role(687433139345555456)  # クラメンロール
 
@@ -469,10 +478,12 @@ async def loop():
 
     clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
     clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
+
     if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') > now.strftime('%Y-%m-%d %H:%M') or now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_day.strftime('%Y-%m-%d %H:%M'):
         return
 
     if now.strftime('%H:%M') == '05:05':
+
         clan_member = clan_member_role.members
         for member in clan_member:
             await member.add_roles(role)
@@ -496,8 +507,12 @@ async def on_raw_reaction_add(payload):
 
     # サーバー案内
     if channel.id == 749511208104755241:
-        if payload.emoji.name == "\U00002705":
-            await channel.send(f"{payload.member.mention} さん　こんにちわ。/n黒猫魔法学院への加入ありがとうございます。/n/nリアクションの確認が取れましたので、各種機能の制限を解除いたします。)""")
+        if payload.emoji.name == \U00002705:
+            await channel.send(f"""
+{payload.member.mention} さん　こんにちわ。
+黒猫魔法学院への加入ありがとうございます。
+リアクションの確認が取れましたので、各種機能の制限を解除いたします。""")
+
             await payload.member.add_roles(general_member_role)
 
 
@@ -512,7 +527,6 @@ async def on_message(message):
 
     start_time = time.time()
     new_message_id = message.id
-
     # ロールの判定
     userrole = False
     for role in message.author.roles:
@@ -522,6 +536,7 @@ async def on_message(message):
 
     # 管理者専用コマンド
     if userrole is True:
+
         r = message.content
         if r.startswith("/ボス名登録\n"):
             # ボスの登録
