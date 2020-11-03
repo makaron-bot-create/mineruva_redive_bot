@@ -487,7 +487,7 @@ async def on_raw_reaction_add(payload):
 
     # サーバー案内
     if channel.id == 749511208104755241:
-        if payload.emoji.name == \U00002705:
+        if payload.emoji.name == "\U00002705":
             await channel.send(f"""
 {payload.member.mention} さん　こんにちわ。
 黒猫魔法学院への加入ありがとうございます。
