@@ -472,16 +472,15 @@ async def loop():
 
     clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
     clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
-    if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') > now.strftime('%Y-%m-%d %H:%M') or now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_day.strftime('%Y-%m-%d %H:%M'):
-        return
+    if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') <= now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M'):
 
-    if now.strftime('%H:%M') == '05:05':
-        clan_member = clan_member_role.members
+        if now.strftime('%H:%M') == '05:05':
+            clan_member = clan_member_role.members
 
-        for member in clan_member:
-            await member.add_roles(role)
+            for member in clan_member:
+                await member.add_roles(role)
 
-        await clan_battle_channel.send("クランメンバーに「未3凸」ロールを付与しました。")
+            await clan_battle_channel.send("クランメンバーに「未3凸」ロールを付与しました。")
 
     # サーバー案内不要メッセージの削除
     async for message in server_rule_channel.history():
