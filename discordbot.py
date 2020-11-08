@@ -4,7 +4,6 @@ from discord import Embed
 from discord.ext import tasks
 import re
 import datetime
-import time
 import io
 import aiohttp
 import asyncio
