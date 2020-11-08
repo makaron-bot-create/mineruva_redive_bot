@@ -435,6 +435,26 @@ async def on_member_join(member):
     await member.add_roles(new_member_role)
 
 
+# サーバー案内ルール既読チェック
+async def server_rule_reaction_check(payload):
+    guild = client.get_guild(payload.guild_id)
+    channel = guild.get_channel(payload.channel_id)
+    general_member_role = guild.get_role(687433546775789770)  # 一般メンバーロール
+
+    # サーバー案内
+    if channel.id == 749511208104755241:
+        if payload.emoji.name == "\U00002705":
+
+            await channel.send(f"""
+{payload.member.mention} さん　こんにちわ。
+黒猫魔法学院への加入ありがとうございます。
+
+リアクションの確認が取れましたので、各種機能の制限を解除しました。
+改めまして今月よりよろしくお願いします。""")
+
+            await payload.member.add_roles(general_member_role)
+
+
 @client.event
 async def on_member_remove(member):
     global kick_cmd
@@ -494,22 +514,10 @@ loop.start()
 # リアクション操作
 @client.event
 async def on_raw_reaction_add(payload):
-    guild = client.get_guild(payload.guild_id)
-    channel = guild.get_channel(payload.channel_id)
-    general_member_role = guild.get_role(687433546775789770)  # 一般メンバーロール
 
-    # サーバー案内
-    if channel.id == 749511208104755241:
-        if payload.emoji.name == "\U00002705":
-
-            await channel.send(f"""
-{payload.member.mention} さん　こんにちわ。
-黒猫魔法学院への加入ありがとうございます。
-
-リアクションの確認が取れましたので、各種機能の制限を解除しました。
-改めまして今月よりよろしくお願いします。""")
-
-            await payload.member.add_roles(general_member_role)
+    # サーバー案内チャンネルチェック
+    if payload.channel.id == 749511208104755241:
+        await server_rule_reaction_check(payload)
 
 
 @client.event
