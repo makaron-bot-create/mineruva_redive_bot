@@ -318,11 +318,12 @@ async def on_raw_message_edit(payload):
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
-    CHANNEL_ID = 741851542503817226
-    channel_1 = client.get_channel(payload.channel_id)
-    message = await channel_1.fetch_message(payload.message_id)
+    guild = payload.guild_id
+    channel = guild.get_channel(741851542503817226)  # メッセージログ
+    channel_1 = guild.get_channel(payload.channel_id)
+    edit_message = await channel_1.fetch_message(payload.message_id)
 
-     if message.author.bot:
+    if edit_message.author.bot:
         return
 
     async for message in channel.history(limit=50):
