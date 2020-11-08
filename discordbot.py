@@ -335,7 +335,6 @@ async def on_raw_message_edit(payload):
                     if edit_message.content == embed.fields[7].value:
                         return
 
-     channel = client.get_channel(CHANNEL_ID)
     embed = discord.Embed(title="【メッセージログ】", color=0xffd700)
     embed.add_field(name="イベント内容≫", value="メッセージ編集", inline=False)
     embed.add_field(name="アカウント名≫", value=message.author.mention, inline=False)
