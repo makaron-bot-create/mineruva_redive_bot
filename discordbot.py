@@ -313,8 +313,6 @@ async def new_message(message):
 # メッセージ編集
 @client.event
 async def on_raw_message_edit(payload):
-    global start_time
-    global new_message_id
 
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
@@ -324,15 +322,19 @@ async def on_raw_message_edit(payload):
     channel_1 = client.get_channel(payload.channel_id)
     message = await channel_1.fetch_message(payload.message_id)
 
-    now_time = time.time() - start_time
-
-    if message.author.bot:
+     if message.author.bot:
         return
 
-    elif now_time < 3 and new_message_id == payload.message_id:
-        return
+    async for message in channel.history(limit=50):
+        if message.embeds:
+            embed = message.embeds[0]
 
-    channel = client.get_channel(CHANNEL_ID)
+            if int(edit_message.id) == int(embed.fields[6].value):
+                if "メッセージ内容》" in embed.fields[7].name:
+                    if edit_message.content == embed.fields[7].value:
+                        return
+
+     channel = client.get_channel(CHANNEL_ID)
     embed = discord.Embed(title="【メッセージログ】", color=0xffd700)
     embed.add_field(name="イベント内容≫", value="メッセージ編集", inline=False)
     embed.add_field(name="アカウント名≫", value=message.author.mention, inline=False)
@@ -504,22 +506,19 @@ async def on_raw_reaction_add(payload):
             await channel.send(f"""
 {payload.member.mention} さん　こんにちわ。
 黒猫魔法学院への加入ありがとうございます。
-リアクションの確認が取れましたので、各種機能の制限を解除いたします。""")
+
+リアクションの確認が取れましたので、各種機能の制限を解除しました。
+改めまして今月よりよろしくお願いします。""")
 
             await payload.member.add_roles(general_member_role)
 
 
 @client.event
 async def on_message(message):
-    global start_time
-    global new_message_id
 
     # BOT無視
     if message.author.bot:
         return
-
-    start_time = time.time()
-    new_message_id = message.id
 
     # ロールの判定
     userrole = False
