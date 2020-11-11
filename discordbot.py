@@ -343,18 +343,18 @@ async def on_raw_message_edit(payload):
     embed.add_field(name="チャンネル》", value=message.channel.mention, inline=False)
     embed.add_field(name="メッセージID》", value=message.id, inline=False)
 
-    if message.content:
-        embed.add_field(name="メッセージ内容》", value=message.content, inline=False)
+    if edit_message.content:
+        embed.add_field(name="メッセージ内容》", value=edit_message.content, inline=False)
 
-    if message.attachments and message.attachments[0].proxy_url:
+    if edit_message.attachments and edit_message.attachments[0].proxy_url:
         img_urls = []
         x = 1
-        for img in message.attachments:
+        for img in edit_message.attachments:
             img_urls.append(f"[ファイル {x}]({img.proxy_url})")
             x += 1
 
         embed.set_image(
-            url=message.attachments[0].proxy_url
+            url=edit_message.attachments[0].proxy_url
         )
         embed.add_field(name="添付ファイル一覧》", value="\n".join(img_urls), inline=False)
 
