@@ -515,7 +515,7 @@ loop.start()
 async def on_raw_reaction_add(payload):
 
     # サーバー案内チャンネルチェック
-    if payload.channel.id == 749511208104755241:
+    if payload.channel_id == 749511208104755241:
         await server_rule_reaction_check(payload)
 
 
