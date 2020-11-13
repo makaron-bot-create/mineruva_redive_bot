@@ -335,12 +335,12 @@ async def on_raw_message_edit(payload):
 
     embed = discord.Embed(title="【メッセージログ】", color=0xffd700)
     embed.add_field(name="イベント内容≫", value="メッセージ編集", inline=False)
-    embed.add_field(name="アカウント名≫", value=message.author.mention, inline=False)
-    embed.add_field(name="ニックネーム》", value=message.author.display_name, inline=False)
-    embed.add_field(name="ユーザーID》", value=message.author.id, inline=False)
+    embed.add_field(name="アカウント名≫", value=edit_message.author.mention, inline=False)
+    embed.add_field(name="ニックネーム》", value=edit_message.author.display_name, inline=False)
+    embed.add_field(name="ユーザーID》", value=edit_message.author.id, inline=False)
     embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
-    embed.add_field(name="チャンネル》", value=message.channel.mention, inline=False)
-    embed.add_field(name="メッセージID》", value=message.id, inline=False)
+    embed.add_field(name="チャンネル》", value=edit_message.channel.mention, inline=False)
+    embed.add_field(name="メッセージID》", value=edit_message.id, inline=False)
 
     if edit_message.content:
         embed.add_field(name="メッセージ内容》", value=edit_message.content, inline=False)
