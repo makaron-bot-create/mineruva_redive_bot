@@ -336,7 +336,7 @@ async def on_raw_message_edit(payload):
                         break
 
                 else:
-                    bleak
+                    break
 
 
     embed = discord.Embed(title="【メッセージログ】", color=0xffd700)
