@@ -338,7 +338,6 @@ async def on_raw_message_edit(payload):
                 else:
                     break
 
-
     embed = discord.Embed(title="【メッセージログ】", color=0xffd700)
     embed.add_field(name="イベント内容≫", value="メッセージ編集", inline=False)
     embed.add_field(name="アカウント名≫", value=edit_message.author.mention, inline=False)
