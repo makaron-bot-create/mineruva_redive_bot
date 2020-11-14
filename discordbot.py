@@ -334,10 +334,10 @@ async def on_raw_message_edit(payload):
                         return
 
                     elif:
-                        bleak
+                        break
 
 　　　　　　　　　 elif:
-                    bleak
+                    break
 
     embed = discord.Embed(title="【メッセージログ】", color=0xffd700)
     embed.add_field(name="イベント内容≫", value="メッセージ編集", inline=False)
