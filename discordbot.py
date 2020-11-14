@@ -332,10 +332,10 @@ async def on_raw_message_edit(payload):
                 if "メッセージ内容》" in embed.fields[7].name:
                     if edit_message.content == embed.fields[7].value:
                         return
-                    elif:
+                    else:
                         break
 
-                elif:
+                else:
                     bleak
 
 
