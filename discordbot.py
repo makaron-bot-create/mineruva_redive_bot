@@ -144,7 +144,8 @@ async def boss_description(boss):
                 embed.add_field(
                     name=embed_name,
                     value=f"```py\n{ln.join([value_text for value_text in embed_value])}\n```",
-                    inline=False)
+                    inline=False
+                )
                 embed_value.clear()
 
             embed_name = text
@@ -161,11 +162,11 @@ async def boss_description(boss):
             embed_value.append(text)
             in_field = True
 
-
     embed.add_field(
         name=embed_name,
         value=f"```py\n{ln.join([value_text for value_text in embed_value])}\n```",
-        inline=False)
+        inline=False
+    )
 
     embed.set_thumbnail(url=boss_text_message.attachments[0].proxy_url)
     if len(message.attachments) == 2:
