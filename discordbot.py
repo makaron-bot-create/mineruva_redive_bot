@@ -104,13 +104,72 @@ async def boss_ch_neme(message):
     while x <= 4:
         channel = client.get_channel(BOSS_Ch[x])
         r = str(x + 1) + "ボス》" + BOSS_name[x] + "\n"
+        boss = BOSS_name[x]
+
+        message_description = f"{role_m.mention}\n\n {int(M)}月の{x + 1}ボスは『{BOSS_name[x]}』です。\nよろしくお願いします。"
+        embed = await boss_description(boss)
         await channel.edit(name=r)
-        await channel.send(f"{role_m.mention}\n\n> {int(M)}月の{x + 1}ボスは『{BOSS_name[x]}』です。\nよろしくお願いします。")
+        await channel.send(message_description,embed=embed)
         BOSS_names += channel.mention + "\n"
         x += 1
 
     await message.delete()
     await message.channel.send(BOSS_names)
+
+
+# ボス説明
+async def boss_description(boss):
+    boss_data_ch = 784763031946264576
+    channel_0 = client.get_channel(boss_data_ch)
+
+    ln = "\n"
+    embed_name = ""
+    embed_value = []
+    in_field = False
+    embed = discord.Embed(
+        title=boss,
+        color=0x00b4ff
+        )
+
+    async for message in channel_0.history():
+        if f"\n{boss}\n" in message.content:
+            boss_text_message = message
+            break
+
+    boss_text = re.findall('(.*)\n', boss_text_message.content)
+    for text in boss_text:
+        if all([re.match("【(.*)】" , text), "【ボス名】" != text]):
+            if in_field:
+                embed.add_field(
+                    name=embed_name,
+                    value=f"```py\n{ln.join([value_text for value_text in embed_value])}\n```",
+                    inline=False)
+                embed_value.clear()
+
+            embed_name = text
+            in_field = False
+
+        elif all([
+            text,
+            text != boss,
+            text != "【ボス名】",
+            "```py" not in text,
+            "```" not in text
+            ]):
+            embed_value.append(text)
+            in_field = True
+
+
+    embed.add_field(
+        name=embed_name,
+        value=f"```py\n{ln.join([value_text for value_text in embed_value])}\n```",
+        inline=False)
+
+    embed.set_thumbnail(url=boss_text_message.attachments[0].proxy_url)
+    if len(message.attachments) == 2:
+        embed.set_image(url=boss_text_message.attachments[1].proxy_url)
+
+    return embed
 
 
 # ロールメンバーリスト
