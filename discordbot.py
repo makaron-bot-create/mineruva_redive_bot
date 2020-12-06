@@ -109,7 +109,7 @@ async def boss_ch_neme(message):
         message_description = f"{role_m.mention}\n\n {int(M)}月の{x + 1}ボスは『{BOSS_name[x]}』です。\nよろしくお願いします。"
         embed = await boss_description(boss)
         await channel.edit(name=r)
-        await channel.send(message_description,embed=embed)
+        await channel.send(message_description, embed=embed)
         BOSS_names += channel.mention + "\n"
         x += 1
 
@@ -126,10 +126,7 @@ async def boss_description(boss):
     embed_name = ""
     embed_value = []
     in_field = False
-    embed = discord.Embed(
-        title=boss,
-        color=0x00b4ff
-        )
+    embed = discord.Embed(title=boss, color=0x00b4ff)
 
     async for message in channel_0.history():
         if f"\n{boss}\n" in message.content:
@@ -138,7 +135,11 @@ async def boss_description(boss):
 
     boss_text = re.findall('(.*)\n', boss_text_message.content)
     for text in boss_text:
-        if all([re.match("【(.*)】" , text), "【ボス名】" != text]):
+        if all([
+            re.match("【(.*)】", text),
+            "【ボス名】" != text
+        ]):
+
             if in_field:
                 embed.add_field(
                     name=embed_name,
@@ -150,12 +151,13 @@ async def boss_description(boss):
             in_field = False
 
         elif all([
-            text,
-            text != boss,
-            text != "【ボス名】",
-            "```py" not in text,
-            "```" not in text
-            ]):
+                text,
+                text != boss,
+                text != "【ボス名】",
+                "```py" not in text,
+                "```" not in text
+        ]):
+
             embed_value.append(text)
             in_field = True
 
