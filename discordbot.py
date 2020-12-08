@@ -448,15 +448,15 @@ async def on_raw_message_delete(payload):
                         name="イベント内容≫",
                         value="```py\n\"このメッセージは削除されました。\"\n```",
                         inline=False
-                        )
+                    )
                     embed.set_field_at(
                         4,
                         name="日時》",
                         value=f"{now_ymd} {now_hms}",
                         inline=False
-                        )
+                    )
                     break
-            except:
+            except AttributeError:
                 pass
 
     await channel.send(embed=embed)
