@@ -504,7 +504,7 @@ async def clan_battle_event():
     y = 0 if clan_battle_tutorial_days is True else 1
     channel = guild.get_channel(int(clan_battle_channel_id[0][y]))  # 進捗状況
 
-    member_role = guild.get_role(687433139345555456)  # クランメンバーロール
+    clan_member_mention = "クランメンバー" if clan_battle_tutorial_days is True else guild.get_role(687433139345555456)  # クランメンバーロール
 
     attack_3 = len(guild.get_role(clan_battle_member_role_id[1]).members) * 3
     attack_2 = len(guild.get_role(clan_battle_member_role_id[2]).members) * 2
@@ -568,7 +568,7 @@ async def clan_battle_event():
 
     embed.add_field(name="【リアクション（スタンプ）説明】", value=help_emoji, inline=False)
 
-    mention_text = f"{member_role.mention}\n{now_lap}週目 {BOSS_name[boss_name_index]}"
+    mention_text = f"{clan_member_mention}\n{now_lap}週目 {BOSS_name[boss_name_index]}"
     now_clan_battl_message = await channel.send(mention_text, embed=embed)
 
     for reactiones in emoji_list.values():
