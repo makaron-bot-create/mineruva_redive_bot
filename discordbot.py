@@ -336,7 +336,6 @@ def compose_embed(message):
 # メッセージログ
 # 書き込み
 async def new_message(message):
-
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
@@ -374,7 +373,6 @@ async def new_message(message):
 # メッセージ編集
 @client.event
 async def on_raw_message_edit(payload):
-
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
@@ -430,21 +428,36 @@ async def on_raw_message_edit(payload):
 # メッセージ削除
 @client.event
 async def on_raw_message_delete(payload):
-
+    CHANNEL_ID = 741851542503817226
+    channel = client.get_channel(CHANNEL_ID)
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
-    message_delete_channel = client.get_channel(payload.channel_id)
+    delete_message_id = payload.message_id
 
-    CHANNEL_ID = 741851542503817226
-    channel = client.get_channel(CHANNEL_ID)
-    embed = discord.Embed(title="【メッセージログ】", color=0xff0000)
-    embed.add_field(name="イベント内容≫", value="メッセージ削除", inline=False)
-    embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
-    embed.add_field(name="チャンネル》", value=message_delete_channel.mention, inline=False)
-    embed.add_field(name="メッセージID》", value=payload.message_id, inline=False)
-    embed.add_field(name="メッセージ内容》", value="このメッセージは、削除されました。", inline=False)
+    async for message in channel.history(limit=50):
+        if message.embeds:
+            embed = message.embeds[0]
+
+            try:
+                if int(delete_message_id) == int(embed.fields[6].value):
+                    embed.color = 0xff0000
+                    embed.set_field_at(
+                        0,
+                        name="イベント内容≫",
+                        value="```py\n\"このメッセージは削除されました。\"\n```",
+                        inline=False
+                        )
+                    embed.set_field_at(
+                        4,
+                        name="日時》",
+                        value=f"{now_ymd} {now_hms}",
+                        inline=False
+                        )
+                    break
+            except:
+                pass
 
     await channel.send(embed=embed)
 
