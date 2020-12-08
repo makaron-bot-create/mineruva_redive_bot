@@ -1367,13 +1367,13 @@ async def loop():
     channel_0 = guild.get_channel(int(clan_battle_channel_id[0][y]))
 
     if any([
-        8 <= now.day < 20,
+        5 <= now.day < 20,
         clan_battle_start_day.strftime('%Y-%m-%d %H:%M') <= now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
     ]):
 
         # クラバト初日設定
         if any([
-            all([now.day == 8, now.strftime('%H:%M') == set_rollover_time]),
+            all([now.day == 5, now.strftime('%H:%M') == set_rollover_time]),
             now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_day.strftime('%Y-%m-%d %H:%M')
         ]):
 
