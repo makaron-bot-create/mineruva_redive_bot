@@ -50,11 +50,11 @@ BOSS_HP =[
     [15000000, 15000000, 20000000, 20000000]
 ]
 now_boss_data = {
-    "now_lap" : 1,
-    "now_boss_level" : 1,
-    "now_boss" : 0,
-    "now_boss_hp" : 6000000
-    }
+    "now_lap": 1,
+    "now_boss_level": 1,
+    "now_boss": 0,
+    "now_boss_hp": 6000000
+}
 ok_plyer_list = []
 ok_attack_list = {}
 p_attack_list = {}
@@ -71,11 +71,11 @@ rollover_time = "05:00"
 
 # 凸宣言絵文字リスト
 emoji_list = {
-    "attack_p" : "\U00002694\U0000fe0f",
-    "attack_m" : "\U0001f9d9",
-    "T_kill" : "\U0001f502",
-    "SOS" : "\U0001f198",
-    "attack_end" : "\U00002705"
+    "attack_p": "\U00002694\U0000fe0f",
+    "attack_m": "\U0001f9d9",
+    "T_kill": "\U0001f502",
+    "SOS": "\U0001f198",
+    "attack_end": "\U00002705"
     }
 
 # 絵文字ヘルプ
@@ -241,7 +241,7 @@ async def boss_description(boss):
 
 
 # クラバト凸管理 ###########################
-## スタートアップ
+# スタートアップ
 async def clan_battl_start_up():
     global now_boss_data
 
@@ -289,8 +289,7 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
     attack_members = (len(attack_3) * 3) + (len(attack_2) * 2) + len(attack_1)
 
     if attack_members == 0 and len(OK_n) == 0:
-        description_text ="本日のクランバトルは全員終了しました。"
-        
+        description_text = "本日のクランバトルは全員終了しました。"
 
     else:    
         description_text = f"残り凸数》\n{attack_members} 凸\n持ち越し残り凸》\n{len(OK_n)} 人"
@@ -299,7 +298,7 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
         title=f"【{now.month}月度クランバトル day {cb_day}】",
         description=description_text,
         color=0x00b4ff
-        )
+     )
         
     if len(OK_n) > 0:
         embed.add_field(name=f"持ち越し》{len(OK_n)} 人", value=noattack_member_list_0, inline=False)
@@ -343,7 +342,6 @@ async def no_attack_role_check(payload):
         elif role.id == clan_battle_member_role_id[3]:
             attack_role_check = True
 
-
     if not attack_role_check and not ok_role_check:
         for reaction in reaction_message.reactions:
 
@@ -352,7 +350,6 @@ async def no_attack_role_check(payload):
                     await reaction.remove(user)
 
         await channel.send(f"{payload.member.display_name}》\n本日の3凸は終了してます。")
-
 
     return attack_role_check, ok_role_check
 
@@ -364,7 +361,6 @@ async def add_attack_role(BOSS_HP_check_message):
     guild = client.get_guild(599780162309062706)
     BOSS_HP_check_member = BOSS_HP_check_message.author
 
-    
     for role in BOSS_HP_check_member.roles:
         if role.id == clan_battle_member_role_id[1]:
             attak_role = guild.get_role(clan_battle_member_role_id[1])
@@ -445,7 +441,6 @@ async def clan_battl_role_reset():
             # 終了したボス情報メッセージのリアクション削除
             await edit_message.clear_reactions()           
             await edit_message.edit(embed=embed)
-
 
     clan_member_role = guild.get_role(687433139345555456)  # クラメンロール
     clan_member = clan_member_role.members
@@ -537,7 +532,6 @@ async def clan_battle_event():
 {now_hp}/{BOSS_MAX_HP}
 ━━━━━━━━━━━━━━━━━━━━"""
 
-
     # メッセージを書きます
     nl = "\n"
     embed = discord.Embed(
@@ -551,7 +545,6 @@ async def clan_battle_event():
             ok = ok_list
 
         embed.add_field(name="【持ち越し凸】", value=f"{ok.display_name}\n", inline=True)
-
 
     if len(p_attack_list) != 0:
         for p_list in p_attack_list:
@@ -626,7 +619,6 @@ async def clan_battl_call_reaction(payload):
     reaction_message = await channel.fetch_message(payload.message_id)
 
 
-
     if reac_member.bot:
         return
 
@@ -660,7 +652,6 @@ async def clan_battl_call_reaction(payload):
             await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
             
 
-
         elif payload.emoji.name == emoji_list["attack_m"]:
             now_attack_list[payload.member] = f"《魔法編成》{ok_attack_text}"
 
@@ -679,7 +670,6 @@ async def clan_battl_call_reaction(payload):
         elif payload.emoji.name == emoji_list["T_kill"]:
             await channel_2.send(f"{reac_member.display_name}》\nタスキルしました。")
             
-
         elif payload.emoji.name == emoji_list["SOS"]:
             await channel_1.send(f"「{reac_member.display_name}」さんが救援を求めてます。")
             return
@@ -782,7 +772,6 @@ async def clan_battl_call_reaction(payload):
                 now_boss_data["now_boss_hp"] = int(BOSS_HP[x][y])
 
 
-
             for role in BOSS_HP_check_message.author.roles:
                 if role.id == int(clan_battle_member_role_id[0]):
                     ok_role_check = True
@@ -805,7 +794,6 @@ async def clan_battl_call_reaction(payload):
 
                 attak_role = guild.get_role(int(clan_battle_member_role_id[0]))
                 await BOSS_HP_check_message.author.add_roles(attak_role)
-
 
             if 0 < last_boss_hp :
                 now_boss_data["now_boss_hp"]  = last_boss_hp
@@ -833,8 +821,6 @@ async def clan_battl_call_reaction(payload):
 ┃
 ┗┳持ち越し時間
 　┗__**{carry_over_time}**__"""
-
-
 
             # 凸宣言リアクションリセット
             for reaction in reaction_message.reactions:
@@ -871,7 +857,6 @@ async def clan_battl_call_reaction(payload):
             if carry_over_time_message:
                 await channel_4.send(last_attack_message)
             
-
         if len(now_attack_list) != 0 :
             member_list = ""
             for member, pt in zip(now_attack_list.keys(), now_attack_list.values()):
@@ -887,7 +872,6 @@ async def clan_battl_call_reaction(payload):
 
         attack_n = attack_3 + attack_2 + attack_1
     
-
         description_text = f"""
 残り凸数》{attack_n}凸
 持ち越し》{OK_n}人
@@ -905,7 +889,7 @@ async def clan_battl_call_reaction(payload):
             name="【現在本戦中メンバー】",
             value=member_list,
             inline=False
-            )
+        )
 
         if 0 == now_hp or 0 == attack_n:
             now = datetime.datetime.now()
@@ -914,7 +898,7 @@ async def clan_battl_call_reaction(payload):
 
             field_name = (
                 "【本日の完凸時間】" if 0 >= attack_n else "【終了時間】"
-                )
+            )
 
             if any([
                 all([0 == now_hp, 0 == attack_n]),
