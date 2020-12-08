@@ -428,20 +428,26 @@ async def on_raw_message_edit(payload):
 # メッセージ削除
 @client.event
 async def on_raw_message_delete(payload):
+    await message_delete_event(payload)
+
+async def message_delete_event(payload):
     CHANNEL_ID = 741851542503817226
     channel = client.get_channel(CHANNEL_ID)
+    delete_message_channel = client.get_channel(payload.channel_id)
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
     delete_message_id = payload.message_id
 
-    async for message in channel.history(limit=50):
+    async for message in channel.history(limit=1000):
+        get_messeag_log = False
         if message.embeds:
             embed = message.embeds[0]
 
             try:
                 if int(delete_message_id) == int(embed.fields[6].value):
+                    get_messeag_log = True
                     embed.color = 0xff0000
                     embed.set_field_at(
                         0,
@@ -456,8 +462,16 @@ async def on_raw_message_delete(payload):
                         inline=False
                     )
                     break
-            except AttributeError:
+            except (AttributeError, IndexError):
                 pass
+
+    if not get_messeag_log:
+        embed = discord.Embed(title="【メッセージログ】", color=0xff0000)
+        embed.add_field(name="イベント内容≫", value="```py\n\"bot自身のメッセージが削除されました。\"\n```", inline=False)
+        embed.add_field(name="日時》", value=f"{now_ymd} {now_hms}", inline=False)
+        embed.add_field(name="チャンネル》", value=delete_message_channel.mention, inline=False)
+        embed.add_field(name="メッセージID》", value=payload.message_id, inline=False)
+
 
     await channel.send(embed=embed)
 
