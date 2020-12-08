@@ -699,7 +699,7 @@ async def clan_battl_call_reaction(payload):
             dmg_fomat = "{:,}"
             now_hp = 0
             if 0 >= last_boss_hp:
-                ok_attack_check = False
+                ok_attack_check = True
                 true_dmg = "" if last_boss_hp < 0 else f"{nl}({dmg_fomat.format(int(now_boss_data['now_boss_hp']))})"
                 if not ok_role_check:
 
@@ -740,9 +740,16 @@ async def clan_battl_call_reaction(payload):
                     else:
                         break
 
-                if not ok_attack_check:
+                if all([
+                    ok_attack_check,
+                    not ok_roll_check
+                ]):
                     last_attack_text = f"\nラスアタ》__**持ち越し時間 ＝ {carry_over_time}**__"
-                else:
+
+                elif all([
+                    ok_attack_check,
+                    ok_roll_check
+                ]):
                     last_attack_text = "\nラスアタ》__**持ち越し不可**__"
 
                 nwe_lap_check = True if int(now_boss_data["now_boss"]) == 4 else False
