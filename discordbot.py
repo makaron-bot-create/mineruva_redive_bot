@@ -4,11 +4,9 @@ from discord import Embed
 from discord.ext import tasks
 import re
 import datetime
-from datetime import datetime as dt
 from datetime import timedelta
 import io
 import aiohttp
-import asyncio
 
 
 # BOTのトークン
@@ -44,7 +42,7 @@ BOSS_Ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699
 BOSS_name = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
 clan_battle_days = ["2030/10/25 05:00", "2030/10/31 00:00"]
 BOSS_lv = [1, 4, 11, 35]
-BOSS_HP =[
+BOSS_HP = [
     [6000000, 6000000, 7000000, 15000000],
     [8000000, 8000000, 9000000, 16000000],
     [10000000, 10000000, 13000000, 18000000],
@@ -315,7 +313,7 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
         now = datetime.datetime.now()
         now_ymd = f"{now.year}年{now.month}月{now.day}日"
         now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
-        embed.add_field(name="【全員３凸終了時間】", value=f"{now_ymd}\n{now_hms}", inline=False) 
+        embed.add_field(name="【全員３凸終了時間】", value=f"{now_ymd}\n{now_hms}", inline=False)
 
     await channel.send(embed=embed)
 
