@@ -472,7 +472,6 @@ async def message_delete_event(payload):
         embed.add_field(name="チャンネル》", value=delete_message_channel.mention, inline=False)
         embed.add_field(name="メッセージID》", value=payload.message_id, inline=False)
 
-
     await channel.send(embed=embed)
 
 
