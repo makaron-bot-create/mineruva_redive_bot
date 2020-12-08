@@ -285,13 +285,13 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
 
     attack_1 = guild.get_role(clan_battle_member_role_id[3]).members
     noattack_member_list_1 = f"```{nl}{nl.join([member.display_name for member in attack_1])}{nl}```"
-    
+
     attack_members = (len(attack_3) * 3) + (len(attack_2) * 2) + len(attack_1)
 
     if attack_members == 0 and len(OK_n) == 0:
         description_text = "本日のクランバトルは全員終了しました。"
 
-    else:    
+    else:
         description_text = f"残り凸数》\n{attack_members} 凸\n持ち越し残り凸》\n{len(OK_n)} 人"
 
     embed = discord.Embed(
@@ -299,7 +299,7 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
         description=description_text,
         color=0x00b4ff
      )
-        
+
     if len(OK_n) > 0:
         embed.add_field(name=f"持ち越し》{len(OK_n)} 人", value=noattack_member_list_0, inline=False)
     if len(attack_3) > 0:
@@ -323,7 +323,7 @@ async def no_attack_role_check(payload):
     guild = client.get_guild(599780162309062706)
 
     y = 0 if clan_battle_tutorial_days is True else 1
-    channel = guild.get_channel(int(clan_battle_channel_id[0][y])) # 進捗状況
+    channel = guild.get_channel(int(clan_battle_channel_id[0][y]))  # 進捗状況
     reaction_message = await channel.fetch_message(payload.message_id)
 
     # ロールの判定
@@ -381,7 +381,7 @@ async def add_attack_role(BOSS_HP_check_message):
         elif role.id == clan_battle_member_role_id[3]:
             attak_role = guild.get_role(clan_battle_member_role_id[3])
             await BOSS_HP_check_member.remove_roles(attak_role)
-            break    
+            break
 
 
 # 残り凸ロールリセット
@@ -389,10 +389,10 @@ async def clan_battl_role_reset():
     global no_attack_role_reset
 
     guild = client.get_guild(599780162309062706)
-    channel = client.get_channel(676057664635142155) # ミネルヴァ・動作ログ(BOT研究室)
+    channel = client.get_channel(676057664635142155)  # ミネルヴァ・動作ログ(BOT研究室)
 
     y = 0 if clan_battle_tutorial_days is True else 1
-    no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][y])) # 残り凸状況
+    no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][y]))  # 残り凸状況
 
     if now_clan_battl_message:
         edit_message = now_clan_battl_message
@@ -439,10 +439,10 @@ async def clan_battl_role_reset():
             embed.add_field(name=f"【終了時間】", value=f"{now_ymd}\n{now_hms}", inline=False)
 
             # 終了したボス情報メッセージのリアクション削除
-            await edit_message.clear_reactions()           
+            await edit_message.clear_reactions()
             await edit_message.edit(embed=embed)
 
-    clan_member_role = guild.get_role(687433139345555456)  # クラメンロール
+    clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
     clan_member = clan_member_role.members
     for member in clan_member:
         await member.add_roles(guild.get_role(clan_battle_member_role_id[1]))
@@ -504,7 +504,7 @@ async def clan_battle_event():
     y = 0 if clan_battle_tutorial_days is True else 1
     channel = guild.get_channel(int(clan_battle_channel_id[0][y])) # 進捗状況
 
-    member_role = guild.get_role(687433139345555456) # クランメンバーロール
+    member_role = guild.get_role(687433139345555456)  # クランメンバーロール
 
     attack_3 = len(guild.get_role(clan_battle_member_role_id[1]).members) * 3
     attack_2 = len(guild.get_role(clan_battle_member_role_id[2]).members) * 2
@@ -538,7 +538,7 @@ async def clan_battle_event():
         title=f"【{now.month}月度クランバトル {cb_day_text}】",
         description=description_text,
         color=0x00b4ff
-        )                    
+        )
 
     if len(ok_plyer_list) != 0:
         for ok_list in ok_plyer_list:
@@ -595,12 +595,12 @@ async def clan_battl_call_reaction(payload):
 
     guild = client.get_guild(599780162309062706)
     ch_id_index_y = 0 if clan_battle_tutorial_days is True else 1
-    channel_0 = guild.get_channel(int(clan_battle_channel_id[0][ch_id_index_y])) # 進捗状況
-    channel_1 = guild.get_channel(int(clan_battle_channel_id[1][ch_id_index_y])) # 凸相談
-    channel_2 = guild.get_channel(int(clan_battle_channel_id[2][ch_id_index_y])) # タスキル状況
-    channel_3 = guild.get_channel(int(clan_battle_channel_id[3][ch_id_index_y])) # バトルログ
-    channel_4 = guild.get_channel(int(clan_battle_channel_id[4][ch_id_index_y])) # 持ち越しメモ
-    no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][ch_id_index_y])) # 残り凸状況
+    channel_0 = guild.get_channel(int(clan_battle_channel_id[0][ch_id_index_y]))  # 進捗状況
+    channel_1 = guild.get_channel(int(clan_battle_channel_id[1][ch_id_index_y]))  # 凸相談
+    channel_2 = guild.get_channel(int(clan_battle_channel_id[2][ch_id_index_y]))  # タスキル状況
+    channel_3 = guild.get_channel(int(clan_battle_channel_id[3][ch_id_index_y]))  # バトルログ
+    channel_4 = guild.get_channel(int(clan_battle_channel_id[4][ch_id_index_y]))  # 持ち越しメモ
+    no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][ch_id_index_y]))  # 残り凸状況
 
     # 現在ボス
     now_lap = now_boss_data["now_lap"]
@@ -622,7 +622,7 @@ async def clan_battl_call_reaction(payload):
     if reac_member.bot:
         return
 
-    if channel.id == int(clan_battle_channel_id[0][ch_id_index_y]): # 進捗状況
+    if channel.id == int(clan_battle_channel_id[0][ch_id_index_y]):  # 進捗状況
         attack_role_check, ok_role_check = await no_attack_role_check(payload)
     
         if not attack_role_check and not ok_role_check:
@@ -650,7 +650,7 @@ async def clan_battl_call_reaction(payload):
 
             await channel_1.send(f"{reac_member.display_name}》\n「物理編成」{ok_attack_text}で入りました。")
             await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
-            
+
 
         elif payload.emoji.name == emoji_list["attack_m"]:
             now_attack_list[payload.member] = f"《魔法編成》{ok_attack_text}"
@@ -665,11 +665,10 @@ async def clan_battl_call_reaction(payload):
 
             await channel_1.send(f"{reac_member.display_name}》\n「魔法編成」{ok_attack_text}で入りました。")
             await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
-            
 
         elif payload.emoji.name == emoji_list["T_kill"]:
             await channel_2.send(f"{reac_member.display_name}》\nタスキルしました。")
-            
+
         elif payload.emoji.name == emoji_list["SOS"]:
             await channel_1.send(f"「{reac_member.display_name}」さんが救援を求めてます。")
             return
@@ -698,7 +697,7 @@ async def clan_battl_call_reaction(payload):
 
                 else:
                     break
-           
+
             # 残り体力計算
             last_boss_hp = int(now_boss_data["now_boss_hp"]) - int(BOSS_HP_check_message.content)
             now_hp = 0
@@ -735,7 +734,7 @@ async def clan_battl_call_reaction(payload):
 
                     carry_over_time_message = await client.wait_for('message', check=carry_over_time_message_check)
                     carry_over_time = re.search(r"[0-9]:[0-9]{2}", carry_over_time_message.content).group()
-                
+
                 async for message in channel_0.history(limit=10):
                     if not message.embeds:
                         await message.delete()
@@ -760,7 +759,7 @@ async def clan_battl_call_reaction(payload):
 
                     elif 4 <= int(now_boss_data["now_lap"]) < 11:
                         now_boss_data["now_boss_level"] = 2
-        
+
                     elif 11 <= int(now_boss_data["now_lap"]) < 35:
                         now_boss_data["now_boss_level"] = 3
 
@@ -770,7 +769,6 @@ async def clan_battl_call_reaction(payload):
                 x = int(now_boss_data["now_boss"])
                 y = int(now_boss_data["now_boss_level"]) - 1
                 now_boss_data["now_boss_hp"] = int(BOSS_HP[x][y])
-
 
             for role in BOSS_HP_check_message.author.roles:
                 if role.id == int(clan_battle_member_role_id[0]):
@@ -882,7 +880,7 @@ async def clan_battl_call_reaction(payload):
 {now_hp}/{BOSS_MAX_HP_NOW}
 ━━━━━━━━━━━━━━━━━━━━"""
 
-        embed = edit_message.embeds[0]        
+        embed = edit_message.embeds[0]
         embed.description = description_text
         embed.set_field_at(
             0,
@@ -923,8 +921,8 @@ async def clan_battl_call_reaction(payload):
 
                 await clan_battl_role_reset()
 
-#########################################
 
+#########################################
 # ロールメンバーリスト
 async def role_member_list(message):
     role = message.role_mentions[0].name
@@ -1105,13 +1103,13 @@ async def on_raw_message_edit(payload):
                 if all([
                     int(edit_message.id) == int(embed.fields[6].value),
                     edit_message.content == embed.fields[7].value
-                    ]):
+                ]):
                     return
 
                 elif all([
                     int(edit_message.id) == int(embed.fields[6].value),
                     edit_message.content != embed.fields[7].value
-                    ]):
+                ]):
                     break
 
                 else:
@@ -1238,7 +1236,7 @@ async def on_ready():
 
 
     ch_id_index_y = 0 if clan_battle_tutorial_days is True else 1
-    channel_0 = guild.get_channel(int(clan_battle_channel_id[0][ch_id_index_y])) # 進捗状況
+    channel_0 = guild.get_channel(int(clan_battle_channel_id[0][ch_id_index_y]))  # 進捗状況
 
     async for message in channel_0.history(limit=10):
         if message.embeds:
@@ -1388,7 +1386,7 @@ async def loop():
         if any([
             all([now.day == 8, now.strftime('%H:%M') == set_rollover_time]),
             now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_day.strftime('%Y-%m-%d %H:%M')
-            ]):
+        ]):
 
             await clan_battl_start_up()
 
@@ -1416,14 +1414,14 @@ async def loop():
             not message.embeds,
             "ボスに与えたダメージを「半角数字」のみで入力してください。" not in message.content,
             "持ち越し時間を入力してください" not in message.content
-            ]):
+        ]):
             await message.delete()
 
         elif all([
             not message.embeds,
             "ボスに与えたダメージを「半角数字」のみで入力してください。"  in message.content,
             "持ち越し時間を入力してください" not in message.content
-            ]):
+        ]):
             pass
 
         elif message.embeds:
@@ -1502,4 +1500,3 @@ async def on_message(message):
 
 
 client.run(TOKEN)
-
