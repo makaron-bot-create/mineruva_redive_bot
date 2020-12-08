@@ -695,9 +695,12 @@ async def clan_battl_call_reaction(payload):
 
             # 残り体力計算
             last_boss_hp = int(now_boss_data["now_boss_hp"]) - int(BOSS_HP_check_message.content)
+            true_dmg = ""
+            dmg_fomat = "{:,}"
             now_hp = 0
             if 0 >= last_boss_hp:
                 ok_attack_check = True
+                true_dmg = "" if last_boss_hp < 0 else f"{ln}({dmg_fomat.format(int(now_boss_data["now_boss_hp"]))})")
                 if not ok_role_check:
 
                     await channel_0.send(f"""
@@ -799,7 +802,7 @@ async def clan_battl_call_reaction(payload):
 {now_lap}週目・{now_boss_level}段階目
 {BOSS_name[boss_name_index]}
 {now_attack_list[BOSS_HP_check_message.author]}{last_attack_text}
-ダメージ》{dmg}"""
+ダメージ》{dmg}{true_dmg}"""
 
             if carry_over_time_message:
                 attak_type = re.sub(r"[《》]", "", now_attack_list[BOSS_HP_check_message.author])
