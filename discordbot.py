@@ -22,26 +22,26 @@ pants_url = [
 # 変数 ######################
 kick_cmd = False
 clan_battle_member_role_id = [
-    688651850513252353, # 持ち越しロール
-    715250107058094100, # 残り3凸
-    731746802499453049, # 残り2凸
-    731746926067974214 # 残り1凸
+    688651850513252353,  # 持ち越しロール
+    715250107058094100,  # 残り3凸
+    731746802499453049,  # 残り2凸
+    731746926067974214  # 残り1凸
 ]
 
 clan_battle_tutorial_days = True
 clan_battle_channel_id = [
     # [チュートリアルCh_ID , クランバトル期間Ch_ID]
-    [750345928678047744, 599784283359674379], # 進捗状況,凸宣言チャンネル
-    [750345732497735782, 599782273792999435], # 凸相談
-    [750351148841566248, 599792931674521600], # タスキル状況
-    [750345983661047949, 772305554009620480], # バトルログ
-    [774871889843453962, 599785761587331092], # 持ち越しメモ
-    [750346096156344450, 695958348264374343] # 残り凸状況
+    [750345928678047744, 599784283359674379],  # 進捗状況,凸宣言チャンネル
+    [750345732497735782, 599782273792999435],  # 凸相談
+    [750351148841566248, 599792931674521600],  # タスキル状況
+    [750345983661047949, 772305554009620480],  # バトルログ
+    [774871889843453962, 599785761587331092],  # 持ち越しメモ
+    [750346096156344450, 695958348264374343]  # 残り凸状況
 ]
 BOSS_Ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699152199680, 680754056477671439]
-BOSS_name = ["BOSS_1","BOSS_2","BOSS_3","BOSS_4","BOSS_5"]
+BOSS_name = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
 clan_battle_days = ["2030/10/25 05:00", "2030/10/31 00:00"]
-BOSS_lv = [1,4, 11, 35]
+BOSS_lv = [1, 4, 11, 35]
 BOSS_HP =[
     [6000000, 6000000, 7000000, 15000000],
     [8000000, 8000000, 9000000, 16000000],
@@ -50,10 +50,10 @@ BOSS_HP =[
     [15000000, 15000000, 20000000, 20000000]
 ]
 now_boss_data = {
-    "now_lap":1,
-    "now_boss_level":1,
-    "now_boss":0,
-    "now_boss_hp":6000000
+    "now_lap" : 1,
+    "now_boss_level" : 1,
+    "now_boss" : 0,
+    "now_boss_hp" : 6000000
     }
 ok_plyer_list = []
 ok_attack_list = {}
@@ -71,11 +71,11 @@ rollover_time = "05:00"
 
 # 凸宣言絵文字リスト
 emoji_list = {
-    "attack_p":"\U00002694\U0000fe0f",
-    "attack_m":"\U0001f9d9",
-    "T_kill":"\U0001f502",
-    "SOS":"\U0001f198",
-    "attack_end":"\U00002705"
+    "attack_p" : "\U00002694\U0000fe0f",
+    "attack_m" : "\U0001f9d9",
+    "T_kill" : "\U0001f502",
+    "SOS" : "\U0001f198",
+    "attack_end" : "\U00002705"
     }
 
 # 絵文字ヘルプ
@@ -178,7 +178,7 @@ async def boss_ch_neme(message):
         message_description = f"{role_m.mention}\n\n {int(M)}月の{x + 1}ボスは『{BOSS_name[x]}』です。\nよろしくお願いします。"
         embed = await boss_description(boss)
         await channel.edit(name=r)
-        await channel.send(message_description,embed=embed)
+        await channel.send(message_description, embed=embed)
         BOSS_names += channel.mention + "\n"
         x += 1
 
@@ -197,7 +197,7 @@ async def boss_description(boss):
     embed = discord.Embed(
         title=boss,
         color=0x00b4ff
-        )
+    )
 
     async for message in channel_0.history():
         if f"\n{boss}\n" in message.content:
@@ -206,12 +206,13 @@ async def boss_description(boss):
 
     boss_text = re.findall('(.*)\n', boss_text_message.content)
     for text in boss_text:
-        if all([re.match("【(.*)】" , text), "【ボス名】" != text]):
+        if all([re.match("【(.*)】", text), "【ボス名】" != text]):
             if in_field:
                 embed.add_field(
                     name=embed_name,
                     value=f"```py\n{ln.join([value_text for value_text in embed_value])}\n```",
-                    inline=False)
+                    inline=False
+                )
                 embed_value.clear()
 
             embed_name = text
@@ -223,10 +224,9 @@ async def boss_description(boss):
             text != "【ボス名】",
             "```py" not in text,
             "```" not in text
-            ]):
+        ]):
             embed_value.append(text)
             in_field = True
-
 
     embed.add_field(
         name=embed_name,
@@ -238,7 +238,6 @@ async def boss_description(boss):
         embed.set_image(url=boss_text_message.attachments[1].proxy_url)
 
     return embed
-
 
 
 # クラバト凸管理 ###########################
