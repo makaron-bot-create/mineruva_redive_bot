@@ -742,13 +742,13 @@ async def clan_battl_call_reaction(payload):
 
                 if all([
                     ok_attack_check,
-                    not ok_roll_check
+                    not ok_role_check
                 ]):
                     last_attack_text = f"\nラスアタ》__**持ち越し時間 ＝ {carry_over_time}**__"
 
                 elif all([
                     ok_attack_check,
-                    ok_roll_check
+                    ok_role_check
                 ]):
                     last_attack_text = "\nラスアタ》__**持ち越し不可**__"
 
