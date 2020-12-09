@@ -459,7 +459,7 @@ async def clan_battl_role_reset():
         for member in guild.get_role(clan_battle_member_role_id[3]).members:
             await member.remove_roles(guild.get_role(clan_battle_member_role_id[3]))
 
-    await channel.send("クランメンバーに「未3凸」ロールを付与しました。")
+    await channel.send(f"クランメンバーに「未3凸」ロールを付与しました。\n{datetime.datetime.now()}")
     await clan_battl_no_attack_member_list(no_attack_member_list_ch)
     await clan_battle_event()
 
