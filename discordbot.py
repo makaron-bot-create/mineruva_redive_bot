@@ -585,6 +585,7 @@ async def clan_battl_call_reaction(payload):
     global ok_member
 
     nl = "\n"
+    hp_fomat = "{:,}"
     ok_attack_text = ""
     ok_attack_check = False
     last_attack_text = ""
@@ -674,7 +675,7 @@ async def clan_battl_call_reaction(payload):
 {reac_member.mention}》
 ボスに与えたダメージを「半角数字」のみで入力してください。
 
-※ボスを倒した場合は「__{int(now_boss_data["now_boss_hp"])}__」以上で入力してください。""")
+※ボスを倒した場合は「__{hp_fomat.format(int(now_boss_data['now_boss_hp']))}__」以上で入力してください。""")
 
             def attack_dmg_message_check(message):
                 return all([
@@ -696,11 +697,10 @@ async def clan_battl_call_reaction(payload):
             # 残り体力計算
             last_boss_hp = int(now_boss_data["now_boss_hp"]) - int(BOSS_HP_check_message.content)
             true_dmg = ""
-            dmg_fomat = "{:,}"
             now_hp = 0
             if 0 >= last_boss_hp:
                 ok_attack_check = True
-                true_dmg = "" if last_boss_hp == 0 else f"{nl}({dmg_fomat.format(int(now_boss_data['now_boss_hp']))})"
+                true_dmg = "" if last_boss_hp == 0 else f"{nl}({hp_fomat.format(int(now_boss_data['now_boss_hp']))})"
                 if not ok_role_check:
 
                     await channel_0.send(f"""
