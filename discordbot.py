@@ -1366,7 +1366,6 @@ async def loop():
 
     guild = client.get_guild(599780162309062706)
     server_rule_channel = guild.get_channel(749511208104755241)  # サーバー案内
-    bot_log_channel = guild.get_channel(741851480868519966)  # 動作ログ
 
     now = datetime.datetime.now()
 
