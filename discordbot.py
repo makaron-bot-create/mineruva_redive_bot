@@ -66,6 +66,7 @@ now_clan_battl_message = None
 new_boss_check = False
 ok_member = False
 no_attack_role_reset = True
+add_role_check = False
 rollover_time = "05:00"
 
 
@@ -386,6 +387,7 @@ async def add_attack_role(BOSS_HP_check_message):
 
 # 残り凸ロールリセット
 async def clan_battl_role_reset():
+    global add_role_check
     global no_attack_role_reset
 
     guild = client.get_guild(599780162309062706)
@@ -393,6 +395,10 @@ async def clan_battl_role_reset():
 
     y = 0 if clan_battle_tutorial_days is True else 1
     no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][y]))  # 残り凸状況
+
+    if add_role_check:
+        add_role_check = False
+        return
 
     if now_clan_battl_message:
         edit_message = now_clan_battl_message
@@ -1400,10 +1406,8 @@ async def loop():
                 await clan_battl_role_reset()
                 no_attack_role_reset = True
 
-                await bot_log_channel.send("クランメンバーに「未3凸」ロールを付与しました。")
-
     else:
-        return
+        pass
 
     # 不要メッセージの削除
     async for message in channel_0.history(limit=10):
