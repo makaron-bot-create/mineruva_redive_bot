@@ -96,7 +96,7 @@ __リアクション後に、「与えたダメージ」と「持ち越し時間
 ┗{emoji_list["attack_end"]} 》本戦終了"""
 
 # タイムアウトエラーテキスト
-timeouterror_text = f"""
+timeouterror_text = """
 ```py
 \"\"\"
 長時間入力が無くタイムアウトになりました。
@@ -706,12 +706,12 @@ async def clan_battl_call_reaction(payload):
 
             except asyncio.TimeoutError:
                 embed = discord.Embed(
-                    title=f"タイムアウトエラー",
+                    title="タイムアウトエラー",
                     description=timeouterror_text,
                     colour=0xff0000
                 )
                 await dmg_input_announce_message.delete()
-                timeout_message = await channel_0.send(reac_member.mention,embed=embed)
+                timeout_message = await channel_0.send(reac_member.mention, embed=embed)
                 # 凸宣言リアクションリセット
                 for reaction in reaction_message.reactions:
                     # 凸終了宣言リアクションリセット
@@ -773,12 +773,12 @@ async def clan_battl_call_reaction(payload):
 
                     except asyncio.TimeoutError:
                         embed = discord.Embed(
-                            title=f"タイムアウトエラー",
+                            title="タイムアウトエラー",
                             description=timeouterror_text,
                             colour=0xff0000
                         )
                         await time_input_announce_message.delete()
-                        timeout_message = await channel_0.send(reac_member.mention,embed=embed)
+                        timeout_message = await channel_0.send(reac_member.mention, embed=embed)
                         # 凸宣言リアクションリセット
                         for reaction in reaction_message.reactions:
                             # 凸終了宣言リアクションリセット
@@ -786,7 +786,7 @@ async def clan_battl_call_reaction(payload):
                                 async for user in reaction.users():
                                     if user == reac_member:
                                         await reaction.remove(user)
-                        
+
                         await asyncio.sleep(10)
                         await timeout_message.delete()
                         return
