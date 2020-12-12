@@ -705,7 +705,7 @@ async def clan_battl_call_reaction(payload):
                 ])
 
             try:
-                BOSS_HP_check_message = await client.wait_for('message', check=attack_dmg_message_check)
+                BOSS_HP_check_message = await client.wait_for('message', check=attack_dmg_message_check, timeout=90)
 
             except asyncio.TimeoutError:
                 embed = discord.Embed(
@@ -772,7 +772,7 @@ async def clan_battl_call_reaction(payload):
                         ])
 
                     try:
-                        carry_over_time_message = await client.wait_for('message', check=carry_over_time_message_check)
+                        carry_over_time_message = await client.wait_for('message', check=carry_over_time_message_check, timeout=90)
                         carry_over_time = re.search(r"[0-9]:[0-9]{2}", carry_over_time_message.content).group()
 
                     except asyncio.TimeoutError:
