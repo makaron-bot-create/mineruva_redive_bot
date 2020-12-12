@@ -711,6 +711,7 @@ async def clan_battl_call_reaction(payload):
                     colour=0xff0000
                 )
                 await dmg_input_announce_message.delete()
+                await channel_0.set_permissions(reac_member, overwrite=None)
                 timeout_message = await channel_0.send(reac_member.mention, embed=embed)
                 # 凸宣言リアクションリセット
                 for reaction in reaction_message.reactions:
@@ -778,6 +779,7 @@ async def clan_battl_call_reaction(payload):
                             colour=0xff0000
                         )
                         await time_input_announce_message.delete()
+                        await channel_0.set_permissions(reac_member, overwrite=None)
                         timeout_message = await channel_0.send(reac_member.mention, embed=embed)
                         # 凸宣言リアクションリセット
                         for reaction in reaction_message.reactions:
