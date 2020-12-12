@@ -401,7 +401,7 @@ async def clan_battl_role_reset():
     global no_attack_role_reset
 
     guild = client.get_guild(599780162309062706)
-    channel = client.get_channel(676057664635142155)  # ミネルヴァ・動作ログ(BOT研究室)
+    channel = client.get_channel(741851480868519966)  # ミネルヴァ・動作ログ(BOT研究室)
 
     y = 0 if clan_battle_tutorial_days is True else 1
     no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][y]))  # 残り凸状況
@@ -409,6 +409,11 @@ async def clan_battl_role_reset():
     if add_role_check:
         add_role_check = False
         return
+    elif not add_role_check:
+        add_role_check = True
+
+    if not no_attack_role_reset:
+        no_attack_role_reset = True
 
     if now_clan_battl_message:
         edit_message = now_clan_battl_message
@@ -478,8 +483,6 @@ async def clan_battl_role_reset():
     await channel.send(f"クランメンバーに「未3凸」ロールを付与しました。\n{datetime.datetime.now()}")
     await clan_battl_no_attack_member_list(no_attack_member_list_ch)
     await clan_battle_event()
-
-    no_attack_role_reset = True
 
 
 # 進捗状況更新
