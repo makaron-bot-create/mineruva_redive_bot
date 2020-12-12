@@ -7,6 +7,7 @@ import datetime
 from datetime import timedelta
 import io
 import aiohttp
+import asyncio
 
 
 # BOTのトークン
@@ -93,6 +94,15 @@ __オプション__
 __凸終了宣言__
 __リアクション後に、「与えたダメージ」と「持ち越し時間」の入力があります。__
 ┗{emoji_list["attack_end"]} 》本戦終了"""
+
+# タイムアウトエラーテキスト
+timeouterror_text = f"""
+```py
+\"\"\"
+長時間入力が無くタイムアウトになりました。
+再度、凸終了宣言リアクションをお願いします。
+\"\"\"
+```"""
 
 #############################
 # メッセージリンク検知
@@ -677,7 +687,7 @@ async def clan_battl_call_reaction(payload):
 
         elif payload.emoji.name == emoji_list["attack_end"]:
             await channel_0.set_permissions(reac_member, send_messages=True)
-            await channel_0.send(f"""
+            dmg_input_announce_message = await channel_0.send(f"""
 {reac_member.mention}》
 ボスに与えたダメージを「半角数字」のみで入力してください。
 
@@ -691,7 +701,28 @@ async def clan_battl_call_reaction(payload):
                     not message.author.bot
                 ])
 
-            BOSS_HP_check_message = await client.wait_for('message', check=attack_dmg_message_check)
+            try:
+                BOSS_HP_check_message = await client.wait_for('message', check=attack_dmg_message_check)
+
+            except asyncio.TimeoutError:
+                embed = discord.Embed(
+                    title=f"タイムアウトエラー",
+                    description=timeouterror_text,
+                    colour=0xff0000
+                )
+                await dmg_input_announce_message.delete()
+                timeout_message = await channel_0.send(reac_member.mention,embed=embed)
+                # 凸宣言リアクションリセット
+                for reaction in reaction_message.reactions:
+                    # 凸終了宣言リアクションリセット
+                    if reaction.emoji == emoji_list["attack_end"]:
+                        async for user in reaction.users():
+                            if user == reac_member:
+                                await reaction.remove(user)
+
+                await asyncio.sleep(10)
+                await timeout_message.delete()
+                return
 
             async for message in channel_0.history(limit=10):
                 if not message.embeds:
@@ -709,7 +740,7 @@ async def clan_battl_call_reaction(payload):
                 true_dmg = "" if last_boss_hp == 0 else f"{nl}({hp_fomat.format(int(now_boss_data['now_boss_hp']))})"
                 if not ok_role_check:
 
-                    await channel_0.send(f"""
+                    time_input_announce_message = await channel_0.send(f"""
 {reac_member.mention}》
 持ち越し時間を入力してください、持ち越しメモに反映します。
 
@@ -736,8 +767,29 @@ async def clan_battl_call_reaction(payload):
                             not message.author.bot
                         ])
 
-                    carry_over_time_message = await client.wait_for('message', check=carry_over_time_message_check)
-                    carry_over_time = re.search(r"[0-9]:[0-9]{2}", carry_over_time_message.content).group()
+                    try:
+                        carry_over_time_message = await client.wait_for('message', check=carry_over_time_message_check)
+                        carry_over_time = re.search(r"[0-9]:[0-9]{2}", carry_over_time_message.content).group()
+
+                    except asyncio.TimeoutError:
+                        embed = discord.Embed(
+                            title=f"タイムアウトエラー",
+                            description=timeouterror_text,
+                            colour=0xff0000
+                        )
+                        await time_input_announce_message.delete()
+                        timeout_message = await channel_0.send(reac_member.mention,embed=embed)
+                        # 凸宣言リアクションリセット
+                        for reaction in reaction_message.reactions:
+                            # 凸終了宣言リアクションリセット
+                            if reaction.emoji == emoji_list["attack_end"]:
+                                async for user in reaction.users():
+                                    if user == reac_member:
+                                        await reaction.remove(user)
+                        
+                        await asyncio.sleep(10)
+                        await timeout_message.delete()
+                        return
 
                 async for message in channel_0.history(limit=10):
                     if not message.embeds:
@@ -838,21 +890,18 @@ async def clan_battl_call_reaction(payload):
                 if reaction.emoji == emoji_list["attack_p"]:
                     async for user in reaction.users():
                         if user == BOSS_HP_check_message.author:
-
                             await reaction.remove(user)
 
                 # 魔法編成、凸宣言リアクションリセット
                 if reaction.emoji == emoji_list["attack_m"]:
                     async for user in reaction.users():
                         if user == BOSS_HP_check_message.author:
-
                             await reaction.remove(user)
 
                 # 凸終了宣言リアクションリセット
                 if reaction.emoji == emoji_list["attack_end"]:
                     async for user in reaction.users():
                         if user == BOSS_HP_check_message.author:
-
                             await reaction.remove(user)
 
             if not ok_role_check:
@@ -1107,6 +1156,7 @@ async def on_raw_message_edit(payload):
     if edit_message.author.bot:
         return
 
+    await asyncio.sleep(1)
     async for message in channel.history(limit=50):
         if message.embeds:
             embed = message.embeds[0]
