@@ -121,18 +121,18 @@ async def pants_trade(message):
 
         img_files = []
         n = 0
-            async with aiohttp.ClientSession() as session:
-                for img_url in pants_url:
-                    async with session.get(my_url) as resp:
+        async with aiohttp.ClientSession() as session:
+            for img_url in pants_url:
+                async with session.get(my_url) as resp:
 
-                        if resp.status != 200:
-                            return await message.channel.send('Could not download file...')
+                    if resp.status != 200:
+                        return await message.channel.send('Could not download file...')
 
-                        data = io.BytesIO(await resp.read())
-                    img_files.append(discord.File(data, f'image_{n}.png'))
+                    data = io.BytesIO(await resp.read())
+　                  img_files.append(discord.File(data, f'image_{n}.png'))
                     n += 1
 
-            await message.channel.send(file=discord.File(data, 'cool_image.png'))
+        await message.channel.send(file=discord.File(data, 'cool_image.png'))
 
 
 # メンバー追放
