@@ -132,7 +132,7 @@ async def pants_trade(message):
                     img_files.append(discord.File(data, f'image_{n}.png'))
                     n += 1
 
-        await message.channel.send(file=img_files)
+        await message.channel.send(files=img_files)
 
 
 # メンバー追放
