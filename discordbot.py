@@ -100,7 +100,7 @@ timeouterror_text = """
 ```py
 \"\"\"
 長時間入力が無くタイムアウトになりました。
-再度、凸終了宣言リアクションをお願いします。
+再度、リアクションをお願いします。
 \"\"\"
 ```"""
 
@@ -258,6 +258,103 @@ async def clan_battl_start_up():
     await clan_battl_role_reset()
 
 
+# 編成登録
+async def battle_log_add_information(payload):
+    guild = client.get_guild(599780162309062706)
+    add_information_reaction_name = "\U0001f4dd"  # メモ絵文字
+
+    if payload.member.bot:
+        return
+
+    y = 0 if clan_battle_tutorial_days is True else 1
+    channel = guild.get_channel(int(clan_battle_channel_id[3][y]))  # バトルログ
+    reaction_message = await channel.fetch_message(payload.message_id)
+
+    if all([
+        payload.emoji.name == add_information_reaction_name,
+        payload.channel_id == channel.id,
+        payload.member.id == reaction_message.mentions[0].id,
+        reaction_message.embeds
+    ]):
+
+        await channel.set_permissions(payload.member, send_messages=True)
+        battle_log_announce_message = await channel.send(f"""
+{payload.member.mention}》
+リアクションしたログに編成情報を反映します。
+
+①ログのスクショ
+②コメント
+
+※①か②のどちらか、または①と②両方の書き込みができます。""")
+
+        def battle_log_message_check(message):
+            return all([
+                message.channel == channel,
+                message.author.id == payload.user_id,
+                not message.author.bot
+            ])
+
+        try:
+            battle_log_check_message = await client.wait_for('message', check=battle_log_message_check, timeout=90)
+
+        except asyncio.TimeoutError:
+            embed = discord.Embed(
+                title="タイムアウトエラー",
+                description=timeouterror_text,
+                colour=0xff0000
+            )
+            await battle_log_announce_message.delete()
+            await channel.set_permissions(payload.member, overwrite=None)
+            timeout_message = await channel.send(payload.member.mention, embed=embed)
+            # リアクションリセット
+            for reaction in reaction_message.reactions:
+                if reaction.emoji == add_information_reaction_name:
+                    async for user in reaction.users():
+                        if user == payload.member:
+                            await reaction.remove(user)
+
+            await asyncio.sleep(10)
+            await timeout_message.delete()
+            return
+
+        async for message in channel.history(limit=10):
+            if not message.embeds:
+                await message.delete()
+
+            else:
+                break
+
+        embed = reaction_message.embeds[0]
+        if battle_log_check_message.content:
+            if reaction_message.embeds[0].fields:
+                embed.set_field_at(
+                    0,
+                    name="【編成情報】",
+                    value=battle_log_check_message.content,
+                    inline=False
+                )
+            else:
+                embed.add_field(
+                    name="【編成情報】",
+                    value=battle_log_check_message.content,
+                    inline=False
+                )
+
+        if battle_log_check_message.attachments:
+            embed.set_image(
+                url=battle_log_check_message.attachments[0].proxy_url
+            )
+
+        # リアクションリセット
+        for reaction in reaction_message.reactions:
+            if reaction.emoji == add_information_reaction_name:
+                async for user in reaction.users():
+                    if user == payload.member:
+                        await reaction.remove(user)
+
+        await reaction_message.edit(embed=embed)
+
+
 # 残り凸メンバーリスト
 async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
     guild = client.get_guild(599780162309062706)
@@ -354,7 +451,7 @@ async def no_attack_role_check(payload):
                 if user == payload.member:
                     await reaction.remove(user)
 
-        await channel.send(f"{payload.member.display_name}》\n本日の3凸は終了してます。")
+        await channel.send(f"{payload.member.mention}》\n本日の3凸は終了してます。")
 
     return attack_role_check, ok_role_check
 
@@ -395,7 +492,7 @@ async def clan_battl_role_reset():
     global no_attack_role_reset
 
     guild = client.get_guild(599780162309062706)
-    channel = client.get_channel(741851480868519966)  # ミネルヴァ・動作ログ(BOT研究室)
+    channel = client.get_channel(741851480868519966)  # ミネルヴァ・動作ログ
 
     y = 0 if clan_battle_tutorial_days is True else 1
     no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][y]))  # 残り凸状況
@@ -735,7 +832,7 @@ async def clan_battl_call_reaction(payload):
             now_hp = 0
             if 0 >= last_boss_hp:
                 ok_attack_check = True
-                true_dmg = "" if last_boss_hp == 0 else f"{nl}({hp_fomat.format(int(now_boss_data['now_boss_hp']))})"
+                true_dmg = "" if last_boss_hp == 0 else f"({hp_fomat.format(int(now_boss_data['now_boss_hp']))})"
                 if not ok_role_check:
 
                     time_input_announce_message = await channel_0.send(f"""
@@ -801,13 +898,13 @@ async def clan_battl_call_reaction(payload):
                     ok_attack_check,
                     not ok_role_check
                 ]):
-                    last_attack_text = f"\nラスアタ》__**持ち越し時間 ＝ {carry_over_time}**__"
+                    last_attack_text = f"\n┣ラスアタ》\n┃┗__**持ち越し時間 ＝ {carry_over_time}**__"
 
                 elif all([
                     ok_attack_check,
                     ok_role_check
                 ]):
-                    last_attack_text = "\nラスアタ》__**持ち越し不可**__"
+                    last_attack_text = "\n┣ラスアタ》\n┃┗__**持ち越し不可**__"
 
                 nwe_lap_check = True if int(now_boss_data["now_boss"]) == 4 else False
                 now_boss_data["now_boss"] = 0 if int(now_boss_data["now_boss"]) + 1 == 5 else int(now_boss_data["now_boss"]) + 1
@@ -861,12 +958,19 @@ async def clan_battl_call_reaction(payload):
                 now_hp = "{:,}".format(int(now_boss_data["now_boss_hp"]))
 
             dmg = "{:,}".format(int(BOSS_HP_check_message.content))
-            msg = f"""
+            battle_log = f"""
 {BOSS_HP_check_message.author.mention}》
 {now_lap}週目・{now_boss_level}段階目
-{BOSS_name[boss_name_index]}
-{now_attack_list[BOSS_HP_check_message.author]}{last_attack_text}
-ダメージ》{dmg}{true_dmg}"""
+{BOSS_HP_check_message.author.mention}
+({BOSS_HP_check_message.author.display_name})
+┣{now_attack_list[BOSS_HP_check_message.author]}{last_attack_text}
+┗ダメージ》
+　┗{dmg}{true_dmg}"""
+
+            embed = discord.Embed(
+                description=battle_log,
+                color=0x00b4ff
+            )
 
             if carry_over_time_message:
                 attak_type = re.sub(r"[《》]", "", now_attack_list[BOSS_HP_check_message.author])
@@ -910,7 +1014,8 @@ async def clan_battl_call_reaction(payload):
             await channel_0.set_permissions(BOSS_HP_check_message.author, overwrite=None)
             await clan_battl_no_attack_member_list(no_attack_member_list_ch)
             await channel_1.send(f"{BOSS_HP_check_message.author.display_name}》\n凸が終了しました。")
-            await channel_3.send(msg)
+            battl_log_message = await channel_3.send(BOSS_HP_check_message.author.mention, embed=embed)
+            await battl_log_message.add_reaction("\U0001f4dd")
 
             if carry_over_time_message:
                 await channel_4.send(last_attack_message)
@@ -1494,6 +1599,7 @@ async def on_raw_reaction_add(payload):
 
     # クラバト管理リアクション
     await clan_battl_call_reaction(payload)
+    await battle_log_add_information(payload)
 
 
 @client.event
