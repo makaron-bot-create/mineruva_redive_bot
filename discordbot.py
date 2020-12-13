@@ -264,12 +264,15 @@ async def battle_log_add_information(payload):
     add_information_reaction_name = "\U0001f4dd"  # メモ絵文字
     channel = guild.get_channel(payload.channel_id)
 
-    if payload.member.bot:
-        return
-
     y = 0 if clan_battle_tutorial_days is True else 1
     battle_log_channel = guild.get_channel(int(clan_battle_channel_id[3][y]))  # バトルログ
     reaction_message = await channel.fetch_message(payload.message_id)
+
+    if any([
+        payload.member.bot,
+        not reaction_message.mentions
+    ]):
+        return
 
     if all([
         payload.emoji.name == add_information_reaction_name,
