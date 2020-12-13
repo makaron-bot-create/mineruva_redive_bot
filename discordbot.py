@@ -959,8 +959,8 @@ async def clan_battl_call_reaction(payload):
 
             dmg = "{:,}".format(int(BOSS_HP_check_message.content))
             battle_log = f"""
-{BOSS_HP_check_message.author.mention}》
 {now_lap}週目・{now_boss_level}段階目
+{BOSS_name[boss_name_index]}
 {BOSS_HP_check_message.author.mention}
 ({BOSS_HP_check_message.author.display_name})
 ┣{now_attack_list[BOSS_HP_check_message.author]}{last_attack_text}
