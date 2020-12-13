@@ -114,32 +114,26 @@ regex_discord_message_url = (
 
 # パンツ交換
 async def pants_trade(message):
-    if "パンツ交換" in message.content or "パンツ" in message.content or "ぱんつ交換" in message.content or "ぱんつ" in message.content:
-        if "パンツ" in message.content or "ぱんつ" in message.content:
-            x = 0
+    if any([
+        "パンツ" in message.content,
+        "ぱんつ" in message.content
+    ]):
 
-            my_url = pants_url[x]
+        img_files = []
+        n = 0
             async with aiohttp.ClientSession() as session:
-                async with session.get(my_url) as resp:
+                for img_url in pants_url:
+                    async with session.get(my_url) as resp:
 
-                    if resp.status != 200:
-                        return await message.channel.send('Could not download file...')
+                        if resp.status != 200:
+                            return await message.channel.send('Could not download file...')
 
-                    data = io.BytesIO(await resp.read())
-                    await message.channel.send(file=discord.File(data, 'cool_image.png'))
+                        data = io.BytesIO(await resp.read())
+                    img_files.append(discord.File(data, f'image_{n}.png'))
+                    n += 1
 
-        if "パンツ交換" in message.content or "ぱんつ交換" in message.content:
-            x = 1
+            await message.channel.send(file=discord.File(data, 'cool_image.png'))
 
-            my_url = pants_url[x]
-            async with aiohttp.ClientSession() as session:
-                async with session.get(my_url) as resp:
-
-                    if resp.status != 200:
-                        return await message.channel.send('Could not download file...')
-
-                    data = io.BytesIO(await resp.read())
-                    await message.channel.send(file=discord.File(data, 'cool_image.png'))
 
 # メンバー追放
 async def member_kick(message):
