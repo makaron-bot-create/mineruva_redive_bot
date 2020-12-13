@@ -262,17 +262,18 @@ async def clan_battl_start_up():
 async def battle_log_add_information(payload):
     guild = client.get_guild(599780162309062706)
     add_information_reaction_name = "\U0001f4dd"  # メモ絵文字
+    channel = guild.get_channel(payload.channel_id)
 
     if payload.member.bot:
         return
 
     y = 0 if clan_battle_tutorial_days is True else 1
-    channel = guild.get_channel(int(clan_battle_channel_id[3][y]))  # バトルログ
+    battle_log_channel = guild.get_channel(int(clan_battle_channel_id[3][y]))  # バトルログ
     reaction_message = await channel.fetch_message(payload.message_id)
 
     if all([
         payload.emoji.name == add_information_reaction_name,
-        payload.channel_id == channel.id,
+        payload.channel_id == battle_log_channel.id,
         payload.member.id == reaction_message.mentions[0].id,
         reaction_message.embeds
     ]):
