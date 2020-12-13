@@ -321,6 +321,7 @@ async def battle_log_add_information(payload):
             await timeout_message.delete()
             return
 
+        await channel.set_permissions(payload.member, overwrite=None)
         await asyncio.sleep(3)
         async for message in channel.history(limit=10):
             if not message.embeds:
