@@ -838,7 +838,7 @@ async def clan_battl_call_reaction(payload):
             now_hp = 0
             if 0 >= last_boss_hp:
                 ok_attack_check = True
-                true_dmg = "" if last_boss_hp == 0 else f"\n\t({hp_fomat.format(int(now_boss_data['now_boss_hp']))})"
+                true_dmg = "" if last_boss_hp == 0 else f"\n　　({hp_fomat.format(int(now_boss_data['now_boss_hp']))})"
                 if not ok_role_check:
 
                     time_input_announce_message = await channel_0.send(f"""
