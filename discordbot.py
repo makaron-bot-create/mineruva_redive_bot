@@ -786,6 +786,20 @@ async def clan_battl_call_reaction(payload):
             return
 
         elif payload.emoji.name == emoji_list["attack_end"]:
+            if not now_attack_list.get(payload.member):
+                # 凸宣言リアクションリセット
+                for reaction in reaction_message.reactions:
+                    # 凸終了宣言リアクションリセット
+                    if reaction.emoji == emoji_list["attack_end"]:
+                        async for user in reaction.users():
+                            if user == reac_member:
+                                await reaction.remove(user)
+
+                not_reaction_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言が有りません。")
+                await asyncio.sleep(10)
+                await not_reaction_message.delete()
+                return
+
             await channel_0.set_permissions(reac_member, send_messages=True)
             dmg_input_announce_message = await channel_0.send(f"""
 {reac_member.mention}》
