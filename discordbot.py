@@ -1030,7 +1030,11 @@ async def clan_battl_call_reaction(payload):
             if not ok_role_check:
                 await add_attack_role(BOSS_HP_check_message)
 
-            del now_attack_list[BOSS_HP_check_message.author]
+            if ok_attack_check:
+                now_attack_list.clear()
+            elif not ok_attack_check:
+                del now_attack_list[BOSS_HP_check_message.author]
+
             await channel_0.set_permissions(BOSS_HP_check_message.author, overwrite=None)
             await clan_battl_no_attack_member_list(no_attack_member_list_ch)
             await channel_1.send(f"{BOSS_HP_check_message.author.display_name}》\n凸が終了しました。")
