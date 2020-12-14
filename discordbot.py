@@ -496,9 +496,11 @@ async def add_attack_role(BOSS_HP_check_message):
 async def clan_battl_role_reset():
     global add_role_check
     global no_attack_role_reset
+    global now_attack_list
 
     guild = client.get_guild(599780162309062706)
     channel = client.get_channel(741851480868519966)  # ミネルヴァ・動作ログ
+    now_attack_list.clear()
 
     y = 0 if clan_battle_tutorial_days is True else 1
     no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][y]))  # 残り凸状況
