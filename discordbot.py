@@ -322,7 +322,7 @@ async def battle_log_add_information(payload):
             return
 
         await channel.set_permissions(payload.member, overwrite=None)
-        await asyncio.sleep(3)
+        await asyncio.sleep(1.5)
         async for message in channel.history(limit=10):
             if not message.embeds:
                 await message.delete()
