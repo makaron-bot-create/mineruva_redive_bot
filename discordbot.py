@@ -1286,12 +1286,15 @@ async def on_raw_message_edit(payload):
     if edit_message.author.bot:
         return
 
-    await asyncio.sleep(1)
     async for message in channel.history(limit=50):
         if message.embeds:
             embed = message.embeds[0]
 
-            if "メッセージ編集" == embed.fields[0].value:
+            if any([
+                "書き込み" == embed.fields[0].value,
+                "メッセージ編集" == embed.fields[0].value
+            ]):
+
                 if all([
                     int(edit_message.id) == int(embed.fields[6].value),
                     edit_message.content == embed.fields[7].value
