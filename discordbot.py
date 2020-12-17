@@ -1565,7 +1565,7 @@ async def loop():
     channel_0 = guild.get_channel(int(clan_battle_channel_id[0][y]))
 
     if any([
-        5 <= now.day < 20,
+        5 <= now.day < 25,
         clan_battle_start_day.strftime('%Y-%m-%d %H:%M') <= now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
     ]):
 
