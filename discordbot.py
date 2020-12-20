@@ -1733,6 +1733,9 @@ async def on_message(message):
         if "/リセット" in message.content:
             await clan_battl_start_up()
 
+        if "/edit_boss" in message.content:
+            await clan_battl_edit_progress(message)
+
     # メッセージリンク展開
     await dispand(message)
 
