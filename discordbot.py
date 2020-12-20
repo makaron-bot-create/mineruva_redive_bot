@@ -106,9 +106,9 @@ timeouterror_text = """
 ```"""
 
 boss_edit_message = (
-"""/edit_boss
+    """/edit_boss
 (?P<now_lap>[0-9]+)
-(?P<boss_name_index>[1-5])
+(?P<now_boss>[1-5])
 (?P<now_hp>[0-9]+)"""
 )
 
