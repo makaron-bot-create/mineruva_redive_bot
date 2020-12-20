@@ -42,6 +42,7 @@ clan_battle_channel_id = [
 BOSS_Ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699152199680, 680754056477671439]
 BOSS_name = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
 clan_battle_days = ["2020/12/26 05:00", "2020/12/31 00:00"]
+boss_img_url = {}
 BOSS_lv = [1, 4, 11, 35]
 BOSS_HP = [
     [6000000, 6000000, 7000000, 15000000],
@@ -103,6 +104,12 @@ timeouterror_text = """
 再度、リアクションをお願いします。
 \"\"\"
 ```"""
+
+boss_edit_message = """
+/edit_boss
+(?P<now_lap>[0-9]+)
+(?P<boss_name_index>[1-5])
+(?P<now_hp>[0-9]+)"""
 
 #############################
 # メッセージリンク検知
@@ -192,6 +199,8 @@ async def boss_ch_neme(message):
 
 # ボス説明
 async def boss_description(boss):
+    global boss_img_url
+
     boss_data_ch = 784763031946264576
     channel_0 = client.get_channel(boss_data_ch)
 
@@ -257,6 +266,62 @@ async def clan_battl_start_up():
 
     await clan_battl_role_reset()
 
+# 進捗状況の編集
+async def clan_battl_edit_progress(message):
+    global now_boss_data
+    guild = client.get_guild(599780162309062706)
+    clan_member_mention = "クランメンバー" if clan_battle_tutorial_days is True else guild.get_role(687433139345555456)  # クランメンバーロール
+    edit_message = now_clan_battl_message
+    embed = edit_message.embeds[0]
+
+    attack_3 = len(guild.get_role(clan_battle_member_role_id[1]).members) * 3
+    attack_2 = len(guild.get_role(clan_battle_member_role_id[2]).members) * 2
+    attack_1 = len(guild.get_role(clan_battle_member_role_id[3]).members)
+    OK_n = len(guild.get_role(clan_battle_member_role_id[0]).members)
+    attack_n = attack_3 + attack_2 + attack_1
+
+    for ids in re.finditer(boss_edit_message, message.content):
+        now_boss_data["now_lap"] = int(ids["now_lap"])
+        now_boss_data["now_boss"] = int(ids["now_boss"]) - 1
+        now_boss_data["now_boss_hp"] = int(ids["now_hp"])
+
+    # 段階取得
+    if 1 <= int(now_boss_data["now_lap"]) < 4:
+        now_boss_data["now_boss_level"] = 1
+
+    elif 4 <= int(now_boss_data["now_lap"]) < 11:
+        now_boss_data["now_boss_level"] = 2
+
+    elif 11 <= int(now_boss_data["now_lap"]) < 35:
+        now_boss_data["now_boss_level"] = 3
+
+    elif 35 <= int(now_boss_data["now_lap"]):
+        now_boss_data["now_boss_level"] = 4
+
+    now_lap = now_boss_data["now_lap"]
+    now_boss_level = now_boss_data["now_boss_level"]
+    boss_name_index = int(now_boss_data["now_boss"])
+
+    now_hp = "{:,}".format(int(now_boss_data["now_boss_hp"]))
+    x = int(now_boss_data["now_boss"])
+    y = int(now_boss_data["now_boss_level"]) - 1
+    BOSS_MAX_HP = "{:,}".format(int(BOSS_HP[x][y]))
+
+    description_text = f"""
+残り凸数》{attack_n}凸
+持ち越し》{OK_n}人
+━━━━━━━━━━━━━━━━━━━━
+{now_lap}週目
+{now_boss_level}段階目
+{BOSS_name[boss_name_index]}
+{now_hp}/{BOSS_MAX_HP}
+━━━━━━━━━━━━━━━━━━━━"""
+
+    mention_text = f"{clan_member_mention}\n{now_lap}週目 {BOSS_name[boss_name_index]}"
+    embed.description = description_text
+
+    await message.delete()
+    await edit_message.edit(content=mention_text, embed=embed)
 
 # 編成登録
 async def battle_log_add_information(payload):
