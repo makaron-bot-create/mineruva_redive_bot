@@ -267,6 +267,7 @@ async def clan_battl_start_up():
 
     await clan_battl_role_reset()
 
+
 # 進捗状況の編集
 async def clan_battl_edit_progress(message):
     global now_boss_data
@@ -323,6 +324,7 @@ async def clan_battl_edit_progress(message):
 
     await message.delete()
     await edit_message.edit(content=mention_text, embed=embed)
+
 
 # 編成登録
 async def battle_log_add_information(payload):
@@ -1361,17 +1363,20 @@ async def on_raw_message_edit(payload):
                 "メッセージ編集" == embed.fields[0].value
             ]):
 
-                if all([
-                    int(edit_message.id) == int(embed.fields[6].value),
-                    edit_message.content == embed.fields[7].value
-                ]):
-                    return
+                try:
+                    if all([
+                        int(edit_message.id) == int(embed.fields[6].value),
+                        edit_message.content == embed.fields[7].value
+                    ]):
+                        return
 
-                elif all([
-                    int(edit_message.id) == int(embed.fields[6].value),
-                    edit_message.content != embed.fields[7].value
-                ]):
-                    break
+                    elif all([
+                        int(edit_message.id) == int(embed.fields[6].value),
+                        edit_message.content != embed.fields[7].value
+                    ]):
+                        break
+                except (IndexError):
+                    pass
 
                 else:
                     pass
