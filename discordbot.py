@@ -1541,7 +1541,7 @@ async def on_ready():
 
     elif 45 <= int(now_boss_data["now_lap"]):
         now_boss_data["now_boss_level"] = 5
-        
+
     await channel_bot_log.send(f"ミネルヴァ起動しました。\n\n{text_1}\n\n{BOSS_names}")
 
 
