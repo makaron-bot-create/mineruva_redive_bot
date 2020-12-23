@@ -43,13 +43,13 @@ BOSS_Ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699
 BOSS_name = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
 clan_battle_days = ["2020/12/26 05:00", "2020/12/31 00:00"]
 boss_img_url = {}
-BOSS_lv = [1, 4, 11, 35]
+BOSS_lv = [1, 4, 11, 35, 45]
 BOSS_HP = [
-    [6000000, 6000000, 7000000, 15000000],
-    [8000000, 8000000, 9000000, 16000000],
-    [10000000, 10000000, 13000000, 18000000],
-    [12000000, 12000000, 15000000, 19000000],
-    [15000000, 15000000, 20000000, 20000000]
+    [6000000, 6000000, 7000000, 15000000, 85000000],
+    [8000000, 8000000, 9000000, 16000000, 90000000],
+    [10000000, 10000000, 13000000, 18000000, 95000000],
+    [12000000, 12000000, 15000000, 19000000, 100000000],
+    [15000000, 15000000, 20000000, 20000000, 110000000]
 ]
 now_boss_data = {
     "now_lap": 1,
@@ -1012,8 +1012,11 @@ async def clan_battl_call_reaction(payload):
                     elif 11 <= int(now_boss_data["now_lap"]) < 35:
                         now_boss_data["now_boss_level"] = 3
 
-                    elif 35 <= int(now_boss_data["now_lap"]):
+                    elif 35 <= int(now_boss_data["now_lap"]) < 45:
                         now_boss_data["now_boss_level"] = 4
+
+                    elif 45 <= int(now_boss_data["now_lap"]):
+                        now_boss_data["now_boss_level"] = 5
 
                 x = int(now_boss_data["now_boss"])
                 y = int(now_boss_data["now_boss_level"]) - 1
@@ -1533,9 +1536,12 @@ async def on_ready():
     elif 11 <= int(now_boss_data["now_lap"]) < 35:
         now_boss_data["now_boss_level"] = 3
 
-    elif 35 <= int(now_boss_data["now_lap"]):
+    elif 35 <= int(now_boss_data["now_lap"]) < 45:
         now_boss_data["now_boss_level"] = 4
 
+    elif 45 <= int(now_boss_data["now_lap"]):
+        now_boss_data["now_boss_level"] = 5
+        
     await channel_bot_log.send(f"ミネルヴァ起動しました。\n\n{text_1}\n\n{BOSS_names}")
 
 
