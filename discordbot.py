@@ -297,8 +297,11 @@ async def clan_battl_edit_progress(message):
     elif 11 <= int(now_boss_data["now_lap"]) < 35:
         now_boss_data["now_boss_level"] = 3
 
-    elif 35 <= int(now_boss_data["now_lap"]):
+    elif 35 <= int(now_boss_data["now_lap"]) < 45:
         now_boss_data["now_boss_level"] = 4
+
+    elif 45 <= int(now_boss_data["now_lap"]):
+        now_boss_data["now_boss_level"] = 5
 
     now_lap = now_boss_data["now_lap"]
     now_boss_level = now_boss_data["now_boss_level"]
