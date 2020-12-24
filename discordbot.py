@@ -1645,7 +1645,7 @@ async def loop():
     channel_0 = guild.get_channel(int(clan_battle_channel_id[0][y]))
 
     if any([
-        5 <= now.day < 25,
+        5 <= now.day < clan_battle_start_day.strftime("%Y/%m/%d 00:00"),
         clan_battle_start_day.strftime('%Y-%m-%d %H:%M') <= now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
     ]):
 
@@ -1667,6 +1667,20 @@ async def loop():
             else:
                 await clan_battl_role_reset()
                 no_attack_role_reset = True
+
+    # クラバト終了処理
+    if any([
+        now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_day.strftime("%Y/%m/%d 00:00"),
+        now.strftime('%Y-%m-%d %H:%M') == clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+    ]):
+
+        if now_attack_list:
+            no_attack_role_reset = False
+            return
+
+        else:
+            await clan_battl_role_reset()
+            no_attack_role_reset = True
 
     else:
         pass
