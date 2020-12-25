@@ -272,7 +272,7 @@ async def clan_battl_start_up():
 async def clan_battl_edit_progress(message):
     global now_boss_data
     guild = client.get_guild(599780162309062706)
-    clan_member_mention = "クランメンバー" if clan_battle_tutorial_days is True else guild.get_role(687433139345555456)  # クランメンバーロール
+    clan_member_mention = "クランメンバー" if clan_battle_tutorial_days is True else guild.get_role(687433139345555456).mention  # クランメンバーロール
     edit_message = now_clan_battl_message
     embed = edit_message.embeds[0]
 
