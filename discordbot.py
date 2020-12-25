@@ -29,7 +29,7 @@ clan_battle_member_role_id = [
     731746926067974214  # 残り1凸
 ]
 
-clan_battle_tutorial_days = True
+clan_battle_tutorial_days = False
 clan_battle_channel_id = [
     # [チュートリアルCh_ID , クランバトル期間Ch_ID]
     [750345928678047744, 599784283359674379],  # 進捗状況,凸宣言チャンネル
