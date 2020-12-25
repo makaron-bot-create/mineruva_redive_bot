@@ -694,7 +694,7 @@ async def clan_battle_event():
     y = 0 if clan_battle_tutorial_days is True else 1
     channel = guild.get_channel(int(clan_battle_channel_id[0][y]))  # 進捗状況
 
-    clan_member_mention = "クランメンバー" if clan_battle_tutorial_days is True else guild.get_role(687433139345555456)  # クランメンバーロール
+    clan_member_mention = "クランメンバー" if clan_battle_tutorial_days is True else guild.get_role(687433139345555456).mention  # クランメンバーロール
 
     attack_3 = len(guild.get_role(clan_battle_member_role_id[1]).members) * 3
     attack_2 = len(guild.get_role(clan_battle_member_role_id[2]).members) * 2
