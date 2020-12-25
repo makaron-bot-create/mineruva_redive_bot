@@ -1671,7 +1671,7 @@ async def loop():
 
     # クラバト終了処理
     if any([
-        now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_day.strftime("%Y/%m/%d 00:00"),
+        now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_day.strftime("%Y-%m-%d 00:00"),
         now.strftime('%Y-%m-%d %H:%M') == clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
     ]):
 
