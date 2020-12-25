@@ -681,12 +681,13 @@ async def clan_battle_event():
     now_d = now.day
     cb_day = (datetime.date(now_y, now_m, now_d) - datetime.date(start_y, start_m, start_d) + timedelta(days=1)).days
 
-    if cb_day < 0:
+    if cb_day <= 0:
         cb_day_text = f"__**クラバト開催前**__（{abs(cb_day)}日前）"
     else:
         if datetime.datetime.now().strftime("%H:%M") < set_rollover_time:
             cb_day = cb_day - 1
-            cb_day_text = f"__**{abs(cb_day)}日目**__"
+
+        cb_day_text = f"__**{abs(cb_day)}日目**__"
 
     guild = client.get_guild(599780162309062706)
 
