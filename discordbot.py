@@ -781,6 +781,9 @@ async def clan_battl_call_reaction(payload):
     last_attack_text = ""
     carry_over_time_message = ""
     carry_over_time = ""
+    message_1 = ""
+    message_2 = ""
+    message_3 = ""
 
     guild = client.get_guild(599780162309062706)
     ch_id_index_y = 0 if clan_battle_tutorial_days is True else 1
@@ -1784,7 +1787,7 @@ async def on_message(message):
 
     # クラバトコマンド
         if "/残り凸状況" in message.content:
-            no_attack_member_list_ch = message.channel.id
+            no_attack_member_list_ch = message.channel
             await clan_battl_no_attack_member_list(no_attack_member_list_ch)
             await message.delete()
 
