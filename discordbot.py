@@ -835,8 +835,17 @@ async def clan_battl_call_reaction(payload):
                         if user == payload.member:
                             await reaction.remove(user)
 
-            await channel_1.send(f"{reac_member.display_name}》\n「物理編成」{ok_attack_text}で入りました。")
-            await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
+            embed = discord.Embed(
+                description=f"{reac_member.display_name}》\n「物理編成」{ok_attack_text}で入りました。",
+                color=0x00b4ff
+            )
+            message_1 = await channel_1.send(embed=embed)
+            message_2 = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
+
+            await asyncio.sleep(10)
+            await message_2.delete()
+            await asyncio.sleep(50)
+            await message_1.delete()
 
         elif payload.emoji.name == emoji_list["attack_m"]:
             now_attack_list[payload.member] = f"《魔法編成》{ok_attack_text}"
@@ -849,8 +858,17 @@ async def clan_battl_call_reaction(payload):
                         if user == payload.member:
                             await reaction.remove(user)
 
-            await channel_1.send(f"{reac_member.display_name}》\n「魔法編成」{ok_attack_text}で入りました。")
-            await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
+            embed = discord.Embed(
+                description=f"{reac_member.display_name}》\n「魔法編成」{ok_attack_text}で入りました。",
+                color=0x00b4ff
+            )
+            message_3 = await channel_1.send(embed=embed)
+            message_4 = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
+
+            await asyncio.sleep(10)
+            await message_4.delete()
+            await asyncio.sleep(50)
+            await message_3.delete()
 
         elif payload.emoji.name == emoji_list["T_kill"]:
             await channel_2.send(f"{reac_member.display_name}》\nタスキルしました。")
@@ -1497,8 +1515,8 @@ async def on_ready():
         BOSS_names += f"\n{name}"
 
     if all([
-        clan_battle_start_day.strftime('%Y-%m-%d %H:%M') <= now.strftime('%Y-%m-%d %H:%M'),
-        clan_battle_end_day.strftime('%Y-%m-%d %H:%M') > now.strftime('%Y-%m-%d %H:%M')
+        now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime('%Y-%m-%d %H:%M'),
+        now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
     ]):
 
         text_1 = "現在クランバトル開催中です。"
@@ -1631,12 +1649,10 @@ async def loop():
     guild = client.get_guild(599780162309062706)
     server_rule_channel = guild.get_channel(749511208104755241)  # サーバー案内
 
-    now = datetime.datetime.now()
-
-    clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
-    clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
-
-    if clan_battle_start_day.strftime('%Y-%m-%d %H:%M') <= now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M'):
+    if all([
+        now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime('%Y-%m-%d %H:%M'),
+        now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+    ]):
         clan_battle_tutorial_days = False
 
     else:
@@ -1646,8 +1662,14 @@ async def loop():
     channel_0 = guild.get_channel(int(clan_battle_channel_id[0][y]))
 
     if any([
-        5 <= now.day < clan_battle_start_day.strftime("%Y/%m/%d 00:00"),
-        clan_battle_start_day.strftime('%Y-%m-%d %H:%M') <= now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+        all([
+            now.day >= 5,
+            now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_day.strftime("%Y/%m/%d 00:00")
+        ]),
+        all([
+            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime('%Y-%m-%d %H:%M'),
+            now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+        ])
     ]):
 
         # クラバト初日設定
