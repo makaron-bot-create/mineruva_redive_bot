@@ -842,6 +842,9 @@ async def clan_battl_call_reaction(payload):
             message_1 = await channel_1.send(embed=embed)
             await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
 
+            await asyncio.sleep(60)
+            await message_1.delete()
+
         elif payload.emoji.name == emoji_list["attack_m"]:
             now_attack_list[payload.member] = f"《魔法編成》{ok_attack_text}"
 
@@ -859,6 +862,9 @@ async def clan_battl_call_reaction(payload):
             )
             message_2 = await channel_1.send(embed=embed)
             await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
+
+            await asyncio.sleep(60)
+            await message_2.delete()
 
         elif payload.emoji.name == emoji_list["T_kill"]:
             await channel_2.send(f"{reac_member.display_name}》\nタスキルしました。")
@@ -1199,15 +1205,6 @@ async def clan_battl_call_reaction(payload):
 
                 await clan_battl_role_reset()
 
-     if message_1:
-        await asyncio.sleep(60)
-        await message_1.delete()
-
-    if message_2:
-        await asyncio.sleep(60)
-        await message_2.delete()
-
-    if message_3:
         await asyncio.sleep(60)
         await message_3.delete()
 
