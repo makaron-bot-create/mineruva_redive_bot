@@ -840,11 +840,9 @@ async def clan_battl_call_reaction(payload):
                 color=0x00b4ff
             )
             message_1 = await channel_1.send(embed=embed)
-            message_2 = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
+            await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
 
-            await asyncio.sleep(10)
-            await message_2.delete()
-            await asyncio.sleep(50)
+            await asyncio.sleep(60)
             await message_1.delete()
 
         elif payload.emoji.name == emoji_list["attack_m"]:
@@ -862,13 +860,11 @@ async def clan_battl_call_reaction(payload):
                 description=f"{reac_member.display_name}》\n「魔法編成」{ok_attack_text}で入りました。",
                 color=0x00b4ff
             )
-            message_3 = await channel_1.send(embed=embed)
-            message_4 = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
+            message_2 = await channel_1.send(embed=embed)
+            await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
 
-            await asyncio.sleep(10)
-            await message_4.delete()
-            await asyncio.sleep(50)
-            await message_3.delete()
+            await asyncio.sleep(60)
+            await message_2.delete()
 
         elif payload.emoji.name == emoji_list["T_kill"]:
             await channel_2.send(f"{reac_member.display_name}》\nタスキルしました。")
@@ -1130,9 +1126,13 @@ async def clan_battl_call_reaction(payload):
             elif not ok_attack_check:
                 del now_attack_list[BOSS_HP_check_message.author]
 
+            embed_end = discord.Embed(
+                description=f"{BOSS_HP_check_message.author.display_name}》\n凸が終了しました。",
+                color=0x00b4ff
+            )
             await channel_0.set_permissions(BOSS_HP_check_message.author, overwrite=None)
             await clan_battl_no_attack_member_list(no_attack_member_list_ch)
-            await channel_1.send(f"{BOSS_HP_check_message.author.display_name}》\n凸が終了しました。")
+            message_3 = await channel_1.send(embed=embed_end)
             battl_log_message = await channel_3.send(BOSS_HP_check_message.author.mention, embed=embed)
             await battl_log_message.add_reaction("\U0001f4dd")
 
@@ -1204,6 +1204,9 @@ async def clan_battl_call_reaction(payload):
             if not now_attack_list:
 
                 await clan_battl_role_reset()
+
+        await asyncio.sleep(60)
+        await message_3.delete()
 
 
 #########################################
