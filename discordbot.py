@@ -1199,17 +1199,17 @@ async def clan_battl_call_reaction(payload):
 
                 await clan_battl_role_reset()
 
-         if message_1:
-            await asyncio.sleep(60)
-            await message_1.delete()
+     if message_1:
+        await asyncio.sleep(60)
+        await message_1.delete()
 
-        if message_2:
-            await asyncio.sleep(60)
-            await message_2.delete()
+    if message_2:
+        await asyncio.sleep(60)
+        await message_2.delete()
 
-        if message_3:
-            await asyncio.sleep(60)
-            await message_3.delete()
+    if message_3:
+        await asyncio.sleep(60)
+        await message_3.delete()
 
 
 #########################################
