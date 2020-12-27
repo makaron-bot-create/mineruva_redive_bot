@@ -450,8 +450,23 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
     now_d = now.day
     cb_day = (datetime.date(now_y, now_m, now_d) - datetime.date(start_y, start_m, start_d) + timedelta(days=1)).days
 
-    if datetime.datetime.now().strftime("%H:%M") < set_rollover_time:
-        cb_day = cb_day - 1
+    if cb_day <= 0:
+        if any([
+            datetime.datetime.now().strftime("%H:%M") < set_rollover_time,
+            not no_attack_role_reset
+        ]):
+            cb_day = cb_day - 1
+
+        cb_day_text = f"(開催**__{abs(cb_day)}日前__**)"
+
+    else:
+        if any([
+            datetime.datetime.now().strftime("%H:%M") < set_rollover_time,
+            not no_attack_role_reset
+        ]):
+            cb_day = cb_day - 1
+
+        cb_day_text = f"__**{abs(cb_day)}日目**__"
 
     OK_n = guild.get_role(clan_battle_member_role_id[0]).members
     noattack_member_list_0 = f"```{nl}{nl.join([member.display_name for member in OK_n])}{nl}```"
@@ -474,7 +489,7 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
         description_text = f"残り凸数》\n{attack_members} 凸\n持ち越し残り凸》\n{len(OK_n)} 人"
 
     embed = discord.Embed(
-        title=f"【{now.month}月度クランバトル day {cb_day}】",
+        title=f"【{now.month}月度クランバトル {cb_day_text}】",
         description=description_text,
         color=0x00b4ff
     )
@@ -569,6 +584,7 @@ async def clan_battl_role_reset():
     global no_attack_role_reset
     global now_attack_list
 
+    now = datetime.datetime.now()
     guild = client.get_guild(599780162309062706)
     channel = client.get_channel(741851480868519966)  # ミネルヴァ・動作ログ
     now_attack_list.clear()
@@ -621,7 +637,6 @@ async def clan_battl_role_reset():
 {now_hp}/{BOSS_MAX_HP}
 ━━━━━━━━━━━━━━━━━━━━"""
 
-            now = datetime.datetime.now()
             now_ymd = f"{now.year}年{now.month}月{now.day}日"
             now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
@@ -682,9 +697,19 @@ async def clan_battle_event():
     cb_day = (datetime.date(now_y, now_m, now_d) - datetime.date(start_y, start_m, start_d) + timedelta(days=1)).days
 
     if cb_day <= 0:
-        cb_day_text = f"__**クラバト開催前**__（{abs(cb_day)}日前）"
+        if any([
+            datetime.datetime.now().strftime("%H:%M") < set_rollover_time,
+            not no_attack_role_reset
+        ]):
+            cb_day = cb_day - 1
+
+        cb_day_text = f"(開催**__{abs(cb_day)}日前__**)"
+
     else:
-        if datetime.datetime.now().strftime("%H:%M") < set_rollover_time:
+        if any([
+            datetime.datetime.now().strftime("%H:%M") < set_rollover_time,
+            not no_attack_role_reset
+        ]):
             cb_day = cb_day - 1
 
         cb_day_text = f"__**{abs(cb_day)}日目**__"
@@ -890,11 +915,13 @@ async def clan_battl_call_reaction(payload):
 {reac_member.mention}》
 ボスに与えたダメージを「半角数字」のみで入力してください。
 
-※ボスを倒した場合は「__{hp_fomat.format(int(now_boss_data['now_boss_hp']))}__」以上で入力してください。""")
+※ボスを倒した場合は「__{hp_fomat.format(int(now_boss_data['now_boss_hp']))}__」以上で入力してください。
+※ボスの最大HP「__{BOSS_MAX_HP_NOW}__」以上は入力できません。""")
 
             def attack_dmg_message_check(message):
                 return all([
                     message.content.isdecimal() is True,
+                    message.content.isdecimal() <= int(BOSS_HP[x][y]),
                     message.channel == channel_0,
                     message.author.id == payload.user_id,
                     not message.author.bot
