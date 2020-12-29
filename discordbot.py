@@ -1126,6 +1126,7 @@ async def clan_battl_call_reaction(payload):
                 description=battle_log,
                 color=0x00b4ff
             )
+            embed.set_thumbnail(url=boss_img_url[boss_name_index])
 
             if carry_over_time_message:
                 attak_type = re.sub(r"[《》]", "", now_attack_list[boss_hp_check_message.author])
