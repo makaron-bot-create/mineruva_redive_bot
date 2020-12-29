@@ -651,12 +651,12 @@ async def clan_battl_role_reset():
             await edit_message.clear_reactions()
             await edit_message.edit(embed=embed)
 
-            if not clan_battle_tutorial_days:
-                embed = discord.Embed(
-                    description="残り凸情報のリセット処理中です。\nしばらくお待ちください。",
-                    colour=0xffff00
-                )
-                reset_role_text = await edit_message.channel.send(embed=embed)
+        if not clan_battle_tutorial_days:
+            embed = discord.Embed(
+                description="残り凸情報のリセット処理中です。\nしばらくお待ちください。",
+                colour=0xffff00
+            )
+            reset_role_text = await edit_message.channel.send(embed=embed)
 
     clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
     clan_member = clan_member_role.members
