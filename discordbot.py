@@ -1227,9 +1227,9 @@ async def clan_battl_call_reaction(payload):
             )
 
             if any([
-                all([0 == now_hp, 0 == attack_n]),
-                all([0 == now_hp, 0 <= attack_n]),
-                all([0 <= now_hp, 0 == attack_n])
+                all([0 == int(now_boss_data["now_boss_hp"]), 0 == attack_n]),
+                all([0 == int(now_boss_data["now_boss_hp"]), 0 <= attack_n]),
+                all([0 <= int(now_boss_data["now_boss_hp"]), 0 == attack_n])
             ]):
 
                 embed.clear_fields()
