@@ -317,12 +317,12 @@ async def clan_battl_edit_progress(message):
     description_text = f"""
 残り凸数》{attack_n}凸
 持ち越し》{OK_n}人
-━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━
 {now_lap}週目
 {now_boss_level}段階目
 {boss_name[boss_name_index]}
 {now_hp}/{boss_max_hp}
-━━━━━━━━━━━━━━━━━━━━"""
+━━━━━━━━━━━━━━━━━━━"""
 
     mention_text = f"{clan_member_mention}\n{now_lap}週目 {boss_name[boss_name_index]}"
     embed.description = description_text
@@ -633,12 +633,12 @@ async def clan_battl_role_reset():
             description_text = f"""
 残り凸数》{attack_n}凸
 持ち越し》{OK_n}人
-━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━
 {now_lap}週目
 {now_boss_level}段階目
 {boss_name[boss_name_index]}
 {now_hp}/{boss_max_hp}
-━━━━━━━━━━━━━━━━━━━━"""
+━━━━━━━━━━━━━━━━━━━"""
 
             now_ymd = f"{now.year}年{now.month}月{now.day}日"
             now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
@@ -750,12 +750,12 @@ async def clan_battle_event():
     description_text = f"""
 残り凸数》{attack_n}凸
 持ち越し》{OK_n}人
-━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━
 {now_lap}週目
 {now_boss_level}段階目
 {boss_name[boss_name_index]}
 {now_hp}/{boss_max_hp}
-━━━━━━━━━━━━━━━━━━━━"""
+━━━━━━━━━━━━━━━━━━━"""
 
     # メッセージを書きます
     nl = "\n"
@@ -1201,12 +1201,12 @@ async def clan_battl_call_reaction(payload):
         description_text = f"""
 残り凸数》{attack_n}凸
 持ち越し》{OK_n}人
-━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━
 {now_lap}週目
 {now_boss_level}段階目
 {boss_name[boss_name_index]}
 {now_hp}/{boss_max_hp_now}
-━━━━━━━━━━━━━━━━━━━━"""
+━━━━━━━━━━━━━━━━━━━"""
 
         embed = edit_message.embeds[0]
         embed.description = description_text
