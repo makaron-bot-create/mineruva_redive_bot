@@ -811,6 +811,7 @@ async def clan_battl_call_reaction(payload):
     message_3 = ""
 
     guild = client.get_guild(599780162309062706)
+    clan_member_role = guild.get_role(687433139345555456)  # クランメンバーロール
     ch_id_index_y = 0 if clan_battle_tutorial_days is True else 1
     channel_0 = guild.get_channel(int(clan_battle_channel_id[0][ch_id_index_y]))  # 進捗状況
     channel_1 = guild.get_channel(int(clan_battle_channel_id[1][ch_id_index_y]))  # 凸相談
@@ -890,9 +891,10 @@ async def clan_battl_call_reaction(payload):
 
         elif payload.emoji.name == emoji_list["T_kill"]:
             await channel_2.send(f"{reac_member.display_name}》\nタスキルしました。")
+            return
 
         elif payload.emoji.name == emoji_list["SOS"]:
-            await channel_1.send(f"「{reac_member.display_name}」さんが救援を求めてます。")
+            await channel_1.send(f"{clan_member_role.mention}\n「{reac_member.display_name}」さんが救援を求めてます。")
             return
 
         elif payload.emoji.name == emoji_list["attack_end"]:
@@ -919,9 +921,14 @@ async def clan_battl_call_reaction(payload):
 ※ボスの最大HP「__{BOSS_MAX_HP_NOW}__」以上は入力できません。""")
 
             def attack_dmg_message_check(message):
+                if message.content.isdecimal():
+                    damage = int(message.content)
+                else:
+                    damage = message.content.isdecimal()
+
                 return all([
-                    message.content.isdecimal() is True,
-                    message.content.isdecimal() <= int(BOSS_HP[x][y]),
+                    message.content.isdecimal(),
+                    damage <= int(BOSS_HP[x][y]),
                     message.channel == channel_0,
                     message.author.id == payload.user_id,
                     not message.author.bot
