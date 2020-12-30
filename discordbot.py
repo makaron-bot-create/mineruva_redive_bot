@@ -588,6 +588,9 @@ async def clan_battl_role_reset():
     global now_attack_list
 
     now = datetime.datetime.now()
+    clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
+    clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
+
     guild = client.get_guild(599780162309062706)
     channel = client.get_channel(741851480868519966)  # ミネルヴァ・動作ログ
     now_attack_list.clear()
