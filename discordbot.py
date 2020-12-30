@@ -5,6 +5,7 @@ from discord.ext import tasks
 import re
 import datetime
 from datetime import timedelta
+import calendar
 import io
 import aiohttp
 import asyncio
@@ -41,7 +42,9 @@ clan_battle_channel_id = [
 ]
 boss_ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699152199680, 680754056477671439]
 boss_name = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
-clan_battle_days = ["2020/12/26 05:00", "2020/12/31 00:00"]
+clan_battle_days = 5
+clan_battle_start_date = ""
+clan_battle_end_date = ""
 boss_img_url = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
 boss_lv = [1, 4, 11, 35, 45]
 boss_hp = [
@@ -118,6 +121,14 @@ regex_discord_message_url = (
     'https://(ptb.|canary.)?discord(app)?.com/channels/'
     '(?P<guild>[0-9]{18})/(?P<channel>[0-9]{18})/(?P<message>[0-9]{18})'
 )
+
+
+# クラバト開催日時
+def get_clanbattle_date(year, month):
+    get_data = datetime.date(year, month, calendar.monthrange(year, month)[1])
+    clan_battle_start_date = f"{get_data - datetime.timedelta(days=clan_battle_days)} 05:00"
+    clan_battle_end_date = f"{get_data} 00:00"
+    return clan_battle_start_date, clan_battle_end_date
 
 
 # パンツ交換
@@ -443,11 +454,9 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
     nl = "\n"
     now = datetime.datetime.now()
     set_rollover_time = rollover_time
-    clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
-
-    start_y = clan_battle_start_day.year
-    start_m = clan_battle_start_day.month
-    start_d = clan_battle_start_day.day
+    start_y = clan_battle_start_date.year
+    start_m = clan_battle_start_date.month
+    start_d = clan_battle_start_date.day
     now_y = now.year
     now_m = now.month
     now_d = now.day
@@ -588,8 +597,6 @@ async def clan_battl_role_reset():
     global now_attack_list
 
     now = datetime.datetime.now()
-    clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
-    clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
 
     guild = client.get_guild(599780162309062706)
     channel = client.get_channel(741851480868519966)  # ミネルヴァ・動作ログ
@@ -657,10 +664,10 @@ async def clan_battl_role_reset():
         # クラバト終了処理
         if any([
             all([
-                now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime("%Y-%m-%d 00:00"),
-                now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_day.strftime('%Y-%m-%d %H:%M')
+                now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime("%Y-%m-%d 00:00"),
+                now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_date.strftime('%Y-%m-%d %H:%M')
             ]),
-            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_date
         ]):
             return
 
@@ -710,7 +717,6 @@ async def clan_battle_event():
 
     set_rollover_time = rollover_time
     now = datetime.datetime.now()
-    clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
 
     start_y = clan_battle_start_day.year
     start_m = clan_battle_start_day.month
@@ -1559,6 +1565,8 @@ async def message_delete_event(payload):
 # BOTの起動
 @client.event
 async def on_ready():
+    global clan_battle_start_date
+    global clan_battle_end_date
     global now_boss_data
     global now_clan_battl_message
     global boss_name
@@ -1571,13 +1579,13 @@ async def on_ready():
     boss_data_channel = guild.get_channel(784763031946264576)  # ボス情報
 
     now = datetime.datetime.now()
-
-    clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
-    clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
+    clan_battle_start_date, clan_battle_end_date = get_clanbattle_date(now.year, now.month)
+    clan_battle_start_date = datetime.datetime.strptime(clan_battle_start_date, "%Y-%m-%d %H:%M")
+    clan_battle_end_date = datetime.datetime.strptime(clan_battle_end_date, "%Y-%m-%d %H:%M")
 
     if all([
-        now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime('%Y-%m-%d %H:%M'),
-        now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+        now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
+        now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
     ]):
         clan_battle_tutorial_days = False
         text_1 = "現在クランバトル開催中です。"
@@ -1639,7 +1647,8 @@ async def on_ready():
     elif 45 <= int(now_boss_data["now_lap"]):
         now_boss_data["now_boss_level"] = 5
 
-    await channel_bot_log.send(f"ミネルヴァ起動しました。\n\n{text_1}\n\n{boss_names}")
+    text_2 = f"{clan_battle_start_date.strftime('%Y-%m-%d %H:%M')}\n{clan_battle_end_date.strftime('%Y-%m-%d %H:%M')}"
+    await channel_bot_log.send(f"ミネルヴァ起動しました。\n\n{text_1}\n{text_2}\n\n{boss_names}")
 
 
 @client.event
@@ -1718,15 +1727,13 @@ async def loop():
 
     set_rollover_time = rollover_time
     now = datetime.datetime.now()
-    clan_battle_start_day = datetime.datetime.strptime(clan_battle_days[0], "%Y/%m/%d %H:%M")
-    clan_battle_end_day = datetime.datetime.strptime(clan_battle_days[1], "%Y/%m/%d %H:%M")
 
     guild = client.get_guild(599780162309062706)
     server_rule_channel = guild.get_channel(749511208104755241)  # サーバー案内
 
     if all([
-        now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime('%Y-%m-%d %H:%M'),
-        now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+        now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
+        now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
     ]):
         clan_battle_tutorial_days = False
 
@@ -1739,18 +1746,18 @@ async def loop():
     if any([
         all([
             now.day >= 5,
-            now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_day.strftime("%Y/%m/%d 00:00")
+            now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_date.strftime("%Y-%m-%d 00:00")
         ]),
         all([
-            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime('%Y-%m-%d %H:%M'),
-            now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
+            now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
         ])
     ]):
 
         # クラバト初日設定
         if any([
             all([now.day == 5, now.strftime('%H:%M') == set_rollover_time]),
-            now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_day.strftime('%Y-%m-%d %H:%M')
+            now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime('%Y-%m-%d %H:%M')
         ]):
 
             await clan_battl_start_up()
@@ -1768,8 +1775,8 @@ async def loop():
 
     # クラバト終了処理
     if any([
-        now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_day.strftime("%Y-%m-%d 00:00"),
-        now.strftime('%Y-%m-%d %H:%M') == clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+        now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime("%Y-%m-%d 00:00"),
+        now.strftime('%Y-%m-%d %H:%M') == clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
     ]):
 
         if now_attack_list:
