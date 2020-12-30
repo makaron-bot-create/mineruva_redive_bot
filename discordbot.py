@@ -837,6 +837,7 @@ async def clan_battl_call_reaction(payload):
     now_boss_level = now_boss_data["now_boss_level"]
     boss_name_index = int(now_boss_data["now_boss"])
     now_hp = "{:,}".format(int(now_boss_data["now_boss_hp"]))
+    last_hp = int(now_boss_data["now_boss_hp"])
     x = int(now_boss_data["now_boss"])
     y = int(now_boss_data["now_boss_level"]) - 1
     boss_max_hp_now = "{:,}".format(int(boss_hp[x][y]))
@@ -1239,7 +1240,7 @@ async def clan_battl_call_reaction(payload):
                 # 終了したボス情報メッセージのリアクション削除
                 await edit_message.clear_reactions()
 
-            if all([0 == now_hp, 0 <= attack_n]):
+            if all([0 == last_hp, 0 <= attack_n]):
                 await clan_battle_event()
 
         await edit_message.edit(embed=embed)
