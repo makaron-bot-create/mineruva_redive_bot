@@ -11,7 +11,6 @@ import aiohttp
 import asyncio
 
 
-
 # BOTのトークン
 TOKEN = os.environ['DISCORD_BOT_TOKEN']
 # 接続に必要なオブジェクトを生成
@@ -719,9 +718,9 @@ async def clan_battle_event():
     set_rollover_time = rollover_time
     now = datetime.datetime.now()
 
-    start_y = clan_battle_start_day.year
-    start_m = clan_battle_start_day.month
-    start_d = clan_battle_start_day.day
+    start_y = clan_battle_start_date.year
+    start_m = clan_battle_start_date.month
+    start_d = clan_battle_start_date.day
     now_y = now.year
     now_m = now.month
     now_d = now.day
