@@ -651,6 +651,16 @@ async def clan_battl_role_reset():
             await edit_message.clear_reactions()
             await edit_message.edit(embed=embed)
 
+        # クラバト終了処理
+        if any([
+            all([
+                now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime("%Y-%m-%d 00:00"),
+                now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_day.strftime('%Y-%m-%d %H:%M')
+            ]),
+            now.strftime('%Y-%m-%d %H:%M') == clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+        ]):
+            return
+
         if not clan_battle_tutorial_days:
             embed = discord.Embed(
                 description="残り凸情報のリセット処理中です。\nしばらくお待ちください。",
