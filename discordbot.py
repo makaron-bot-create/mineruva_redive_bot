@@ -981,7 +981,7 @@ async def clan_battl_call_reaction(payload):
             # 残り体力計算
             last_boss_hp = int(now_boss_data["now_boss_hp"]) - int(boss_hp_check_message.content)
             true_dmg = ""
-            now_hp = 0
+            last_hp = 0
             if 0 >= last_boss_hp:
                 ok_attack_check = True
                 true_dmg = "" if last_boss_hp == 0 else f"\n　　({hp_fomat.format(int(now_boss_data['now_boss_hp']))})"
@@ -1218,7 +1218,7 @@ async def clan_battl_call_reaction(payload):
             inline=False
         )
 
-        if 0 == now_hp or 0 == attack_n:
+        if 0 == last_hp or 0 == attack_n:
             now = datetime.datetime.now()
             now_ymd = f"{now.year}年{now.month}月{now.day}日"
             now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
@@ -1228,9 +1228,9 @@ async def clan_battl_call_reaction(payload):
             )
 
             if any([
-                all([0 == int(now_boss_data["now_boss_hp"]), 0 == attack_n]),
-                all([0 == int(now_boss_data["now_boss_hp"]), 0 <= attack_n]),
-                all([0 <= int(now_boss_data["now_boss_hp"]), 0 == attack_n])
+                all([0 == last_hp, 0 == attack_n]),
+                all([0 == last_hp, 0 <= attack_n]),
+                all([0 <= last_hp, 0 == attack_n])
             ]):
 
                 embed.clear_fields()
