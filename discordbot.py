@@ -660,7 +660,7 @@ async def clan_battl_role_reset():
                 now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_day.strftime("%Y-%m-%d 00:00"),
                 now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_day.strftime('%Y-%m-%d %H:%M')
             ]),
-            now.strftime('%Y-%m-%d %H:%M') == clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
+            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_day.strftime('%Y-%m-%d %H:%M')
         ]):
             return
 
