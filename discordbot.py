@@ -983,7 +983,8 @@ async def clan_battl_call_reaction(payload):
             last_boss_hp = int(now_boss_data["now_boss_hp"]) - int(boss_hp_check_message.content)
             true_dmg = ""
             if 0 >= last_boss_hp:
-                last_hp, now_hp = 0
+                last_hp = 0
+                now_hp = 0
                 ok_attack_check = True
                 true_dmg = "" if last_boss_hp == 0 else f"\n　　({hp_fomat.format(int(now_boss_data['now_boss_hp']))})"
                 if not ok_role_check:
