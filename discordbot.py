@@ -983,7 +983,7 @@ async def clan_battl_call_reaction(payload):
             last_boss_hp = int(now_boss_data["now_boss_hp"]) - int(boss_hp_check_message.content)
             true_dmg = ""
             if 0 >= last_boss_hp:
-                last_hp = 0
+                last_hp, now_hp = 0
                 ok_attack_check = True
                 true_dmg = "" if last_boss_hp == 0 else f"\n　　({hp_fomat.format(int(now_boss_data['now_boss_hp']))})"
                 if not ok_role_check:
@@ -1199,6 +1199,7 @@ async def clan_battl_call_reaction(payload):
         OK_n = len(guild.get_role(clan_battle_member_role_id[0]).members)
 
         attack_n = attack_3 + attack_2 + attack_1
+        attack_total = attack_n + OK_n
 
         description_text = f"""
 残り凸数》{attack_n}凸
@@ -1219,19 +1220,19 @@ async def clan_battl_call_reaction(payload):
             inline=False
         )
 
-        if 0 == last_hp or 0 == attack_n:
+        if 0 == last_hp or 0 == attack_total:
             now = datetime.datetime.now()
             now_ymd = f"{now.year}年{now.month}月{now.day}日"
             now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
             field_name = (
-                "【本日の完凸時間】" if 0 >= attack_n else "【終了時間】"
+                "【本日の完凸時間】" if 0 >= attack_total else "【終了時間】"
             )
 
             if any([
-                all([0 == last_hp, 0 == attack_n]),
-                all([0 == last_hp, 0 <= attack_n]),
-                all([0 <= last_hp, 0 == attack_n])
+                all([0 == last_hp, 0 == attack_total]),
+                all([0 == last_hp, 0 <= attack_total]),
+                all([0 <= last_hp, 0 == attack_total])
             ]):
 
                 embed.clear_fields()
@@ -1240,7 +1241,7 @@ async def clan_battl_call_reaction(payload):
                 # 終了したボス情報メッセージのリアクション削除
                 await edit_message.clear_reactions()
 
-            if all([0 == last_hp, 0 <= attack_n]):
+            if all([0 == last_hp, 0 <= attack_total]):
                 await clan_battle_event()
 
         await edit_message.edit(embed=embed)
