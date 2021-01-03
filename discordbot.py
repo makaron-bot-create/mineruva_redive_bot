@@ -1743,7 +1743,7 @@ async def loop():
     server_rule_channel = guild.get_channel(749511208104755241)  # サーバー案内
     announce_channel = guild.get_channel(749511208104755241)  # 連絡事項
 
-    try:
+    if "" != clan_battle_start_date and "" != clan_battle_end_date:
         if all([
             now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
             now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
@@ -1753,7 +1753,7 @@ async def loop():
         else:
             clan_battle_tutorial_days = True
 
-    except AttributeError:
+    else:
         return
 
     y = 0 if clan_battle_tutorial_days is True else 1
