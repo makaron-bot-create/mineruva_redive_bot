@@ -1763,11 +1763,11 @@ async def loop():
         t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-5 %H:%M'), "%Y-%m-%d %H:%M")
         t_end_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-%d 00:00'), "%Y-%m-%d %H:%M")
         announce_messeage = f"""
-<@&687433139345555456> 
+<@&687433139345555456>
 本日5時よりクラバト開催前日までの期間中、凸管理システムの模擬操作期間となります。
 軽微なアップデートも行っているため、必ず全員一通り操作しておいてください。
 
-<@&687433546775789770> 
+<@&687433546775789770>
 クラメン以外でもし触れてみたい人が居ましたら連絡ください。
 
 <#785864497583358012>
