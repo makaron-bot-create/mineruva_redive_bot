@@ -454,6 +454,7 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
     nl = "\n"
     now = datetime.datetime.now()
     set_rollover_time = rollover_time
+
     start_y = clan_battle_start_date.year
     start_m = clan_battle_start_date.month
     start_d = clan_battle_start_date.day
@@ -604,6 +605,7 @@ async def clan_battl_role_reset():
 
     y = 0 if clan_battle_tutorial_days is True else 1
     no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][y]))  # 残り凸状況
+    channel_4 = guild.get_channel(int(clan_battle_channel_id[4][y]))  # 持ち越しメモ
 
     if add_role_check:
         add_role_check = False
@@ -660,6 +662,14 @@ async def clan_battl_role_reset():
             # 終了したボス情報メッセージのリアクション削除
             await edit_message.clear_reactions()
             await edit_message.edit(embed=embed)
+
+            # 持ち越しメッセージの削除
+            async for message in channel_4.history():
+                if not message.embeds:
+                    await message.delete()
+
+                elif message.embeds:
+                    break
 
         # クラバト終了処理
         if any([
@@ -1272,17 +1282,18 @@ async def clan_battl_call_reaction(payload):
 
                 await clan_battl_role_reset()
 
-        if message_1:
-            await asyncio.sleep(60)
-            await message_1.delete()
+        if not clan_battle_tutorial_days:
+            if message_1:
+                await asyncio.sleep(60)
+                await message_1.delete()
 
-        if message_2:
-            await asyncio.sleep(60)
-            await message_2.delete()
+            if message_2:
+                await asyncio.sleep(60)
+                await message_2.delete()
 
-        if message_3:
-            await asyncio.sleep(60)
-            await message_3.delete()
+            if message_3:
+                await asyncio.sleep(60)
+                await message_3.delete()
 
 
 #########################################
@@ -1730,6 +1741,7 @@ async def loop():
 
     guild = client.get_guild(599780162309062706)
     server_rule_channel = guild.get_channel(749511208104755241)  # サーバー案内
+    announce_channel = guild.get_channel(749511208104755241)  # 連絡事項
 
     if all([
         now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
@@ -1742,6 +1754,57 @@ async def loop():
 
     y = 0 if clan_battle_tutorial_days is True else 1
     channel_0 = guild.get_channel(int(clan_battle_channel_id[0][y]))
+
+    if all([
+        now.day >= 5,
+        now.strftime('%H:%M') == "00:00"
+    ]):
+
+        t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-5 %H:%M'), "%Y-%m-%d %H:%M")
+        t_end_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-%d 00:00'), "%Y-%m-%d %H:%M")
+        announce_messeage = f"""
+<@&687433139345555456> 
+本日5時よりクラバト開催前日までの期間中、凸管理システムの模擬操作期間となります。
+軽微なアップデートも行っているため、必ず全員一通り操作しておいてください。
+
+<@&687433546775789770> 
+クラメン以外でもし触れてみたい人が居ましたら連絡ください。
+
+<#785864497583358012>
+こちらのチャンネルにクラバト期間中の操作法を記載しております。
+`必ずクラバト前までに実際に模擬操作して`慣れておいて下さい。
+《模擬操作は以下のチャンネルを使用します》
+（一番下の「凸管理チュートリアル」のカテゴリーです）
+
+<#750345732497735782> `（クラバト期間外専用チャンネル）`
+┗進行の相談はこちら
+<#750345928678047744> `（クラバト期間外専用チャンネル）`
+┗凸宣言はこちらから
+<#772305554009620480> `（クラバト期間外専用チャンネル）`
+┗凸終了後、ログが記録されます
+<#774871889843453962> `（クラバト期間外専用チャンネル）`
+┗持ち越しの状況です
+<#695958348264374343> `（クラバト期間外専用チャンネル）`
+┗1凸毎の残り凸状況のメンバーリストです
+<#750351148841566248> `（クラバト期間外専用チャンネル）`
+┗タスキルリアクションをすると書き込まれます。
+
+【模擬操作期間】
+```py
+《開始》
+┗{t_start_date.month}月{t_start_date.day}日 {t_start_date.hour}時{t_start_date.minute}分
+《終了》
+┗{t_end_date.month}月{t_end_date.day}日 {t_end_date.hour}時{t_end_date.minute}分
+```
+【クラバト開催予定日】
+```py
+《開始》
+┗{clan_battle_start_date.month}月{clan_battle_start_date.day}日 {clan_battle_start_date.hour}時{clan_battle_start_date.minute}分
+《終了》
+┗{clan_battle_end_date.month}月{clan_battle_end_date.day}日 {clan_battle_end_date.hour}時{clan_battle_end_date.minute}分
+```"""
+
+        await announce_channel.send(announce_messeage)
 
     if any([
         all([
