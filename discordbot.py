@@ -1760,8 +1760,9 @@ async def loop():
     channel_0 = guild.get_channel(int(clan_battle_channel_id[0][y]))
 
     if all([
-        now.day >= 5,
-        now.strftime('%H:%M') == "00:00"
+        now.day == 5,
+        now.strftime('%H:%M') == "00:00",
+        now.strftime('%H:%M:%S') <= "00:00:30"
     ]):
 
         t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-5 %H:%M'), "%Y-%m-%d %H:%M")
