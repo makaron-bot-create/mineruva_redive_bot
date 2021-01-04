@@ -956,12 +956,20 @@ async def clan_battl_call_reaction(payload):
                 return
 
             await channel_0.set_permissions(reac_member, send_messages=True)
-            dmg_input_announce_message = await channel_0.send(f"""
+            m_content = f"""
 {reac_member.mention}》
 ボスに与えたダメージを「半角数字」のみで入力してください。
 
 ※ボスを倒した場合は「__{hp_fomat.format(int(now_boss_data['now_boss_hp']))}__」以上で入力してください。
-※ボスの最大HP「__{boss_max_hp_now}__」以上は入力できません。""")
+※ボスの最大HP「__{boss_max_hp_now}__」以上は入力できません。
+`スマホの場合、下の数字を長押しする事でコピーできます。`"""
+
+            embed = discord.Embed(
+                    title="ラスアタ時は、下の数字をコピペしてください。",
+                    description=int(now_boss_data['now_boss_hp']),
+                    colour=0xffea00
+            )
+            dmg_input_announce_message = await channel_0.send(m_content, embed=embed)
 
             def attack_dmg_message_check(message):
                 if message.content.isdecimal():
