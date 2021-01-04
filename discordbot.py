@@ -1010,12 +1010,10 @@ async def clan_battl_call_reaction(payload):
                 return
 
             async for message in channel_0.history(limit=10):
-                if any([
-                    "ラスアタ時は、下の数字をコピペしてください。" == message.embeds[0].title,
-                    not message.embeds
-                ]):
+                if not message.embeds:
                     await message.delete()
-
+                elif "ラスアタ時は、下の数字をコピペしてください。" == message.embeds[0].title:
+                    await message.delete()
                 else:
                     break
 
