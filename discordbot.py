@@ -674,10 +674,10 @@ async def clan_battl_role_reset():
         # クラバト終了処理
         if any([
             all([
-                now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime("%Y-%m-%d 00:00"),
+                now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d 00:00'),
                 now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_date.strftime('%Y-%m-%d %H:%M')
             ]),
-            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_date
+            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
         ]):
             return
 
