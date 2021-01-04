@@ -965,9 +965,9 @@ async def clan_battl_call_reaction(payload):
 `スマホの場合、下の数字を長押しする事でコピーできます。`"""
 
             embed = discord.Embed(
-                    title="ラスアタ時は、下の数字をコピペしてください。",
-                    description=int(now_boss_data['now_boss_hp']),
-                    colour=0xffea00
+                title="ラスアタ時は、下の数字をコピペしてください。",
+                description=int(now_boss_data['now_boss_hp']),
+                colour=0xffea00
             )
             dmg_input_announce_message = await channel_0.send(m_content, embed=embed)
 
