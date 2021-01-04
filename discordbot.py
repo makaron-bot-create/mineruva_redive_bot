@@ -1769,8 +1769,8 @@ async def loop():
 
     if all([
         now.day == 5,
-        now.strftime('%H:%M') == "00:00",
-        now.strftime('%H:%M:%S') <= "00:00:30"
+        now.strftime('%H:%M') == "00:04",
+        now.strftime('%H:%M:%S') <= "00:04:30"
     ]):
 
         t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-5 %H:%M'), "%Y-%m-%d %H:%M")
