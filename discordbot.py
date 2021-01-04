@@ -1749,7 +1749,7 @@ async def loop():
 
     guild = client.get_guild(599780162309062706)
     server_rule_channel = guild.get_channel(749511208104755241)  # サーバー案内
-    announce_channel = guild.get_channel(749511208104755241)  # 連絡事項
+    announce_channel = guild.get_channel(599784496866263050)  # 連絡事項
 
     if "" != clan_battle_start_date and "" != clan_battle_end_date:
         if all([
