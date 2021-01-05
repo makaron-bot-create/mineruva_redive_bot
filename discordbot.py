@@ -969,7 +969,8 @@ async def clan_battl_call_reaction(payload):
                 description=int(now_boss_data['now_boss_hp']),
                 colour=0xffea00
             )
-            dmg_input_announce_message = await channel_0.send(m_content, embed=embed)
+            dmg_input_announce_message_1 = await channel_0.send(m_content)
+            dmg_input_announce_message_2 = await channel_0.send(int(now_boss_data['now_boss_hp']), embed=embed)
 
             def attack_dmg_message_check(message):
                 if message.content.isdecimal():
@@ -994,7 +995,8 @@ async def clan_battl_call_reaction(payload):
                     description=timeouterror_text,
                     colour=0xff0000
                 )
-                await dmg_input_announce_message.delete()
+                await dmg_input_announce_message_1.delete()
+                await dmg_input_announce_message_2.delete()
                 await channel_0.set_permissions(reac_member, overwrite=None)
                 timeout_message = await channel_0.send(reac_member.mention, embed=embed)
                 # 凸宣言リアクションリセット
