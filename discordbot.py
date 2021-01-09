@@ -856,14 +856,31 @@ async def clan_battl_clear_reaction(payload):
             if reaction.emoji == emoji_list["attack_m"]:
                 async for user in reaction.users():
                     if user == reac_member:
-                        return
+
+                        for reaction in now_clan_battl_message.reactions:
+                            if reaction.emoji == emoji_list["attack_end"]:
+                                async for user in reaction.users():
+                                    if user == reac_member:
+                                        return
 
     if payload.emoji.name == emoji_list["attack_m"]:
         for reaction in now_clan_battl_message.reactions:
             if reaction.emoji == emoji_list["attack_p"]:
                 async for user in reaction.users():
                     if user == reac_member:
-                        return
+
+                        for reaction in now_clan_battl_message.reactions:
+                            if reaction.emoji == emoji_list["attack_end"]:
+                                async for user in reaction.users():
+                                    if user == reac_member:
+                                        return
+
+    if any([
+        payload.emoji.name == emoji_list["T_kill"],
+        payload.emoji.name == emoji_list["SOS"],
+        payload.emoji.name == emoji_list["attack_end"],
+    ]):
+            return
 
     embed = discord.Embed(
         description=f"{reac_member.display_name}》\n凸宣言がキャンセルされました。",
