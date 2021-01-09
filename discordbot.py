@@ -831,6 +831,70 @@ async def clan_battle_event():
         await now_clan_battl_message.add_reaction(reactiones)
 
 
+# 凸宣言キャンセルリアクションイベント
+async def clan_battl_clear_reaction(payload):
+    global now_attack_list
+
+    nl = "\n"
+    guild = client.get_guild(payload.guild_id)
+    reac_member = guild.get_member(payload.user_id)
+    channel = guild.get_channel(payload.channel_id)
+    edit_message = now_clan_battl_message
+
+    ch_id_index_y = 0 if clan_battle_tutorial_days is True else 1
+    channel_0 = guild.get_channel(int(clan_battle_channel_id[0][ch_id_index_y]))  # 進捗状況
+    channel_1 = guild.get_channel(int(clan_battle_channel_id[1][ch_id_index_y]))  # 凸相談
+
+    if any([
+        reac_member.bot,
+        channel.id != int(clan_battle_channel_id[0][ch_id_index_y]),  # 進捗状況
+    ]):
+        return
+
+    if payload.emoji.name == emoji_list["attack_p"]:
+        for reaction in now_clan_battl_message.reactions:
+            if reaction.emoji == emoji_list["attack_m"]:
+                async for user in reaction.users():
+                    if user == reac_member:
+                        return
+
+    if payload.emoji.name == emoji_list["attack_m"]:
+        for reaction in now_clan_battl_message.reactions:
+            if reaction.emoji == emoji_list["attack_p"]:
+                async for user in reaction.users():
+                    if user == reac_member:
+                        return
+
+    embed = discord.Embed(
+        description=f"{reac_member.display_name}》\n凸宣言がキャンセルされました。",
+        color=0xff0000
+    )
+    now_attack_list.pop(reac_member)
+    message_1 = await channel_1.send(embed=embed)
+    await channel_0.send(f"{reac_member.mention}》\n凸宣言をキャンセルしました。")
+
+    if not clan_battle_tutorial_days:
+        if message_1:
+            await asyncio.sleep(60)
+            await message_1.delete()
+
+    if len(now_attack_list) != 0:
+        member_list = ""
+        for member, pt in zip(now_attack_list.keys(), now_attack_list.values()):
+            member_list += f"{member.display_name}{pt}\n"
+    else:
+        member_list = f"```py{nl}\"本戦中のメンバーは現在いません。\"{nl}```"
+
+    embed = edit_message.embeds[0]
+    embed.set_field_at(
+        0,
+        name="【現在本戦中メンバー】",
+        value=member_list,
+        inline=False
+    )
+    await edit_message.edit(embed=embed)
+
+
 # 凸管理リアクションイベント
 async def clan_battl_call_reaction(payload):
     global boss_hp_check
@@ -900,9 +964,7 @@ async def clan_battl_call_reaction(payload):
 
             for reaction in reaction_message.reactions:
                 if reaction.emoji == emoji_list["attack_m"]:
-
                     async for user in reaction.users():
-
                         if user == payload.member:
                             await reaction.remove(user)
 
@@ -918,9 +980,7 @@ async def clan_battl_call_reaction(payload):
 
             for reaction in reaction_message.reactions:
                 if reaction.emoji == emoji_list["attack_p"]:
-
                     async for user in reaction.users():
-
                         if user == payload.member:
                             await reaction.remove(user)
 
@@ -1880,8 +1940,8 @@ async def loop():
 
         elif all([
             not message.embeds,
-            "ボスに与えたダメージを「半角数字」のみで入力してください。" in message.content,
-            "持ち越し時間を入力してください" not in message.content
+            "凸宣言を受け付けました。" in message.content,
+            "凸宣言がキャンセルされました。" in message.content
         ]):
             pass
 
@@ -1907,6 +1967,14 @@ async def on_raw_reaction_add(payload):
     # クラバト管理リアクション
     await clan_battl_call_reaction(payload)
     await battle_log_add_information(payload)
+
+
+# リアクション操作
+@client.event
+async def on_raw_reaction_remove(payload):
+
+    # 凸宣言キャンセル
+    await clan_battl_clear_reaction(payload)
 
 
 @client.event
