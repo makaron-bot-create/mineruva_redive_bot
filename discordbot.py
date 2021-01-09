@@ -880,7 +880,7 @@ async def clan_battl_clear_reaction(payload):
         payload.emoji.name == emoji_list["SOS"],
         payload.emoji.name == emoji_list["attack_end"],
     ]):
-            return
+        return
 
     embed = discord.Embed(
         description=f"{reac_member.display_name}》\n凸宣言がキャンセルされました。",
