@@ -1949,9 +1949,9 @@ async def loop():
         elif all([
             not message.embeds,
             "凸宣言を受け付けました。" in message.content,
-            "凸宣言がキャンセルされました。" in message.content
+            "凸宣言をキャンセルしました。" in message.content
         ]):
-            pass
+            await message.delete()
 
         elif message.embeds:
             break
