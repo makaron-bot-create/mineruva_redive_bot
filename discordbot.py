@@ -847,7 +847,7 @@ async def clan_battl_clear_reaction(payload):
 
     if any([
         reac_member.bot,
-        reac_member in now_attack_list,
+        reac_member not in now_attack_list,
         channel.id != int(clan_battle_channel_id[0][ch_id_index_y]),  # 進捗状況
     ]):
         return
