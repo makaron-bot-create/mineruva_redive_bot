@@ -856,24 +856,24 @@ async def clan_battl_clear_reaction(payload):
             if reaction.emoji == emoji_list["attack_m"]:
                 async for user in reaction.users():
                     if user == reac_member:
+                        return
 
-                        for reaction in now_clan_battl_message.reactions:
-                            if reaction.emoji == emoji_list["attack_end"]:
-                                async for user in reaction.users():
-                                    if user == reac_member:
-                                        return
+            if reaction.emoji == emoji_list["attack_end"]:
+                async for user in reaction.users():
+                    if user == reac_member:
+                        return
 
     if payload.emoji.name == emoji_list["attack_m"]:
         for reaction in now_clan_battl_message.reactions:
             if reaction.emoji == emoji_list["attack_p"]:
                 async for user in reaction.users():
                     if user == reac_member:
+                        return
 
-                        for reaction in now_clan_battl_message.reactions:
-                            if reaction.emoji == emoji_list["attack_end"]:
-                                async for user in reaction.users():
-                                    if user == reac_member:
-                                        return
+            if reaction.emoji == emoji_list["attack_end"]:
+                async for user in reaction.users():
+                    if user == reac_member:
+                        return
 
     if any([
         payload.emoji.name == emoji_list["T_kill"],
@@ -1280,6 +1280,7 @@ async def clan_battl_call_reaction(payload):
                 if reaction.emoji == emoji_list["attack_end"]:
                     async for user in reaction.users():
                         if user == boss_hp_check_message.author:
+                            await asyncio.sleep(1)
                             await reaction.remove(user)
 
             if not ok_role_check:
