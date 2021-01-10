@@ -847,6 +847,7 @@ async def clan_battl_clear_reaction(payload):
 
     if any([
         reac_member.bot,
+        reac_member in now_attack_list,
         channel.id != int(clan_battle_channel_id[0][ch_id_index_y]),  # 進捗状況
     ]):
         return
@@ -858,19 +859,9 @@ async def clan_battl_clear_reaction(payload):
                     if user == reac_member:
                         return
 
-            if reaction.emoji == emoji_list["attack_end"]:
-                async for user in reaction.users():
-                    if user == reac_member:
-                        return
-
     if payload.emoji.name == emoji_list["attack_m"]:
         for reaction in now_clan_battl_message.reactions:
             if reaction.emoji == emoji_list["attack_p"]:
-                async for user in reaction.users():
-                    if user == reac_member:
-                        return
-
-            if reaction.emoji == emoji_list["attack_end"]:
                 async for user in reaction.users():
                     if user == reac_member:
                         return
@@ -1262,6 +1253,11 @@ async def clan_battl_call_reaction(payload):
 ┗┳持ち越し時間
 　┗__**{carry_over_time}**__"""
 
+            if ok_attack_check:
+                now_attack_list.clear()
+            elif not ok_attack_check:
+                del now_attack_list[boss_hp_check_message.author]
+
             # 凸宣言リアクションリセット
             for reaction in reaction_message.reactions:
                 # 物理編成、凸宣言リアクションリセット
@@ -1285,11 +1281,6 @@ async def clan_battl_call_reaction(payload):
 
             if not ok_role_check:
                 await add_attack_role(boss_hp_check_message)
-
-            if ok_attack_check:
-                now_attack_list.clear()
-            elif not ok_attack_check:
-                del now_attack_list[boss_hp_check_message.author]
 
             embed_end = discord.Embed(
                 description=f"{boss_hp_check_message.author.display_name}》\n凸が終了しました。",
