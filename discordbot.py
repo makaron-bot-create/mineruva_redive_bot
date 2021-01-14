@@ -856,14 +856,16 @@ async def clan_battl_clear_reaction(payload):
         for reaction in now_clan_battl_message.reactions:
             if reaction.emoji == emoji_list["attack_m"]:
                 async for user in reaction.users():
-                    if user == reac_member:
+                    member = guild.get_member(user.id)
+                    if member == reac_member:
                         return
 
     if payload.emoji.name == emoji_list["attack_m"]:
         for reaction in now_clan_battl_message.reactions:
             if reaction.emoji == emoji_list["attack_p"]:
                 async for user in reaction.users():
-                    if user == reac_member:
+                    member = guild.get_member(user.id)
+                    if member == reac_member:
                         return
 
     if any([
