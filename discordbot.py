@@ -1050,7 +1050,7 @@ async def clan_battl_call_reaction(payload):
 
                 return all([
                     message.content.isdecimal(),
-                    damage <= int(boss_hp[x][y]),
+                    int(damage) <= int(boss_hp[x][y]),
                     message.channel == channel_0,
                     message.author.id == payload.user_id,
                     not message.author.bot
