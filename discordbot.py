@@ -1046,7 +1046,7 @@ async def clan_battl_call_reaction(payload):
                 if message.content.isdecimal():
                     damage = int(message.content)
                 else:
-                    damage = message.content.isdecimal()
+                    return False
 
                 return all([
                     message.content.isdecimal(),
