@@ -2034,7 +2034,8 @@ async def on_message(message):
     await ok_tl_edit(message)
 
     # パンツ交換
-    await pants_trade(message)
+    if message.channel.id != 804272119982718978:
+        await pants_trade(message)
 
     # メッセージログ
     await new_message(message)
