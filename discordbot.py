@@ -1081,12 +1081,15 @@ async def clan_battl_call_reaction(payload):
                 await timeout_message.delete()
                 return
 
-            async for message in channel_0.history(limit=10):
-                if not message.embeds:
+            async for message in channel_0.history(limit=20):
+                if any([
+                    message.id == dmg_input_announce_message_1.id,
+                    message.id == dmg_input_announce_message_2.id,
+                    message.id == boss_hp_check_message.id
+                ]):
                     await message.delete()
-                elif "ラスアタ時は、下の数字をコピペしてください。" == message.embeds[0].title:
-                    await message.delete()
-                else:
+
+                elif message.id == now_clan_battl_message.id:
                     break
 
             # 残り体力計算
@@ -1151,11 +1154,15 @@ async def clan_battl_call_reaction(payload):
                         await timeout_message.delete()
                         return
 
-                async for message in channel_0.history(limit=10):
-                    if not message.embeds:
+                async for message in channel_0.history(limit=20):
+                    if any([
+                        message.id == dmg_input_announce_message_1.id,
+                        message.id == dmg_input_announce_message_2.id,
+                        message.id == boss_hp_check_message.id
+                    ]):
                         await message.delete()
 
-                    else:
+                    elif message.id == now_clan_battl_message.id:
                         break
 
                 if all([
@@ -1739,6 +1746,12 @@ async def on_ready():
     elif 45 <= int(now_boss_data["now_lap"]):
         now_boss_data["now_boss_level"] = 5
 
+    async for message in channel_0.history(limit=20):
+        if message.id == now_clan_battl_message.id:
+            break
+        else:
+            await message.delete()
+
     text_2 = f"{clan_battle_start_date.strftime('%Y-%m-%d %H:%M')}\n{clan_battle_end_date.strftime('%Y-%m-%d %H:%M')}"
     await channel_bot_log.send(f"ミネルヴァ起動しました。\n\n{text_1}\n{text_2}\n\n{boss_names}")
 
@@ -1775,7 +1788,7 @@ async def server_rule_reaction_check(payload):
     if channel.id == 749511208104755241:
         if payload.emoji.name == "\U00002705":
 
-            await channel.send(f"""
+            delete_message = await channel.send(f"""
 {payload.member.mention} さん　こんにちわ。
 黒猫魔法学院への加入ありがとうございます。
 
@@ -1783,6 +1796,9 @@ async def server_rule_reaction_check(payload):
 改めまして今月よりよろしくお願いします。""")
 
             await payload.member.add_roles(general_member_role)
+
+            await asyncio.sleep(60)
+            await delete_message.delete()
 
 
 @client.event
@@ -1805,7 +1821,6 @@ async def on_member_remove(member):
     embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
     embed.add_field(name="ユーザーID》", value=member.id, inline=False)
     embed.add_field(name="サーバー退室日時》", value=f"{now_ymd} {now_hms}", inline=False)
-    await channel.send(embed=embed)
 
 
 # 時間処理
@@ -1836,9 +1851,6 @@ async def loop():
 
     else:
         return
-
-    y = 0 if clan_battle_tutorial_days is True else 1
-    channel_0 = guild.get_channel(int(clan_battle_channel_id[0][y]))
 
     if all([
         now.day == 5,
@@ -1938,30 +1950,6 @@ async def loop():
 
     else:
         pass
-
-    # 不要メッセージの削除
-    async for message in channel_0.history(limit=10):
-        if all([
-            not message.embeds,
-            "ボスに与えたダメージを「半角数字」のみで入力してください。" not in message.content,
-            "持ち越し時間を入力してください" not in message.content
-        ]):
-            await message.delete()
-
-        elif all([
-            not message.embeds,
-            "凸宣言を受け付けました。" in message.content,
-            "凸宣言をキャンセルしました。" in message.content
-        ]):
-            await message.delete()
-
-        elif message.embeds:
-            break
-
-    # サーバー案内不要メッセージの削除
-    async for message in server_rule_channel.history():
-        if message.id != 749520003203596339:
-            await message.delete()
 
 loop.start()
 
