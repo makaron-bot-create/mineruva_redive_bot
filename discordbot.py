@@ -1821,6 +1821,7 @@ async def on_member_remove(member):
     embed.add_field(name="ニックネーム》", value=member.display_name, inline=False)
     embed.add_field(name="ユーザーID》", value=member.id, inline=False)
     embed.add_field(name="サーバー退室日時》", value=f"{now_ymd} {now_hms}", inline=False)
+    await channel.send(embed=embed)
 
 
 # 時間処理
