@@ -1814,6 +1814,7 @@ async def on_member_remove(member):
         return
 
     member_log_ch = 741851689916825630
+    channel = client.get_channel(member_log_ch)
     embed = discord.Embed(title="【サーバー退室者情報】", color=0xffea00)
     embed.set_thumbnail(url=member.avatar_url)
     embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
