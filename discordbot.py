@@ -1814,7 +1814,6 @@ async def on_member_remove(member):
         return
 
     member_log_ch = 741851689916825630
-    channel = client.get_channel(member_log_ch)
     embed = discord.Embed(title="【サーバー退室者情報】", color=0xffea00)
     embed.set_thumbnail(url=member.avatar_url)
     embed.add_field(name="アカウント名≫", value=member.mention, inline=False)
@@ -1836,7 +1835,6 @@ async def loop():
     now = datetime.datetime.now()
 
     guild = client.get_guild(599780162309062706)
-    server_rule_channel = guild.get_channel(749511208104755241)  # サーバー案内
     announce_channel = guild.get_channel(599784496866263050)  # 連絡事項
 
     if "" != clan_battle_start_date and "" != clan_battle_end_date:
