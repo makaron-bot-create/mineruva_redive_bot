@@ -881,12 +881,14 @@ async def clan_battl_clear_reaction(payload):
     )
     now_attack_list.pop(reac_member)
     message_1 = await channel_1.send(embed=embed)
-    await channel_0.send(f"{reac_member.mention}》\n凸宣言をキャンセルしました。")
+    message_2 = await channel_0.send(f"{reac_member.mention}》\n凸宣言をキャンセルしました。")
+    delete_time = 10
+    await message_time_delete(message_2, delete_time)
 
     if not clan_battle_tutorial_days:
         if message_1:
-            await asyncio.sleep(60)
-            await message_1.delete()
+            delete_time = 60
+            await message_time_delete(message_1, delete_time)
 
     if len(now_attack_list) != 0:
         member_list = ""
@@ -969,6 +971,7 @@ async def clan_battl_call_reaction(payload):
 
             ok_attack_text = f"__**（持ち越し凸）{carry_over_time}**__"
 
+        # 物理リアクション
         if payload.emoji.name == emoji_list["attack_p"]:
             now_attack_list[payload.member] = f"《物理編成》{ok_attack_text}"
 
@@ -984,9 +987,11 @@ async def clan_battl_call_reaction(payload):
             )
             message_1 = await channel_1.send(embed=embed)
             delete_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
-            await asyncio.sleep(10)
-            await delete_message.delete()
+            delete_time = 10
+            await message_time_delete(delete_message, delete_time)
+            return
 
+        # 魔法リアクション
         elif payload.emoji.name == emoji_list["attack_m"]:
             now_attack_list[payload.member] = f"《魔法編成》{ok_attack_text}"
 
@@ -1001,11 +1006,12 @@ async def clan_battl_call_reaction(payload):
                 color=0x00b4ff
             )
             message_2 = await channel_1.send(embed=embed)
-            await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
             delete_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
-            await asyncio.sleep(10)
-            await delete_message.delete()
+            delete_time = 10
+            await message_time_delete(delete_message, delete_time)
+            return
 
+        # タスキルリアクション
         elif payload.emoji.name == emoji_list["T_kill"]:
             await channel_2.send(f"{reac_member.display_name}》\nタスキルしました。")
             return
@@ -1015,6 +1021,7 @@ async def clan_battl_call_reaction(payload):
             await channel_1.send(f"{clan_member_mention}\n「{reac_member.display_name}」さんが救援を求めてます。")
             return
 
+        # 凸終了リアクション
         elif payload.emoji.name == emoji_list["attack_end"]:
             if not now_attack_list.get(payload.member):
                 # 凸宣言リアクションリセット
@@ -1026,8 +1033,8 @@ async def clan_battl_call_reaction(payload):
                                 await reaction.remove(user)
 
                 not_reaction_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言が有りません。")
-                await asyncio.sleep(10)
-                await not_reaction_message.delete()
+                delete_time = 10
+                await message_time_delete(not_reaction_message, delete_time)
                 return
 
             await channel_0.set_permissions(reac_member, send_messages=True)
@@ -1155,16 +1162,12 @@ async def clan_battl_call_reaction(payload):
                                     if user == reac_member:
                                         await reaction.remove(user)
 
-                        await asyncio.sleep(10)
-                        await timeout_message.delete()
+                        delete_time = 10
+                        await message_time_delete(timeout_message, delete_time)
                         return
 
                 async for message in channel_0.history(limit=20):
-                    if any([
-                        message.id == dmg_input_announce_message_1.id,
-                        message.id == dmg_input_announce_message_2.id,
-                        message.id == boss_hp_check_message.id
-                    ]):
+                    if message.id != now_clan_battl_message.id:
                         await message.delete()
 
                     elif message.id == now_clan_battl_message.id:
@@ -1377,16 +1380,23 @@ async def clan_battl_call_reaction(payload):
 
         if not clan_battle_tutorial_days:
             if message_1:
-                await asyncio.sleep(60)
-                await message_1.delete()
+                delete_time = 60
+                await message_time_delete(message_1, delete_time)
 
             if message_2:
-                await asyncio.sleep(60)
-                await message_2.delete()
+                delete_time = 60
+                await message_time_delete(message_2, delete_time)
 
             if message_3:
-                await asyncio.sleep(60)
-                await message_3.delete()
+                delete_time = 60
+                await message_time_delete(message_3, delete_time)
+
+
+#########################################
+# メッセージの時間削除
+async def message_time_delete(delete_message, delete_time):
+    await asyncio.sleep(delete_time)
+    await delete_message.delete()
 
 
 #########################################
