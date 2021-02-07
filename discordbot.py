@@ -989,7 +989,6 @@ async def clan_battl_call_reaction(payload):
             delete_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
             delete_time = 10
             await message_time_delete(delete_message, delete_time)
-            return
 
         # 魔法リアクション
         elif payload.emoji.name == emoji_list["attack_m"]:
@@ -1009,7 +1008,6 @@ async def clan_battl_call_reaction(payload):
             delete_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
             delete_time = 10
             await message_time_delete(delete_message, delete_time)
-            return
 
         # タスキルリアクション
         elif payload.emoji.name == emoji_list["T_kill"]:
