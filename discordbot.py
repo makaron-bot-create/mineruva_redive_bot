@@ -556,7 +556,9 @@ async def no_attack_role_check(payload):
                 if user == payload.member:
                     await reaction.remove(user)
 
-        await channel.send(f"{payload.member.mention}》\n本日の3凸は終了してます。")
+        message = await channel.send(f"{payload.member.mention}》\n本日の3凸は終了してます。")
+        delete_time = 10
+        await message_time_delete(message, delete_time)
 
     return attack_role_check, ok_role_check
 
