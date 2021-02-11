@@ -1000,7 +1000,7 @@ async def clan_battl_call_reaction(payload):
 
             else:
                 delete_message = await channel_0.send(message_content)
-                delete_time = 10    
+                delete_time = 10
                 await message_time_delete(delete_message, delete_time)
 
         if ok_role_check:
