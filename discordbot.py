@@ -526,12 +526,7 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
 
 
 # 未凸ロールチェック
-async def no_attack_role_check(payload):
-    guild = client.get_guild(599780162309062706)
-
-    y = 0 if clan_battle_tutorial_days is True else 1
-    channel = guild.get_channel(int(clan_battle_channel_id[0][y]))  # 進捗状況
-    reaction_message = await channel.fetch_message(payload.message_id)
+def no_attack_role_check(payload):
 
     # ロールの判定
     ok_role_check = False
@@ -548,17 +543,6 @@ async def no_attack_role_check(payload):
 
         elif role.id == clan_battle_member_role_id[3]:
             attack_role_check = True
-
-    if not attack_role_check and not ok_role_check:
-        for reaction in reaction_message.reactions:
-
-            async for user in reaction.users():
-                if user == payload.member:
-                    await reaction.remove(user)
-
-        message = await channel.send(f"{payload.member.mention}》\n本日の3凸は終了してます。")
-        delete_time = 10
-        await message_time_delete(message, delete_time)
 
     return attack_role_check, ok_role_check
 
@@ -929,6 +913,8 @@ async def clan_battl_call_reaction(payload):
     message_2 = ""
     message_3 = ""
 
+    reset_reaction = ["\U00002705", "\U0000274c"]
+
     guild = client.get_guild(599780162309062706)
     clan_member_role = guild.get_role(687433139345555456)  # クランメンバーロール
     ch_id_index_y = 0 if clan_battle_tutorial_days is True else 1
@@ -959,10 +945,58 @@ async def clan_battl_call_reaction(payload):
         return
 
     if channel.id == int(clan_battle_channel_id[0][ch_id_index_y]):  # 進捗状況
-        attack_role_check, ok_role_check = await no_attack_role_check(payload)
+        attack_role_check, ok_role_check = no_attack_role_check(payload)
 
         if not attack_role_check and not ok_role_check:
-            return
+            message_content = f"{payload.member.mention}》\n本日の3凸は終了してます。"
+            if clan_battle_tutorial_days:
+                embed = discord.Embed(
+                    description=f"もう一度3凸する場合は{reset_reaction[0]}を、キャンセルする場合は{reset_reaction[1]}を押してください。",
+                    color=0x00b4ff
+                )
+
+                reset_message = await channel_0.send(message_content, embed=embed)
+
+                for reactiones in reset_reaction:
+                    await reset_message.add_reaction(reactiones)
+
+                def role_reset_check(reaction, user):
+
+                    return all([
+                        any([
+                            reaction.emoji == reset_reaction[0],
+                            reaction.emoji == reset_reaction[1]
+                        ]),
+                        reaction.message.id == reset_message.id,
+                        user.id == payload.member.id,
+                        not user.bot
+
+                    ])
+
+                try:
+                    reaction, user = await client.wait_for('reaction_add', check=role_reset_check, timeout=30)
+
+                except asyncio.TimeoutError:
+                    for reaction in reaction_message.reactions:
+                        async for user in reaction.users():
+                            if user == payload.member:
+                                await reaction.remove(user)
+
+                    await reset_message.delete()
+                    return
+
+                if reaction.emoji == reset_reaction[1]:
+                    for reaction in reaction_message.reactions:
+                        async for user in reaction.users():
+                            if user == payload.member:
+                                await reaction.remove(user)
+
+                    await reset_message.delete()
+                    return
+
+                elif reaction.emoji == reset_reaction[0]:
+                    await payload.member.add_roles(guild.get_role(clan_battle_member_role_id[1]))
+                    await reset_message.delete()
 
         if ok_role_check:
             # 持ち越し時間
@@ -1978,8 +2012,9 @@ async def on_raw_reaction_add(payload):
         await server_rule_reaction_check(payload)
 
     # クラバト管理リアクション
-    await clan_battl_call_reaction(payload)
-    await battle_log_add_information(payload)
+    if payload.message_id == now_clan_battl_message.id:
+        await clan_battl_call_reaction(payload)
+        await battle_log_add_information(payload)
 
 
 # リアクション操作
