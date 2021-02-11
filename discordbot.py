@@ -951,8 +951,8 @@ async def clan_battl_call_reaction(payload):
             message_content = f"{payload.member.mention}》\n本日の3凸は終了してます。"
             if clan_battle_tutorial_days:
                 embed = discord.Embed(
-                    description=f"もう一度3凸する場合は{reset_reaction[0]}を、キャンセルする場合は{reset_reaction[1]}を押してください。",
-                    color=0x00b4ff
+                    description=f"もう一度3凸する場合は「{reset_reaction[0]}」を、キャンセルする場合は「{reset_reaction[1]}」を押してください。",
+                    color=0xffff00
                 )
 
                 reset_message = await channel_0.send(message_content, embed=embed)
