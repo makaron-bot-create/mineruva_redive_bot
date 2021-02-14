@@ -869,7 +869,6 @@ async def clan_battl_clear_reaction(payload):
     message_1 = await channel_1.send(embed=embed)
     message_2 = await channel_0.send(f"{reac_member.mention}》\n凸宣言をキャンセルしました。")
 
-
     if len(now_attack_list) != 0:
         member_list = ""
         for member, pt in zip(now_attack_list.keys(), now_attack_list.values()):
