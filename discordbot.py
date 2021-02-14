@@ -1416,7 +1416,7 @@ async def clan_battl_call_reaction(payload):
 
         if add_attack_message:
             delete_time = 10
-            await message_time_delete(delete_message, delete_time)
+            await message_time_delete(add_attack_message, delete_time)
 
         if not clan_battle_tutorial_days:
             if message_1:
