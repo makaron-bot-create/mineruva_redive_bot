@@ -868,13 +868,7 @@ async def clan_battl_clear_reaction(payload):
     now_attack_list.pop(reac_member)
     message_1 = await channel_1.send(embed=embed)
     message_2 = await channel_0.send(f"{reac_member.mention}》\n凸宣言をキャンセルしました。")
-    delete_time = 10
-    await message_time_delete(message_2, delete_time)
 
-    if not clan_battle_tutorial_days:
-        if message_1:
-            delete_time = 60
-            await message_time_delete(message_1, delete_time)
 
     if len(now_attack_list) != 0:
         member_list = ""
@@ -891,6 +885,14 @@ async def clan_battl_clear_reaction(payload):
         inline=False
     )
     await edit_message.edit(embed=embed)
+
+    delete_time = 10
+    await message_time_delete(message_2, delete_time)
+
+    if not clan_battle_tutorial_days:
+        if message_1:
+            delete_time = 60
+            await message_time_delete(message_1, delete_time)
 
 
 # 凸管理リアクションイベント
@@ -1027,9 +1029,7 @@ async def clan_battl_call_reaction(payload):
                 color=0x00b4ff
             )
             message_1 = await channel_1.send(embed=embed)
-            delete_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
-            delete_time = 10
-            await message_time_delete(delete_message, delete_time)
+            add_attack_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
 
         # 魔法リアクション
         elif payload.emoji.name == emoji_list["attack_m"]:
@@ -1046,9 +1046,7 @@ async def clan_battl_call_reaction(payload):
                 color=0x00b4ff
             )
             message_2 = await channel_1.send(embed=embed)
-            delete_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
-            delete_time = 10
-            await message_time_delete(delete_message, delete_time)
+            add_attack_message = await channel_0.send(f"{reac_member.mention}》\n凸宣言を受け付けました。")
 
         # タスキルリアクション
         elif payload.emoji.name == emoji_list["T_kill"]:
@@ -1416,6 +1414,10 @@ async def clan_battl_call_reaction(payload):
             if not now_attack_list:
 
                 await clan_battl_role_reset()
+
+        if add_attack_message:
+            delete_time = 10
+            await message_time_delete(delete_message, delete_time)
 
         if not clan_battle_tutorial_days:
             if message_1:
