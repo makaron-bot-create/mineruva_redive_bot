@@ -905,6 +905,8 @@ async def clan_battl_call_reaction(payload):
     global new_boss_check
     global ok_member
 
+    global fast_attack_check
+
     nl = "\n"
     hp_fomat = "{:,}"
     ok_attack_text = ""
@@ -1414,6 +1416,7 @@ async def clan_battl_call_reaction(payload):
             fast_attack_check,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
+            fast_attack_check = False
             await cb_mission(mission_id="m_001", user=payload.member, clear_time=datetime.datetime.now())
 
         # クロスデイcheck
