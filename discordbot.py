@@ -38,7 +38,8 @@ clan_battle_channel_id = [
     [750351148841566248, 599792931674521600],  # タスキル状況
     [750345983661047949, 772305554009620480],  # バトルログ
     [774871889843453962, 599785761587331092],  # 持ち越しメモ
-    [750346096156344450, 695958348264374343]  # 残り凸状況
+    [750346096156344450, 695958348264374343],  # 残り凸状況
+    [811023367011303464, 811059306392715325]  # ミッション情報
 ]
 boss_ch = [680753487629385739, 680753616965206016, 680753627433795743, 680753699152199680, 680754056477671439]
 boss_name = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
@@ -73,6 +74,7 @@ ok_member = False
 no_attack_role_reset = True
 add_role_check = False
 rollover_time = "05:00"
+fast_attack_check = False
 
 
 # 凸宣言絵文字リスト
@@ -1408,15 +1410,25 @@ async def clan_battl_call_reaction(payload):
 
         await edit_message.edit(embed=embed)
 
+        if all([
+            fast_attack_check,
+            payload.emoji.name == emoji_list["attack_end"]
+        ]):
+            await cb_mission(mission_id="m_001", user=payload.member, clear_time=datetime.datetime.now())
+
         # クロスデイcheck
         if not no_attack_role_reset:
             if not now_attack_list:
 
                 await clan_battl_role_reset()
 
-        if add_attack_message:
-            delete_time = 10
-            await message_time_delete(add_attack_message, delete_time)
+        if any([
+                payload.emoji.name == emoji_list["attack_p"],
+                payload.emoji.name == emoji_list["attack_m"]
+        ]):
+            if add_attack_message:
+                delete_time = 10
+                await message_time_delete(add_attack_message, delete_time)
 
         if not clan_battle_tutorial_days:
             if message_1:
@@ -1430,6 +1442,29 @@ async def clan_battl_call_reaction(payload):
             if message_3:
                 delete_time = 60
                 await message_time_delete(message_3, delete_time)
+
+
+#########################################
+# クラバトミッション
+async def cb_mission(mission_id, user, clear_time):
+    guild = client.get_guild(599780162309062706)
+    y = 0 if clan_battle_tutorial_days is True else 1
+    mission_log_channel = guild.get_channel(int(clan_battle_channel_id[6][y]))  # ミッション情報
+
+    now = clear_time
+    now_ymd = f"{now.year}年{now.month}月{now.day}日"
+    now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
+
+    if mission_id == "m_001":
+        add_pt = 30
+        embed = discord.Embed(
+            title="以下のミッションを達成しました。》",
+            description="```py\n30人中のその日の1凸目になる```",
+            color=0xffff00
+        )
+        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+        await mission_log_channel.send(user.mention, embed=embed)
 
 
 #########################################
@@ -1726,6 +1761,10 @@ async def on_ready():
     global boss_name
     global boss_img_url
 
+    global fast_attack_check
+
+    fast_attack_check = True
+
     boss_name.clear()
     boss_img_url.clear()
     guild = client.get_guild(599780162309062706)
@@ -1886,6 +1925,8 @@ async def loop():
     global clan_battle_tutorial_days
     global now_boss_data
 
+    global fast_attack_check
+
     await client.wait_until_ready()
 
     set_rollover_time = rollover_time
@@ -1976,6 +2017,7 @@ async def loop():
             now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime('%Y-%m-%d %H:%M')
         ]):
 
+            fast_attack_check = True
             await clan_battl_start_up()
 
         # 日付変更リセット
@@ -1987,6 +2029,7 @@ async def loop():
 
             else:
                 await clan_battl_role_reset()
+                fast_attack_check = True
                 no_attack_role_reset = True
 
     # クラバト終了処理
