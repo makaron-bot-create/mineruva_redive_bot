@@ -903,7 +903,7 @@ async def clan_battl_clear_reaction(payload):
     )
     await edit_message.edit(embed=embed)
 
-    delete_time = 10
+    delete_time = 3
     await message_time_delete(message_2, delete_time)
 
     if not clan_battle_tutorial_days:
@@ -1485,7 +1485,7 @@ async def clan_battl_call_reaction(payload):
                 payload.emoji.name == emoji_list["attack_m"]
         ]):
             if add_attack_message:
-                delete_time = 10
+                delete_time = 3
                 await message_time_delete(add_attack_message, delete_time)
 
         if not clan_battle_tutorial_days:
