@@ -23,7 +23,7 @@ pants_url = [
 ]
 # 変数 ######################
 kick_cmd = False
-clan_battle_member_role_id = [
+clan_battle_attack_role_id = [
     688651850513252353,  # 持ち越しロール
     715250107058094100,  # 残り3凸
     731746802499453049,  # 残り2凸
