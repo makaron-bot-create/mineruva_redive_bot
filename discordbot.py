@@ -291,10 +291,10 @@ async def clan_battl_edit_progress(message):
     edit_message = now_clan_battl_message
     embed = edit_message.embeds[0]
 
-    attack_3 = len(guild.get_role(clan_battle_member_role_id[1]).members) * 3
-    attack_2 = len(guild.get_role(clan_battle_member_role_id[2]).members) * 2
-    attack_1 = len(guild.get_role(clan_battle_member_role_id[3]).members)
-    OK_n = len(guild.get_role(clan_battle_member_role_id[0]).members)
+    attack_3 = len(guild.get_role(clan_battle_attack_role_id[1]).members) * 3
+    attack_2 = len(guild.get_role(clan_battle_attack_role_id[2]).members) * 2
+    attack_1 = len(guild.get_role(clan_battle_attack_role_id[3]).members)
+    OK_n = len(guild.get_role(clan_battle_attack_role_id[0]).members)
     attack_n = attack_3 + attack_2 + attack_1
 
     for ids in re.finditer(boss_edit_message, message.content):
@@ -483,16 +483,16 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
 
         cb_day_text = f"__**{abs(cb_day)}日目**__"
 
-    OK_n = guild.get_role(clan_battle_member_role_id[0]).members
+    OK_n = guild.get_role(clan_battle_attack_role_id[0]).members
     noattack_member_list_0 = f"```{nl}{nl.join([member.display_name for member in OK_n])}{nl}```"
 
-    attack_3 = guild.get_role(clan_battle_member_role_id[1]).members
+    attack_3 = guild.get_role(clan_battle_attack_role_id[1]).members
     noattack_member_list_3 = f"```{nl}{nl.join([member.display_name for member in attack_3])}{nl}```"
 
-    attack_2 = guild.get_role(clan_battle_member_role_id[2]).members
+    attack_2 = guild.get_role(clan_battle_attack_role_id[2]).members
     noattack_member_list_2 = f"```{nl}{nl.join([member.display_name for member in attack_2])}{nl}```"
 
-    attack_1 = guild.get_role(clan_battle_member_role_id[3]).members
+    attack_1 = guild.get_role(clan_battle_attack_role_id[3]).members
     noattack_member_list_1 = f"```{nl}{nl.join([member.display_name for member in attack_1])}{nl}```"
 
     attack_members = (len(attack_3) * 3) + (len(attack_2) * 2) + len(attack_1)
@@ -534,16 +534,16 @@ def no_attack_role_check(payload):
     ok_role_check = False
     attack_role_check = False
     for role in payload.member.roles:
-        if role.id == clan_battle_member_role_id[0]:
+        if role.id == clan_battle_attack_role_id[0]:
             ok_role_check = True
 
-        elif role.id == clan_battle_member_role_id[1]:
+        elif role.id == clan_battle_attack_role_id[1]:
             attack_role_check = True
 
-        elif role.id == clan_battle_member_role_id[2]:
+        elif role.id == clan_battle_attack_role_id[2]:
             attack_role_check = True
 
-        elif role.id == clan_battle_member_role_id[3]:
+        elif role.id == clan_battle_attack_role_id[3]:
             attack_role_check = True
 
     return attack_role_check, ok_role_check
@@ -551,30 +551,28 @@ def no_attack_role_check(payload):
 
 # 未凸ロールの更新
 async def add_attack_role(boss_hp_check_message):
-    global ok_member
-
     guild = client.get_guild(599780162309062706)
     boss_hp_check_member = boss_hp_check_message.author
 
     for role in boss_hp_check_member.roles:
-        if role.id == clan_battle_member_role_id[1]:
-            attak_role = guild.get_role(clan_battle_member_role_id[1])
+        if role.id == clan_battle_attack_role_id[1]:
+            attak_role = guild.get_role(clan_battle_attack_role_id[1])
             await boss_hp_check_member.remove_roles(attak_role)
 
-            attak_role = guild.get_role(clan_battle_member_role_id[2])
+            attak_role = guild.get_role(clan_battle_attack_role_id[2])
             await boss_hp_check_member.add_roles(attak_role)
             break
 
-        elif role.id == clan_battle_member_role_id[2]:
-            attak_role = guild.get_role(clan_battle_member_role_id[2])
+        elif role.id == clan_battle_attack_role_id[2]:
+            attak_role = guild.get_role(clan_battle_attack_role_id[2])
             await boss_hp_check_member.remove_roles(attak_role)
 
-            attak_role = guild.get_role(clan_battle_member_role_id[3])
+            attak_role = guild.get_role(clan_battle_attack_role_id[3])
             await boss_hp_check_member.add_roles(attak_role)
             break
 
-        elif role.id == clan_battle_member_role_id[3]:
-            attak_role = guild.get_role(clan_battle_member_role_id[3])
+        elif role.id == clan_battle_attack_role_id[3]:
+            attak_role = guild.get_role(clan_battle_attack_role_id[3])
             await boss_hp_check_member.remove_roles(attak_role)
             break
 
@@ -585,11 +583,15 @@ async def clan_battl_role_reset():
     global no_attack_role_reset
     global now_attack_list
 
+    global fast_attack_check
+
     now = datetime.datetime.now()
 
     guild = client.get_guild(599780162309062706)
     channel = client.get_channel(741851480868519966)  # ミネルヴァ・動作ログ
     now_attack_list.clear()
+
+    fast_attack_check = True
 
     y = 0 if clan_battle_tutorial_days is True else 1
     no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][y]))  # 残り凸状況
@@ -614,11 +616,10 @@ async def clan_battl_role_reset():
         ]):
 
             # 埋め込み情報の編集
-            attack_3 = len(guild.get_role(clan_battle_member_role_id[1]).members) * 3
-            attack_2 = len(guild.get_role(clan_battle_member_role_id[2]).members) * 2
-            attack_1 = len(guild.get_role(clan_battle_member_role_id[3]).members)
-            OK_n = len(guild.get_role(clan_battle_member_role_id[0]).members)
-
+            attack_3 = len(guild.get_role(clan_battle_attack_role_id[1]).members) * 3
+            attack_2 = len(guild.get_role(clan_battle_attack_role_id[2]).members) * 2
+            attack_1 = len(guild.get_role(clan_battle_attack_role_id[3]).members)
+            OK_n = len(guild.get_role(clan_battle_attack_role_id[0]).members)
             attack_n = attack_3 + attack_2 + attack_1
 
             now_lap = now_boss_data["now_lap"]
@@ -679,24 +680,39 @@ async def clan_battl_role_reset():
     clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
     clan_member = clan_member_role.members
     for member in clan_member:
-        await member.add_roles(guild.get_role(clan_battle_member_role_id[1]))
+        await member.add_roles(guild.get_role(clan_battle_attack_role_id[1]))
 
-    if guild.get_role(clan_battle_member_role_id[0]).members:
-        for member in guild.get_role(clan_battle_member_role_id[0]).members:
-            await member.remove_roles(guild.get_role(clan_battle_member_role_id[0]))
+    if guild.get_role(clan_battle_attack_role_id[0]).members:
+        for member in guild.get_role(clan_battle_attack_role_id[0]).members:
+            await member.remove_roles(guild.get_role(clan_battle_attack_role_id[0]))
 
-    if guild.get_role(clan_battle_member_role_id[2]).members:
-        for member in guild.get_role(clan_battle_member_role_id[2]).members:
-            await member.remove_roles(guild.get_role(clan_battle_member_role_id[2]))
+    if guild.get_role(clan_battle_attack_role_id[2]).members:
+        for member in guild.get_role(clan_battle_attack_role_id[2]).members:
+            await member.remove_roles(guild.get_role(clan_battle_attack_role_id[2]))
 
-    if guild.get_role(clan_battle_member_role_id[3]).members:
-        for member in guild.get_role(clan_battle_member_role_id[3]).members:
-            await member.remove_roles(guild.get_role(clan_battle_member_role_id[3]))
+    if guild.get_role(clan_battle_attack_role_id[3]).members:
+        for member in guild.get_role(clan_battle_attack_role_id[3]).members:
+            await member.remove_roles(guild.get_role(clan_battle_attack_role_id[3]))
 
     await channel.send(f"クランメンバーに「未3凸」ロールを付与しました。\n{datetime.datetime.now()}")
     await clan_battl_no_attack_member_list(no_attack_member_list_ch)
     await clan_battle_event()
     await reset_role_text.delete()
+
+
+# 残り凸ロール全削除
+async def no_attack_role_remove():
+    global no_attack_role_reset
+
+    guild = client.get_guild(599780162309062706)
+
+    if not no_attack_role_reset:
+        no_attack_role_reset = True
+
+    for role_id in clan_battle_attack_role_id:
+        role = guild.get_role(role_id)
+        for member in guild.role.members:
+            await member.remove_roles(role)
 
 
 # 進捗状況更新
@@ -749,10 +765,10 @@ async def clan_battle_event():
 
     clan_member_mention = "クランメンバー" if clan_battle_tutorial_days is True else guild.get_role(687433139345555456).mention  # クランメンバーロール
 
-    attack_3 = len(guild.get_role(clan_battle_member_role_id[1]).members) * 3
-    attack_2 = len(guild.get_role(clan_battle_member_role_id[2]).members) * 2
-    attack_1 = len(guild.get_role(clan_battle_member_role_id[3]).members)
-    OK_n = len(guild.get_role(clan_battle_member_role_id[0]).members)
+    attack_3 = len(guild.get_role(clan_battle_attack_role_id[1]).members) * 3
+    attack_2 = len(guild.get_role(clan_battle_attack_role_id[2]).members) * 2
+    attack_1 = len(guild.get_role(clan_battle_attack_role_id[3]).members)
+    OK_n = len(guild.get_role(clan_battle_attack_role_id[0]).members)
     attack_n = attack_3 + attack_2 + attack_1
 
     now_lap = now_boss_data["now_lap"]
@@ -1000,7 +1016,7 @@ async def clan_battl_call_reaction(payload):
                     return
 
                 elif reaction.emoji == reset_reaction[0]:
-                    await payload.member.add_roles(guild.get_role(clan_battle_member_role_id[1]))
+                    await payload.member.add_roles(guild.get_role(clan_battle_attack_role_id[1]))
                     await reset_message.delete()
 
             else:
@@ -1252,9 +1268,9 @@ async def clan_battl_call_reaction(payload):
                 now_boss_data["now_boss_hp"] = int(boss_hp[x][y])
 
             for role in boss_hp_check_message.author.roles:
-                if role.id == int(clan_battle_member_role_id[0]):
+                if role.id == int(clan_battle_attack_role_id[0]):
                     ok_role_check = True
-                    attak_role = guild.get_role(int(clan_battle_member_role_id[0]))
+                    attak_role = guild.get_role(int(clan_battle_attack_role_id[0]))
 
                     # 持ち越しメッセージの削除
                     async for message in channel_4.history():
@@ -1272,7 +1288,7 @@ async def clan_battl_call_reaction(payload):
                 not ok_role_check
             ]):
 
-                attak_role = guild.get_role(int(clan_battle_member_role_id[0]))
+                attak_role = guild.get_role(int(clan_battle_attack_role_id[0]))
                 await boss_hp_check_message.author.add_roles(attak_role)
 
             if 0 < last_boss_hp:
@@ -1359,11 +1375,10 @@ async def clan_battl_call_reaction(payload):
             member_list = f"```py{nl}\"本戦中のメンバーは現在いません。\"{nl}```"
 
         # 埋め込み情報の編集
-        attack_3 = len(guild.get_role(clan_battle_member_role_id[1]).members) * 3
-        attack_2 = len(guild.get_role(clan_battle_member_role_id[2]).members) * 2
-        attack_1 = len(guild.get_role(clan_battle_member_role_id[3]).members)
-        OK_n = len(guild.get_role(clan_battle_member_role_id[0]).members)
-
+        attack_3 = len(guild.get_role(clan_battle_attack_role_id[1]).members) * 3
+        attack_2 = len(guild.get_role(clan_battle_attack_role_id[2]).members) * 2
+        attack_1 = len(guild.get_role(clan_battle_attack_role_id[3]).members)
+        OK_n = len(guild.get_role(clan_battle_attack_role_id[0]).members)
         attack_n = attack_3 + attack_2 + attack_1
         attack_total = attack_n + OK_n
 
@@ -1412,18 +1427,58 @@ async def clan_battl_call_reaction(payload):
 
         await edit_message.edit(embed=embed)
 
+        # クラバトミッション
+        # ファーストアタック
+        now = datetime.datetime.now()
         if all([
             fast_attack_check,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
             fast_attack_check = False
-            await cb_mission(mission_id="m_001", user=payload.member, clear_time=datetime.datetime.now())
+            await cb_mission(mission_id="m_001", user=payload.member, clear_time=now)
+
+        # ラス凸
+        if all([
+            attack_total == 0,
+            now.strftime('%H:%M') < "00:00",
+            payload.emoji.name == emoji_list["attack_end"]
+        ]):
+            await cb_mission(mission_id="m_002", user=payload.member, clear_time=now)
+
+        # 朝活
+        if all([
+            all([
+                now.strftime('%H:%M') >= "05:00",
+                now.strftime('%H:%M') < "11:00"
+            ]),
+            any([
+                last_hp > 0,
+                all([
+                    last_hp == 0,
+                    ok_attack_check,
+                    ok_role_check
+                ])
+            ]),
+            payload.emoji.name == emoji_list["attack_end"]
+        ]):
+            await cb_mission(mission_id="m_003", user=payload.member, clear_time=now)
 
         # クロスデイcheck
         if not no_attack_role_reset:
             if not now_attack_list:
 
-                await clan_battl_role_reset()
+                if any([
+                    all([
+                        now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime("%Y-%m-%d 00:00"),
+                        now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
+                    ]),
+                    now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
+                ]):
+
+                    await no_attack_role_remove()
+
+                else:
+                    await clan_battl_role_reset()
 
         if any([
                 payload.emoji.name == emoji_list["attack_p"],
@@ -1458,11 +1513,48 @@ async def cb_mission(mission_id, user, clear_time):
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
+    # ファーストアタック
     if mission_id == "m_001":
         add_pt = 30
         embed = discord.Embed(
             title="以下のミッションを達成しました。》",
             description="```py\n30人中のその日の1凸目になる```",
+            color=0xffff00
+        )
+        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+        await mission_log_channel.send(user.mention, embed=embed)
+
+    # ラス凸
+    if mission_id == "m_002":
+        add_pt = 100
+        embed = discord.Embed(
+            title="以下のミッションを達成しました。》",
+            description="```py\n0時までにその日の90凸目になる```",
+            color=0xffff00
+        )
+        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+        await mission_log_channel.send(user.mention, embed=embed)
+
+    # 朝活
+    if mission_id == "m_003":
+        add_pt = 10
+        embed = discord.Embed(
+            title="以下のミッションを達成しました。》",
+            description="```py\n5時～11時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
+            color=0xffff00
+        )
+        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+        await mission_log_channel.send(user.mention, embed=embed)
+
+    # ラス凸
+    if mission_id == "m_002":
+        add_pt = 100
+        embed = discord.Embed(
+            title="以下のミッションを達成しました。》",
+            description="```py\n0時までにその日の90凸目になる```",
             color=0xffff00
         )
         embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1764,10 +1856,6 @@ async def on_ready():
     global boss_name
     global boss_img_url
 
-    global fast_attack_check
-
-    fast_attack_check = True
-
     boss_name.clear()
     boss_img_url.clear()
     guild = client.get_guild(599780162309062706)
@@ -1928,8 +2016,6 @@ async def loop():
     global clan_battle_tutorial_days
     global now_boss_data
 
-    global fast_attack_check
-
     await client.wait_until_ready()
 
     set_rollover_time = rollover_time
@@ -2020,7 +2106,6 @@ async def loop():
             now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime('%Y-%m-%d %H:%M')
         ]):
 
-            fast_attack_check = True
             await clan_battl_start_up()
 
         # 日付変更リセット
@@ -2032,7 +2117,6 @@ async def loop():
 
             else:
                 await clan_battl_role_reset()
-                fast_attack_check = True
                 no_attack_role_reset = True
 
     # クラバト終了処理
@@ -2046,7 +2130,7 @@ async def loop():
             return
 
         else:
-            await clan_battl_role_reset()
+            await no_attack_role_remove()
             no_attack_role_reset = True
 
     else:
