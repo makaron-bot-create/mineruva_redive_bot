@@ -2150,7 +2150,8 @@ async def on_raw_reaction_add(payload):
     # クラバト管理リアクション
     if payload.message_id == now_clan_battl_message.id:
         await clan_battl_call_reaction(payload)
-        await battle_log_add_information(payload)
+
+    await battle_log_add_information(payload)
 
 
 # リアクション操作
