@@ -529,11 +529,13 @@ async def clan_battl_no_attack_member_list(no_attack_member_list_ch):
 
 # 未凸ロールチェック
 def no_attack_role_check(payload):
+    guild = client.get_guild(599780162309062706)
+    member = guild.get_member(payload.user_id)
 
     # ロールの判定
     ok_role_check = False
     attack_role_check = False
-    for role in payload.member.roles:
+    for role in member.roles:
         if role.id == clan_battle_attack_role_id[0]:
             ok_role_check = True
 
@@ -1430,13 +1432,14 @@ async def clan_battl_call_reaction(payload):
         # クラバトミッション
         # ファーストアタック
         now = datetime.datetime.now()
+        clear_missions = []
         attack_role_check, ok_role_check = no_attack_role_check(payload)
         if all([
             fast_attack_check,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
             fast_attack_check = False
-            await cb_mission(mission_id="m_001", user=payload.member, clear_time=now)
+            clear_missions.append("m_001")
 
         # ラス凸
         if all([
@@ -1444,7 +1447,7 @@ async def clan_battl_call_reaction(payload):
             now.strftime('%H:%M') < "00:00",
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            await cb_mission(mission_id="m_002", user=payload.member, clear_time=now)
+            clear_missions.append("m_002")
 
         # 朝活
         if all([
@@ -1462,7 +1465,8 @@ async def clan_battl_call_reaction(payload):
             ]),
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            await cb_mission(mission_id="m_003", user=payload.member, clear_time=now)
+            clear_missions.append("m_003")
+
 
         # 朝活マスター
         if all([
@@ -1471,9 +1475,10 @@ async def clan_battl_call_reaction(payload):
                 now.strftime('%H:%M') < "11:00"
             ]),
             not attack_role_check,
-            not ok_role_check
+            not ok_role_check,
+            payload.emoji.name == emoji_list["attack_end"]
         ]):
-            await cb_mission(mission_id="m_004", user=payload.member, clear_time=now)
+            clear_missions.append("m_004")
 
         # 昼活
         if all([
@@ -1491,7 +1496,7 @@ async def clan_battl_call_reaction(payload):
             ]),
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            await cb_mission(mission_id="m_005", user=payload.member, clear_time=now)
+            clear_missions.append("m_005")
 
         # 昼活マスター
         if all([
@@ -1500,9 +1505,14 @@ async def clan_battl_call_reaction(payload):
                 now.strftime('%H:%M') < "16:00"
             ]),
             not attack_role_check,
-            not ok_role_check
+            not ok_role_check,
+            payload.emoji.name == emoji_list["attack_end"]
         ]):
-            await cb_mission(mission_id="m_006", user=payload.member, clear_time=now)
+            clear_missions.append("m_006")
+
+        # ミッション達成処理
+        if clear_missions:
+            await cb_mission(clear_missions, user=payload.member, clear_time=now)
 
         # クロスデイcheck
         if not no_attack_role_reset:
@@ -1545,7 +1555,7 @@ async def clan_battl_call_reaction(payload):
 
 #########################################
 # クラバトミッション
-async def cb_mission(mission_id, user, clear_time):
+async def cb_mission(clear_missions, user, clear_time):
     guild = client.get_guild(599780162309062706)
     y = 0 if clan_battle_tutorial_days is True else 1
     mission_log_channel = guild.get_channel(int(clan_battle_channel_id[6][y]))  # ミッション情報
@@ -1554,77 +1564,78 @@ async def cb_mission(mission_id, user, clear_time):
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
-    # ファーストアタック
-    if mission_id == "m_001":
-        add_pt = 30
-        embed = discord.Embed(
-            title="以下のミッションを達成しました。》",
-            description="```py\n30人中のその日の1凸目になる```",
-            color=0x00ffff
-        )
-        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-        await mission_log_channel.send(user.mention, embed=embed)
+    for mission in clear_missions:
+        # ファーストアタック
+        if mission == "m_001":
+            add_pt = 30
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n30人中のその日の1凸目になる```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
 
-    # ラス凸
-    if mission_id == "m_002":
-        add_pt = 100
-        embed = discord.Embed(
-            title="以下のミッションを達成しました。》",
-            description="```py\n0時までにその日の90凸目になる```",
-            color=0x00ffff
-        )
-        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-        await mission_log_channel.send(user.mention, embed=embed)
+        # ラス凸
+        if mission == "m_002":
+            add_pt = 100
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n0時までにその日の90凸目になる```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
 
-    # 朝活
-    if mission_id == "m_003":
-        add_pt = 10
-        embed = discord.Embed(
-            title="以下のミッションを達成しました。》",
-            description="```py\n5時～11時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
-            color=0x00ffff
-        )
-        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-        await mission_log_channel.send(user.mention, embed=embed)
+        # 朝活
+        if mission == "m_003":
+            add_pt = 10
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n5時～11時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
 
-    # 朝活マスター
-    if mission_id == "m_004":
-        add_pt = 20
-        embed = discord.Embed(
-            title="以下のミッションを達成しました。》",
-            description="```py\n11時までに3凸終了する```",
-            color=0x00ffff
-        )
-        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-        await mission_log_channel.send(user.mention, embed=embed)
+        # 朝活マスター
+        if mission == "m_004":
+            add_pt = 20
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n11時までに3凸終了する```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
 
-    # 昼活
-    if mission_id == "m_005":
-        add_pt = 5
-        embed = discord.Embed(
-            title="以下のミッションを達成しました。》",
-            description="```py\n11時～16時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
-            color=0x00ffff
-        )
-        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-        await mission_log_channel.send(user.mention, embed=embed)
+        # 昼活
+        if mission == "m_005":
+            add_pt = 5
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n11時～16時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
 
-    # 昼活マスター
-    if mission_id == "m_006":
-        add_pt = 10
-        embed = discord.Embed(
-            title="以下のミッションを達成しました。》",
-            description="```py\n16時までに3凸終了する```",
-            color=0x00ffff
-        )
-        embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-        embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-        await mission_log_channel.send(user.mention, embed=embed)
+        # 昼活マスター
+        if mission == "m_006":
+            add_pt = 10
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n16時までに3凸終了する```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
 
 
 #########################################
