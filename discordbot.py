@@ -1509,6 +1509,25 @@ async def clan_battl_call_reaction(payload):
         ]):
             clear_missions.append("m_006")
 
+        # 早寝早起き
+        if all([
+            all([
+                now.strftime('%H:%M') >= "05:00",
+                now.strftime('%H:%M') < "00:00"
+            ]),
+            not attack_role_check,
+            not ok_role_check,
+            payload.emoji.name == emoji_list["attack_end"]
+        ]):
+            clear_missions.append("m_007")
+
+        # 残飯処理
+        if all([
+            last_hp == 0,
+            payload.emoji.name == emoji_list["attack_end"]
+        ]):
+            clear_missions.append("m_008")
+
         # ミッション達成処理
         if clear_missions:
             await cb_mission(clear_missions, user=payload.member, clear_time=now)
@@ -1630,6 +1649,30 @@ async def cb_mission(clear_missions, user, clear_time):
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
                 description="```py\n16時までに3凸終了する```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
+
+        # 早寝早起き
+        if mission == "m_007":
+            add_pt = 5 * (20 - (int(now.hour) - 5))
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n0時までに3凸終了する```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
+
+        # 残飯処理
+        if mission == "m_008":
+            add_pt = 10
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\nラスアタする```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
