@@ -1467,7 +1467,6 @@ async def clan_battl_call_reaction(payload):
         ]):
             clear_missions.append("m_003")
 
-
         # 朝活マスター
         if all([
             all([
