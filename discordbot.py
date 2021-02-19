@@ -1471,7 +1471,7 @@ async def clan_battl_call_reaction(payload):
                 now.strftime('%H:%M') < "11:00"
             ]),
             not attack_role_check,
-            not ok_role_check,
+            not ok_role_check
         ]):
             await cb_mission(mission_id="m_004", user=payload.member, clear_time=now)
 
@@ -1500,7 +1500,7 @@ async def clan_battl_call_reaction(payload):
                 now.strftime('%H:%M') < "16:00"
             ]),
             not attack_role_check,
-            not ok_role_check,
+            not ok_role_check
         ]):
             await cb_mission(mission_id="m_006", user=payload.member, clear_time=now)
 
