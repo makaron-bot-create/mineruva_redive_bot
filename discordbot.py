@@ -1561,7 +1561,7 @@ async def cb_mission(mission_id, user, clear_time):
         embed = discord.Embed(
             title="以下のミッションを達成しました。》",
             description="```py\n30人中のその日の1凸目になる```",
-            color=0xff9600
+            color=0x00ffff
         )
         embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
         embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
@@ -1573,7 +1573,7 @@ async def cb_mission(mission_id, user, clear_time):
         embed = discord.Embed(
             title="以下のミッションを達成しました。》",
             description="```py\n0時までにその日の90凸目になる```",
-            color=0xff9600
+            color=0x00ffff
         )
         embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
         embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
@@ -1585,7 +1585,7 @@ async def cb_mission(mission_id, user, clear_time):
         embed = discord.Embed(
             title="以下のミッションを達成しました。》",
             description="```py\n5時～11時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
-            color=0xff9600
+            color=0x00ffff
         )
         embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
         embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
@@ -1597,7 +1597,7 @@ async def cb_mission(mission_id, user, clear_time):
         embed = discord.Embed(
             title="以下のミッションを達成しました。》",
             description="```py\n11時までに3凸終了する```",
-            color=0xff9600
+            color=0x00ffff
         )
         embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
         embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
@@ -1609,7 +1609,7 @@ async def cb_mission(mission_id, user, clear_time):
         embed = discord.Embed(
             title="以下のミッションを達成しました。》",
             description="```py\n11時～16時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
-            color=0xff9600
+            color=0x00ffff
         )
         embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
         embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
@@ -1621,7 +1621,7 @@ async def cb_mission(mission_id, user, clear_time):
         embed = discord.Embed(
             title="以下のミッションを達成しました。》",
             description="```py\n16時までに3凸終了する```",
-            color=0xff9600
+            color=0x00ffff
         )
         embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
         embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
