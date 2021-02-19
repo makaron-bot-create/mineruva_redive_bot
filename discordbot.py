@@ -1430,6 +1430,7 @@ async def clan_battl_call_reaction(payload):
         # クラバトミッション
         # ファーストアタック
         now = datetime.datetime.now()
+        attack_role_check, ok_role_check = no_attack_role_check(payload)
         if all([
             fast_attack_check,
             payload.emoji.name == emoji_list["attack_end"]
@@ -1464,7 +1465,6 @@ async def clan_battl_call_reaction(payload):
             await cb_mission(mission_id="m_003", user=payload.member, clear_time=now)
 
         # 朝活マスター
-        attack_role_check, ok_role_check = no_attack_role_check(payload)
         if all([
             all([
                 now.strftime('%H:%M') >= "05:00",
@@ -1494,7 +1494,6 @@ async def clan_battl_call_reaction(payload):
             await cb_mission(mission_id="m_005", user=payload.member, clear_time=now)
 
         # 昼活マスター
-        attack_role_check, ok_role_check = no_attack_role_check(payload)
         if all([
             all([
                 now.strftime('%H:%M') >= "11:00",
@@ -1503,7 +1502,7 @@ async def clan_battl_call_reaction(payload):
             not attack_role_check,
             not ok_role_check,
         ]):
-            await cb_mission(mission_id="m_004", user=payload.member, clear_time=now)
+            await cb_mission(mission_id="m_006", user=payload.member, clear_time=now)
 
         # クロスデイcheck
         if not no_attack_role_reset:
