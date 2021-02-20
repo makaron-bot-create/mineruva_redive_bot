@@ -1528,7 +1528,6 @@ async def clan_battl_call_reaction(payload):
         ]):
             clear_missions.append("m_007")
 
-
         # ミッション達成処理
         if clear_missions:
             await cb_mission(clear_missions, user=payload.member, clear_time=now)
@@ -1711,7 +1710,6 @@ async def cb_mission(clear_missions, user, clear_time):
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
             embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
             await mission_log_channel.send(user.mention, embed=embed)
-
 
 
 #########################################
