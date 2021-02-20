@@ -366,7 +366,7 @@ async def battle_log_add_information(payload):
 
     # ミッション達成チェック
     # 編成情報チェック
-    if not reaction_message.embeds.fields[]:
+    if not reaction_message.embeds.fields:
         clear_missions.append("m-009")
     # スクショチェック
     if not reaction_message.embeds.image:
