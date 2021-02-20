@@ -1466,8 +1466,7 @@ async def clan_battl_call_reaction(payload):
                 last_hp > 0,
                 all([
                     last_hp == 0,
-                    ok_attack_check,
-                    ok_role_check
+                    not ok_role_check
                 ])
             ]),
             payload.emoji.name == emoji_list["attack_end"]
@@ -1496,8 +1495,7 @@ async def clan_battl_call_reaction(payload):
                 last_hp > 0,
                 all([
                     last_hp == 0,
-                    ok_attack_check,
-                    ok_role_check
+                    not ok_role_check
                 ])
             ]),
             payload.emoji.name == emoji_list["attack_end"]
