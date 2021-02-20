@@ -1446,7 +1446,7 @@ async def clan_battl_call_reaction(payload):
             last_hp == 0,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_008")
+            clear_missions.append("m_002")
 
         # ラス凸
         if all([
@@ -1454,7 +1454,7 @@ async def clan_battl_call_reaction(payload):
             now.strftime('%H:%M') < "00:00",
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_002")
+            clear_missions.append("m_003")
 
         # 朝活
         if all([
@@ -1472,7 +1472,7 @@ async def clan_battl_call_reaction(payload):
             ]),
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_003")
+            clear_missions.append("m_004")
 
         # 朝活マスター
         if all([
@@ -1484,7 +1484,7 @@ async def clan_battl_call_reaction(payload):
             not ok_role_check,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_004")
+            clear_missions.append("m_005")
 
         # 昼活
         if all([
@@ -1502,7 +1502,7 @@ async def clan_battl_call_reaction(payload):
             ]),
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_005")
+            clear_missions.append("m_006")
 
         # 昼活マスター
         if all([
@@ -1514,7 +1514,7 @@ async def clan_battl_call_reaction(payload):
             not ok_role_check,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_006")
+            clear_missions.append("m_007")
 
         # 早寝早起き
         if all([
@@ -1526,7 +1526,7 @@ async def clan_battl_call_reaction(payload):
             not ok_role_check,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_007")
+            clear_missions.append("m_008")
 
         # ミッション達成処理
         if clear_missions:
