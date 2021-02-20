@@ -351,6 +351,9 @@ async def battle_log_add_information(payload):
     add_information_reaction_name = "\U0001f4dd"  # メモ絵文字
     channel = guild.get_channel(payload.channel_id)
 
+    now = datetime.datetime.now()
+    clear_missions = []
+
     y = 0 if clan_battle_tutorial_days is True else 1
     battle_log_channel = guild.get_channel(int(clan_battle_channel_id[3][y]))  # バトルログ
     reaction_message = await channel.fetch_message(payload.message_id)
@@ -360,6 +363,14 @@ async def battle_log_add_information(payload):
         not reaction_message.mentions
     ]):
         return
+
+    # ミッション達成チェック
+    # 編成情報チェック
+    if not reaction_message.embeds.fields:
+        clear_missions.append("m-009")
+    # スクショチェック
+    if not reaction_message.embeds.image:
+        clear_missions.append("m-010")
 
     if all([
         payload.emoji.name == add_information_reaction_name,
@@ -446,6 +457,10 @@ async def battle_log_add_information(payload):
                         await reaction.remove(user)
 
         await reaction_message.edit(embed=embed)
+
+        # ミッション達成処理
+        if clear_missions:
+            await cb_mission(clear_missions, user=payload.member, clear_time=now)
 
 
 # 残り凸メンバーリスト
@@ -1699,6 +1714,39 @@ async def cb_mission(clear_missions, user, clear_time):
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
                 description="```py\n0時までに3凸終了する```",
+                color=0x00ffff
+            )
+            embed.set_author(
+                name=user.display_name,
+                icon_url=user.avatar_url,
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
+
+        # バトルログ
+        # 編成情報
+        if mission == "m_009":
+            add_pt = 5
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\nバトルログに編成の詳細を書き込む\n（ラスアタ、持ち越しそれぞれ有効）```",
+                color=0x00ffff
+            )
+            embed.set_author(
+                name=user.display_name,
+                icon_url=user.avatar_url,
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            await mission_log_channel.send(user.mention, embed=embed)
+
+        # スクショ
+        if mission == "m_010":
+            add_pt = 5
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\nバトルログに編成のスクショをアップロード\n（ラスアタ、持ち越しそれぞれ有効)```",
                 color=0x00ffff
             )
             embed.set_author(
