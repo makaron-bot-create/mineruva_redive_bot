@@ -367,10 +367,10 @@ async def battle_log_add_information(payload):
     # ミッション達成チェック
     # 編成情報チェック
     if not reaction_message.embeds[0].fields:
-        clear_missions.append("m-009")
+        clear_missions.append("m_009")
     # スクショチェック
     if not reaction_message.embeds[0].image:
-        clear_missions.append("m-010")
+        clear_missions.append("m_010")
 
     if all([
         payload.emoji.name == add_information_reaction_name,
@@ -398,6 +398,19 @@ async def battle_log_add_information(payload):
 
         try:
             battle_log_check_message = await client.wait_for('message', check=battle_log_message_check, timeout=90)
+
+            # ミッションクリア判定
+            if all([
+                not battle_log_check_message.content,
+                "m_009" in clear_missions
+            ]):
+                clear_missions.remove("m_009")
+
+            if all([
+                not battle_log_check_message.attachments,
+                "m_010" in clear_missions
+            ]):
+                clear_missions.remove("m_010")
 
         except asyncio.TimeoutError:
             embed = discord.Embed(
