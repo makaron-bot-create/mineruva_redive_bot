@@ -1518,7 +1518,7 @@ async def clan_battl_call_reaction(payload):
         if all([
             all([
                 now.strftime('%H:%M') >= "05:00",
-                now.strftime('%H:%M') < "00:00"
+                now.strftime('%H:%M') <= "23:59"
             ]),
             not attack_role_check,
             not ok_role_check,
