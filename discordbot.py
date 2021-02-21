@@ -1758,7 +1758,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = -50
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\nバトルログに編成のスクショをアップロード\n（ラスアタ、持ち越しそれぞれ有効)```",
+                description="```py\n凸漏れしたのでポイントが減点されました```",
                 color=0xff0000
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
