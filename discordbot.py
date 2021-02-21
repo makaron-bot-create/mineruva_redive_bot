@@ -1776,6 +1776,80 @@ async def cb_mission(clear_missions, user, clear_time):
 
 
 #########################################
+# ポイント集計
+async def point_total(message):
+
+    now = datetime.datetime.now()
+
+    guild = client.get_guild(599780162309062706)
+    mission_log_channel = guild.get_channel(811023367011303464)  # ミッションログ
+    mission_total_channel = guild.get_channel(813091110401605652)  # 集計チャンネル
+
+    clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
+    clan_member = clan_member_role.members
+
+    mission_point_list = {}
+
+    # 集計アナウンス
+    embed = discord.Embed(
+        title="貢献度ポイントの集計を開始します。",
+        description="```py\n\"貢献度ポイント集計中.........\"\n```",
+        color=0xffff00
+    )
+    await message.delete()
+    delete_message = await message.channel.send(embed=embed)
+
+    for member in clan_member:
+        points = 0
+        mission_point_list[member] = points
+        async for message in mission_log_channel.history():
+            message_embed = message.embeds[0]
+            try:
+                if all([
+                    member.mention not in message.content,
+                    f"{now.year}年{now.month}月" in message_embed.fields[2].value
+                ]):
+                    pass
+
+                elif all([
+                    member.mention in message.content,
+                    f"{now.year}年{now.month}月" in message_embed.fields[2].value
+                ]):
+                    get_point = re.search("(?<=\")[0-9]+(?= )", message_embed.fields[0].value).group()
+                    points += int(get_point)
+                    mission_point_list[member] = points
+
+                elif f"{now.year}年{now.month}月" not in message_embed.fields[2].value:
+                    break
+            except IndexError:
+                break
+
+
+    # 集計結果
+    rank = 0
+    for member, point in sorted(mission_point_list.items(), key=lambda i: i[1], reverse=True):
+        rank += 1
+        embed = discord.Embed(
+            title=f"{now.month}月の累計ポイントはこちらです》",
+            description=f"【クラン内ランキング】\n```py\n{rank}位\n```\n【累計ポイント】\n```py\n{point} pt\n```",
+            color=0x00ffff
+        )
+        embed.set_author(
+            name=member.display_name,
+            icon_url=member.avatar_url,
+        )
+        await mission_total_channel.send(embed=embed)
+
+    await asyncio.sleep(180)
+    embed = discord.Embed(
+        description="全ての集計が完了しました。",
+        color=0xffff00
+    )
+    await delete_message.delete()
+    await delete_message.channel.send(embed=embed)
+
+
+#########################################
 # メッセージの時間削除
 async def message_time_delete(delete_message, delete_time):
     await asyncio.sleep(delete_time)
@@ -2402,6 +2476,9 @@ async def on_message(message):
 
         if r.startswith(("/kick\n", "/kick ")):
             await member_kick(message)
+
+        if r.startswith("/集計"):
+            await point_total(message)
 
     # クラバトコマンド
         if "/残り凸状況" in message.content:
