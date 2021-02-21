@@ -1608,6 +1608,36 @@ async def cb_mission(clear_missions, user, clear_time):
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
+    # 現在のクラバト開催日数
+    set_rollover_time = rollover_time
+
+    start_y = clan_battle_start_date.year
+    start_m = clan_battle_start_date.month
+    start_d = clan_battle_start_date.day
+    now_y = now.year
+    now_m = now.month
+    now_d = now.day
+    cb_day = (datetime.date(now_y, now_m, now_d) - datetime.date(start_y, start_m, start_d) + timedelta(days=1)).days
+
+    if cb_day <= 0:
+        if any([
+            datetime.datetime.now().strftime("%H:%M") < set_rollover_time,
+            not no_attack_role_reset
+        ]):
+            cb_day = cb_day - 1
+
+        cb_days = f"```\n開催{abs(cb_day)}日前\n```"
+
+    else:
+        if any([
+            datetime.datetime.now().strftime("%H:%M") < set_rollover_time,
+            not no_attack_role_reset
+        ]):
+            cb_day = cb_day - 1
+
+        cb_days = f"```\n{abs(cb_day)}日目\n```"
+
+    mission_logs = []
     for mission in clear_missions:
         # ファーストアタック
         if mission == "m_001":
@@ -1617,13 +1647,8 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\n30人中のその日の1凸目になる```",
                 color=0x00ffff
             )
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+            mission_logs.append(embed)
 
         # 残飯処理
         if mission == "m_002":
@@ -1633,13 +1658,8 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\nラスアタする```",
                 color=0x00ffff
             )
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+            mission_logs.append(embed)
 
         # ラス凸
         if mission == "m_003":
@@ -1649,13 +1669,8 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\n0時までにその日の90凸目になる```",
                 color=0x00ffff
             )
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+            mission_logs.append(embed)
 
         # 朝活
         if mission == "m_004":
@@ -1665,13 +1680,8 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\n5時～11時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
                 color=0x00ffff
             )
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+            mission_logs.append(embed)
 
         # 朝活マスター
         if mission == "m_005":
@@ -1681,13 +1691,8 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\n11時までに3凸終了する```",
                 color=0x00ffff
             )
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+            mission_logs.append(embed)
 
         # 昼活
         if mission == "m_006":
@@ -1697,13 +1702,8 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\n11時～16時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
                 color=0x00ffff
             )
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+            mission_logs.append(embed)
 
         # 昼活マスター
         if mission == "m_007":
@@ -1713,13 +1713,8 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\n16時までに3凸終了する```",
                 color=0x00ffff
             )
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+            mission_logs.append(embed)
 
         # 早寝早起き
         if mission == "m_008":
@@ -1729,13 +1724,8 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\n0時までに3凸終了する```",
                 color=0x00ffff
             )
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+            mission_logs.append(embed)
 
         # バトルログ
         # 編成情報
@@ -1746,13 +1736,8 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\nバトルログに編成の詳細を書き込む\n（ラスアタ、持ち越しそれぞれ有効）```",
                 color=0x00ffff
             )
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+            mission_logs.append(embed)
 
         # スクショ
         if mission == "m_010":
@@ -1762,12 +1747,17 @@ async def cb_mission(clear_missions, user, clear_time):
                 description="```py\nバトルログに編成のスクショをアップロード\n（ラスアタ、持ち越しそれぞれ有効)```",
                 color=0x00ffff
             )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            mission_logs.append(embed)
+
+        # ミッションログ送信
+        for embed in mission_logs:
             embed.set_author(
                 name=user.display_name,
                 icon_url=user.avatar_url,
             )
-            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
-            embed.add_field(name="【達成日時】", value=f"{now_ymd}\n{now_hms}", inline=False)
+            embed.add_field(name="【クラバト日数】", value=cb_days, inline=False)
+            embed.add_field(name="【達成日時】", value=f"```\n{now_ymd}\n{now_hms}\n```", inline=False)
             await mission_log_channel.send(user.mention, embed=embed)
 
 
