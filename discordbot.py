@@ -705,12 +705,6 @@ async def clan_battl_role_reset(now):
             )
             reset_role_text = await edit_message.channel.send(embed=embed)
 
-    # 凸漏れチェック
-    for role_id in clan_battle_attack_role_id:
-        members = guild.get_role(role_id)
-        for member in members:
-            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
-
     clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
     clan_member = clan_member_role.members
     for member in clan_member:
