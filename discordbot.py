@@ -281,7 +281,7 @@ async def clan_battl_start_up():
     now_boss_data["now_boss"] = 0
     now_boss_data["now_boss_hp"] = int(boss_hp[0][0])
 
-    await clan_battl_role_reset()
+    await clan_battl_role_reset(now)
 
 
 # 進捗状況の編集
