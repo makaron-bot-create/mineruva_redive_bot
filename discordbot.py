@@ -1764,15 +1764,15 @@ async def cb_mission(clear_missions, user, clear_time):
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
             mission_logs.append(embed)
 
-        # ミッションログ送信
-        for embed in mission_logs:
-            embed.set_author(
-                name=user.display_name,
-                icon_url=user.avatar_url,
-            )
-            embed.add_field(name="【クラバト日数】", value=cb_days, inline=False)
-            embed.add_field(name="【達成日時】", value=f"```\n{now_ymd}\n{now_hms}\n```", inline=False)
-            await mission_log_channel.send(user.mention, embed=embed)
+    # ミッションログ送信
+    for embed in mission_logs:
+        embed.set_author(
+            name=user.display_name,
+            icon_url=user.avatar_url,
+        )
+        embed.add_field(name="【クラバト日数】", value=cb_days, inline=False)
+        embed.add_field(name="【達成日時】", value=f"```\n{now_ymd}\n{now_hms}\n```", inline=False)
+        await mission_log_channel.send(user.mention, embed=embed)
 
 
 #########################################
