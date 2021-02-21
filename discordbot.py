@@ -275,6 +275,7 @@ async def boss_description(boss):
 async def clan_battl_start_up():
     global now_boss_data
 
+    now = datetime.datetime.now()
     now_boss_data["now_lap"] = 1
     now_boss_data["now_boss_level"] = 1
     now_boss_data["now_boss"] = 0
@@ -608,14 +609,11 @@ async def add_attack_role(boss_hp_check_message):
 
 
 # 残り凸ロールリセット
-async def clan_battl_role_reset():
+async def clan_battl_role_reset(now):
     global add_role_check
     global no_attack_role_reset
     global now_attack_list
-
     global fast_attack_check
-
-    now = datetime.datetime.now()
 
     guild = client.get_guild(599780162309062706)
     channel = client.get_channel(741851480868519966)  # ミネルヴァ・動作ログ
@@ -706,6 +704,12 @@ async def clan_battl_role_reset():
                 colour=0xffff00
             )
             reset_role_text = await edit_message.channel.send(embed=embed)
+
+    # 凸漏れチェック
+    for role_id in clan_battle_attack_role_id:
+        members = guild.get_role(role_id)
+        for member in members:
+            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
 
     clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
     clan_member = clan_member_role.members
@@ -1388,6 +1392,7 @@ async def clan_battl_call_reaction(payload):
                 description=f"{boss_hp_check_message.author.display_name}》\n凸が終了しました。",
                 color=0x00b4ff
             )
+            now = datetime.datetime.now()
             await channel_0.set_permissions(boss_hp_check_message.author, overwrite=None)
             await clan_battl_no_attack_member_list(no_attack_member_list_ch)
             message_3 = await channel_1.send(embed=embed_end)
@@ -1432,7 +1437,6 @@ async def clan_battl_call_reaction(payload):
         )
 
         if 0 == last_hp or 0 == attack_total:
-            now = datetime.datetime.now()
             now_ymd = f"{now.year}年{now.month}月{now.day}日"
             now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
 
@@ -1459,7 +1463,6 @@ async def clan_battl_call_reaction(payload):
 
         # クラバトミッション
         # ファーストアタック
-        now = datetime.datetime.now()
         clear_missions = []
         attack_role_check, ok_role_check = no_attack_role_check(payload)
         if all([
@@ -1573,7 +1576,7 @@ async def clan_battl_call_reaction(payload):
                     await no_attack_role_remove()
 
                 else:
-                    await clan_battl_role_reset()
+                    await clan_battl_role_reset(now)
 
         if any([
                 payload.emoji.name == emoji_list["attack_p"],
@@ -1746,6 +1749,17 @@ async def cb_mission(clear_missions, user, clear_time):
                 title="以下のミッションを達成しました。》",
                 description="```py\nバトルログに編成のスクショをアップロード\n（ラスアタ、持ち越しそれぞれ有効)```",
                 color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            mission_logs.append(embed)
+
+        # 凸漏れ
+        if mission == "m_999":
+            add_pt = -50
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\nバトルログに編成のスクショをアップロード\n（ラスアタ、持ち越しそれぞれ有効)```",
+                color=0xff0000
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
             mission_logs.append(embed)
@@ -2315,7 +2329,7 @@ async def loop():
                 return
 
             else:
-                await clan_battl_role_reset()
+                await clan_battl_role_reset(now)
                 no_attack_role_reset = True
 
     # クラバト終了処理
