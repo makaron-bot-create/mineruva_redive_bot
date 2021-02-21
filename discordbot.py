@@ -1824,7 +1824,6 @@ async def point_total(message):
             except IndexError:
                 break
 
-
     # 集計結果
     rank = 0
     for member, point in sorted(mission_point_list.items(), key=lambda i: i[1], reverse=True):
