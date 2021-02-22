@@ -688,12 +688,12 @@ async def clan_battl_role_reset(now):
                 elif message.embeds:
                     break
 
-    # 凸漏れチェック
-    for role_id in clan_battle_attack_role_id:
-        members = guild.get_role(role_id).members
-        if members:
-            for member in members:
-                await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+        # 凸漏れチェック
+        for role_id in clan_battle_attack_role_id:
+            members = guild.get_role(role_id).members
+            if members:
+                for member in members:
+                    await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
 
         # クラバト終了処理
         if any([
