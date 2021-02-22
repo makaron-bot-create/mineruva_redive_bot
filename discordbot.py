@@ -2508,7 +2508,7 @@ async def on_raw_reaction_add(payload):
             for channel in boss_ch:
                 boss += 1
                 if payload.channel_id == channel:
-                    await cb_mission(clear_missions=[f"mb_00{boss}"], user=reaction_message.content, clear_time=now)
+                    await cb_mission(clear_missions=[f"mb_00{boss}"], user=reaction_message.author, clear_time=now)
 
 
 # リアクション操作
