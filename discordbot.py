@@ -688,6 +688,13 @@ async def clan_battl_role_reset(now):
                 elif message.embeds:
                     break
 
+    # 凸漏れチェック
+    for role_id in clan_battle_attack_role_id:
+        members = guild.get_role(role_id).members
+        if members:
+            for member in members:
+                await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+
         # クラバト終了処理
         if any([
             all([
@@ -696,6 +703,7 @@ async def clan_battl_role_reset(now):
             ]),
             now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
         ]):
+            await no_attack_role_remove()
             return
 
         if not clan_battle_tutorial_days:
@@ -722,7 +730,7 @@ async def clan_battl_role_reset(now):
         for member in guild.get_role(clan_battle_attack_role_id[3]).members:
             await member.remove_roles(guild.get_role(clan_battle_attack_role_id[3]))
 
-    await channel.send(f"クランメンバーに「未3凸」ロールを付与しました。\n{datetime.datetime.now()}")
+    await channel.send(f"クランメンバーに「未3凸」ロールを付与しました。\n{now}")
     await clan_battl_no_attack_member_list(no_attack_member_list_ch)
     await clan_battle_event()
     await reset_role_text.delete()
@@ -2410,7 +2418,7 @@ async def loop():
             return
 
         else:
-            await no_attack_role_remove()
+            await clan_battl_role_reset(now)
             no_attack_role_reset = True
 
     else:
