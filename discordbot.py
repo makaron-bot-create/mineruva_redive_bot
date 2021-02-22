@@ -1649,7 +1649,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 30
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n30人中のその日の1凸目になる```",
+                description="```py\n30人中のその日の1凸目になる\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1660,7 +1660,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 10
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\nラスアタする```",
+                description="```py\nラスアタする\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1671,7 +1671,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 100
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n0時までにその日の90凸目になる```",
+                description="```py\n0時までにその日の90凸目になる\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1682,7 +1682,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 10
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n5時～11時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
+                description="```py\n5時～11時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1693,7 +1693,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 20
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n11時までに3凸終了する```",
+                description="```py\n11時までに3凸終了する\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1704,7 +1704,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 5
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n11時～16時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）```",
+                description="```py\n11時～16時の間に1凸する\n（ラスアタ時は持ち越し消化後に付与）\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1715,7 +1715,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 10
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n16時までに3凸終了する```",
+                description="```py\n16時までに3凸終了する\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1726,7 +1726,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 5 * (20 - (int(now.hour) - 5))
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n0時までに3凸終了する```",
+                description="```py\n0時までに3凸終了する\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1738,7 +1738,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 5
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\nバトルログに編成の詳細を書き込む\n（ラスアタ、持ち越しそれぞれ有効）```",
+                description="```py\nバトルログに編成の詳細を書き込む\n（ラスアタ、持ち越しそれぞれ有効）\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1749,7 +1749,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 5
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\nバトルログに編成のスクショをアップロード\n（ラスアタ、持ち越しそれぞれ有効)```",
+                description="```py\nバトルログに編成のスクショをアップロード\n（ラスアタ、持ち越しそれぞれ有効)\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1760,8 +1760,64 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = -50
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n凸漏れしたのでポイントが減点されました```",
+                description="```py\n凸漏れしたのでポイントが減点されました\n```",
                 color=0xff0000
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            mission_logs.append(embed)
+
+        # ボス別編成共有
+        # 1ボス編成
+        if mission == "mb_001":
+            add_pt = 10
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n1ボスの編成を上げる/n（クラマス判断で付与）\n（スクショのみは無効）\n```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            mission_logs.append(embed)
+
+        # 2ボス編成
+        if mission == "mb_002":
+            add_pt = 10
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n2ボスの編成を上げる/n（クラマス判断で付与）\n（スクショのみは無効）\n```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            mission_logs.append(embed)
+
+        # 3ボス編成
+        if mission == "mb_003":
+            add_pt = 10
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n1ボスの編成を上げる/n（クラマス判断で付与）\n（スクショのみは無効）\n```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            mission_logs.append(embed)
+
+        # 4ボス編成
+        if mission == "mb_004":
+            add_pt = 10
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n1ボスの編成を上げる/n（クラマス判断で付与）\n（スクショのみは無効）\n```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            mission_logs.append(embed)
+
+        # 5ボス編成
+        if mission == "mb_005":
+            add_pt = 10
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n1ボスの編成を上げる/n（クラマス判断で付与）\n（スクショのみは無効）\n```",
+                color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
             mission_logs.append(embed)
@@ -2430,6 +2486,7 @@ loop.start()
 # リアクション操作
 @client.event
 async def on_raw_reaction_add(payload):
+    now = datetime.datetime.now()
 
     # サーバー案内チャンネルチェック
     if payload.channel_id == 749511208104755241:
@@ -2440,6 +2497,16 @@ async def on_raw_reaction_add(payload):
         await clan_battl_call_reaction(payload)
 
     await battle_log_add_information(payload)
+
+    # クラバトミッション
+    boss = 0
+    ok_emoji = client.get_emoji(682357586062082083)
+    if payload.member.id == 490682682880163850:
+        if payload.emoji == ok_emoji:
+            for channel in boss_ch:
+                boss += 1
+                if payload.channel_id == channel:
+                    await cb_mission(clear_missions=[f"mb_00{boss}"], user=payload.member, clear_time=now)
 
 
 # リアクション操作
