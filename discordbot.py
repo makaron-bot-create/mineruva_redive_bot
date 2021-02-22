@@ -959,6 +959,7 @@ async def clan_battl_call_reaction(payload):
 
     global fast_attack_check
 
+    now = datetime.datetime.now()
     nl = "\n"
     hp_fomat = "{:,}"
     ok_attack_text = ""
