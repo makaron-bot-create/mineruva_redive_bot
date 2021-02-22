@@ -2501,12 +2501,14 @@ async def on_raw_reaction_add(payload):
     # クラバトミッション
     boss = 0
     ok_emoji = client.get_emoji(682357586062082083)
+    channel = client.get_channel(payload.channel_id)
     if payload.member.id == 490682682880163850:
         if payload.emoji == ok_emoji:
+            reaction_message = await channel.fetch_message(payload.message_id)
             for channel in boss_ch:
                 boss += 1
                 if payload.channel_id == channel:
-                    await cb_mission(clear_missions=[f"mb_00{boss}"], user=payload.member, clear_time=now)
+                    await cb_mission(clear_missions=[f"mb_00{boss}"], user=reaction_message.content, clear_time=now)
 
 
 # リアクション操作
