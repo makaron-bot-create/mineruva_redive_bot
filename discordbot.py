@@ -693,7 +693,18 @@ async def clan_battl_role_reset(now):
             members = guild.get_role(role_id).members
             if members:
                 for member in members:
-                    await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+                    if role_id == clan_battle_attack_role_id[0]
+                        for count in range(1):
+                            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+                    elif role_id == clan_battle_attack_role_id[1]
+                        for count in range(3):
+                            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+                    elif role_id == clan_battle_attack_role_id[2]
+                        for count in range(2):
+                            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+                    elif role_id == clan_battle_attack_role_id[3]
+                        for count in range(1):
+                            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
 
         # クラバト終了処理
         if any([
@@ -745,10 +756,21 @@ async def no_attack_role_remove():
     if not no_attack_role_reset:
         no_attack_role_reset = True
 
-    for role_id in clan_battle_attack_role_id:
-        role = guild.get_role(role_id)
-        for member in guild.role.members:
-            await member.remove_roles(role)
+    if guild.get_role(clan_battle_attack_role_id[0]).members:
+        for member in guild.get_role(clan_battle_attack_role_id[0]).members:
+            await member.remove_roles(guild.get_role(clan_battle_attack_role_id[0]))
+
+    if guild.get_role(clan_battle_attack_role_id[1]).members:
+        for member in guild.get_role(clan_battle_attack_role_id[1]).members:
+            await member.remove_roles(guild.get_role(clan_battle_attack_role_id[1]))
+
+    if guild.get_role(clan_battle_attack_role_id[2]).members:
+        for member in guild.get_role(clan_battle_attack_role_id[2]).members:
+            await member.remove_roles(guild.get_role(clan_battle_attack_role_id[2]))
+
+    if guild.get_role(clan_battle_attack_role_id[3]).members:
+        for member in guild.get_role(clan_battle_attack_role_id[3]).members:
+            await member.remove_roles(guild.get_role(clan_battle_attack_role_id[3]))
 
 
 # 進捗状況更新
