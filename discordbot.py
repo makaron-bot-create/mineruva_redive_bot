@@ -693,16 +693,16 @@ async def clan_battl_role_reset(now):
             members = guild.get_role(role_id).members
             if members:
                 for member in members:
-                    if role_id == clan_battle_attack_role_id[0]
+                    if role_id == clan_battle_attack_role_id[0]:
                         for count in range(1):
                             await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
-                    elif role_id == clan_battle_attack_role_id[1]
+                    elif role_id == clan_battle_attack_role_id[1]:
                         for count in range(3):
                             await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
-                    elif role_id == clan_battle_attack_role_id[2]
+                    elif role_id == clan_battle_attack_role_id[2]:
                         for count in range(2):
                             await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
-                    elif role_id == clan_battle_attack_role_id[3]
+                    elif role_id == clan_battle_attack_role_id[3]:
                         for count in range(1):
                             await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
 
