@@ -1794,7 +1794,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 10
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n1ボスの編成を上げる\n（クラマス判断で付与）\n（スクショのみは無効）\n```",
+                description="```py\n3ボスの編成を上げる\n（クラマス判断で付与）\n（スクショのみは無効）\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1805,7 +1805,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 10
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n1ボスの編成を上げる\n（クラマス判断で付与）\n（スクショのみは無効）\n```",
+                description="```py\n4ボスの編成を上げる\n（クラマス判断で付与）\n（スクショのみは無効）\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
@@ -1816,7 +1816,7 @@ async def cb_mission(clear_missions, user, clear_time):
             add_pt = 10
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
-                description="```py\n1ボスの編成を上げる\n（クラマス判断で付与）\n（スクショのみは無効）\n```",
+                description="```py\n5ボスの編成を上げる\n（クラマス判断で付与）\n（スクショのみは無効）\n```",
                 color=0x00ffff
             )
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
