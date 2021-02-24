@@ -2603,6 +2603,8 @@ async def on_raw_reaction_add(payload):
                 if payload.channel_id == channel:
                     await cb_mission(clear_missions=[f"mb_00{boss}"], user=reaction_message.author, clear_time=now)
 
+    # 不人気ボス投票
+    await boss_election(payload)
 
 # リアクション操作
 @client.event
