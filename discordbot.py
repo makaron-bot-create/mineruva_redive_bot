@@ -86,6 +86,14 @@ emoji_list = {
     "attack_end": "\U00002705"
 }
 
+number_emoji = [
+    "\U00000031\U0000fe0f\U000020e3",
+    "\U00000032\U0000fe0f\U000020e3",
+    "\U00000033\U0000fe0f\U000020e3",
+    "\U00000034\U0000fe0f\U000020e3",
+    "\U00000035\U0000fe0f\U000020e3"
+]
+
 # 絵文字ヘルプ
 help_emoji = f"""
 __凸前宣言__
@@ -1927,6 +1935,68 @@ async def point_total(message):
     )
     await delete_message.delete()
     await delete_message.channel.send(embed=embed)
+
+
+#########################################
+# 不人気ボス投票
+async def boss_election(payload):
+    guild = client.get_guild(payload.guild_id)
+    channel = guild.get_channel(payload.channel_id)
+
+    async for message in channel.history(limit=10):
+        if "不人気ボス" in message.content:
+            reaction_message = message
+            break
+
+    if payload.member.bot:
+        return
+
+    if payload.message_id != reaction_message.id:
+        return
+
+    emoji_check = False
+    for reaction_emoji in number_emoji:
+        if payload.emoji.name == reaction_emoji:
+            emoji_check = True
+            break
+
+    if not emoji_check:
+        return
+
+    if payload.emoji.name == number_emoji[0]:
+        for reaction in reaction_message.reactions:
+            if reaction.emoji != number_emoji[0]:
+                async for user in reaction.users():
+                    if user == payload.member:
+                        await reaction.remove(user)
+
+    if payload.emoji.name == number_emoji[1]:
+        for reaction in reaction_message.reactions:
+            if reaction.emoji != number_emoji[1]:
+                async for user in reaction.users():
+                    if user == payload.member:
+                        await reaction.remove(user)
+
+    if payload.emoji.name == number_emoji[2]:
+        for reaction in reaction_message.reactions:
+            if reaction.emoji != number_emoji[2]:
+                async for user in reaction.users():
+                    if user == payload.member:
+                        await reaction.remove(user)
+
+    if payload.emoji.name == number_emoji[3]:
+        for reaction in reaction_message.reactions:
+            if reaction.emoji != number_emoji[3]:
+                async for user in reaction.users():
+                    if user == payload.member:
+                        await reaction.remove(user)
+
+    if payload.emoji.name == number_emoji[4]:
+        for reaction in reaction_message.reactions:
+            if reaction.emoji != number_emoji[4]:
+                async for user in reaction.users():
+                    if user == payload.member:
+                        await reaction.remove(user)
 
 
 #########################################
