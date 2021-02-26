@@ -1515,6 +1515,7 @@ async def clan_battl_call_reaction(payload):
         # ラス凸
         if all([
             attack_total == 0,
+            now.strftime('%H:%M') >= "05:00",
             now.strftime('%H:%M') <= "23:59",
             payload.emoji.name == emoji_list["attack_end"]
         ]):
