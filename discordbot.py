@@ -1892,7 +1892,7 @@ async def point_total(message):
     for member in clan_member:
         points = 0
         mission_point_list[member] = points
-        async for message in mission_log_channel.history():
+        async for message in mission_log_channel.history(limit=5000):
             message_embed = message.embeds[0]
             try:
                 if all([
