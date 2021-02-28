@@ -1872,7 +1872,7 @@ async def point_total(message):
     now = datetime.datetime.now()
 
     guild = client.get_guild(599780162309062706)
-    mission_log_channel = guild.get_channel(811023367011303464)  # ミッションログ
+    mission_log_channel = guild.get_channel(811059306392715325)  # ミッションログ
     mission_total_channel = guild.get_channel(813091110401605652)  # 集計チャンネル
 
     clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
