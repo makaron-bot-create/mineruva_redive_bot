@@ -1904,7 +1904,7 @@ async def point_total(message):
                     get_point = re.search("(?<=\")[0-9]+(?= )", message_embed.fields[0].value).group()
                     points += int(get_point)
 
-                elif f"{now.year}年{now.month}月" not in message_embed.fields[2].value:
+                elif f"{now.year}年2月" not in message_embed.fields[2].value:
                     break
             except IndexError:
                 pass
