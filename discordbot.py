@@ -1898,15 +1898,22 @@ async def point_total(message):
             message_embed = mission_message.embeds[0]
             try:
                 if all([
-                    member.id == mission_message.mentions[0].id,
-                    f"{now.year}年2月" in message_embed.fields[2].value
+                    member.id == message.mentions[0].id,
+                    f"{now.year}年2月" in message_embed.fields[2].value,
+                    re.search("(?<=\")[0-9]+(?= )", message_embed.fields[0].value)
                 ]):
                     get_point = re.search("(?<=\")[0-9]+(?= )", message_embed.fields[0].value).group()
                     points += int(get_point)
-
-                elif f"{now.year}年2月" not in message_embed.fields[2].value:
-                    break
-            except IndexError:
+                    print(int(get_point))
+                elif all([
+                    member.id == message.mentions[0].id,
+                    f"{now.year}年2月" in message_embed.fields[2].value,
+                    re.search("(?<=\")-[0-9]+(?= )", message_embed.fields[0].value)
+                ]):
+                    get_point = re.search("(?<=\")-[0-9]+(?= )", message_embed.fields[0].value).group()
+                    points += int(get_point)
+                    print(int(get_point))
+            except AttributeError:
                 pass
 
         mission_point_list[member] = points
