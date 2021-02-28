@@ -1879,6 +1879,7 @@ async def point_total(message):
     clan_member = clan_member_role.members
 
     mission_point_list = {}
+    point_rank_list = []
 
     # 集計アナウンス
     embed = discord.Embed(
@@ -1916,8 +1917,17 @@ async def point_total(message):
 
     # 集計結果
     rank = 0
+    point_x = 0
+    count = 0
     for member, point in sorted(mission_point_list.items(), key=lambda i: i[1], reverse=True):
         rank += 1
+        if point_x == point:
+            rank -= 1
+            count += 1
+        elif point_x != point:
+            rank += count
+            count = 0
+
         embed = discord.Embed(
             title=f"{now.month}月の累計ポイントはこちらです》",
             description=f"【クラン内ランキング】\n```py\n{rank}位\n```\n【累計ポイント】\n```py\n{point} pt\n```",
@@ -1927,6 +1937,10 @@ async def point_total(message):
             name=member.display_name,
             icon_url=member.avatar_url,
         )
+        point_x = point
+        point_rank_list.append(embed)
+
+    for embed in reverse(point_rank_list):
         await mission_total_channel.send(embed=embed)
 
     await asyncio.sleep(180)
