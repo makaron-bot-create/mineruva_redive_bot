@@ -1898,7 +1898,7 @@ async def point_total(message):
             message_embed = mission_message.embeds[0]
             try:
                 if all([
-                    member.id == message.mentions[0].id,
+                    member.id == mission_message.mentions[0].id,
                     f"{now.year}年2月" in message_embed.fields[2].value,
                     re.search("(?<=\")[0-9]+(?= )", message_embed.fields[0].value)
                 ]):
