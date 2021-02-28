@@ -1915,6 +1915,8 @@ async def point_total(message):
             except IndexError:
                 pass
 
+        mission_point_list[member] = points
+
     # 集計結果
     rank = 0
     point_x = 0
