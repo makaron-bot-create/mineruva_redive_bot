@@ -1877,6 +1877,7 @@ async def point_total(message):
 
     clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
     clan_member = clan_member_role.members
+    mission_log_list = await mission_log_channel.history(limit=2000).flatten()
 
     mission_point_list = {}
     point_rank_list = []
@@ -1893,7 +1894,7 @@ async def point_total(message):
     for member in clan_member:
         points = 0
         mission_point_list[member] = points
-        async for message in mission_log_channel.history(limit=5000):
+        for message in mission_log_list:
             message_embed = message.embeds[0]
             try:
                 if all([
