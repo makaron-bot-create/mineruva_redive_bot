@@ -1904,12 +1904,11 @@ async def point_total(message):
                     pass
 
                 elif all([
-                    member.mention in message.content,
+                    member.id == message.mentions[0].id,
                     f"{now.year}年{now.month}月" in message_embed.fields[2].value
                 ]):
                     get_point = re.search("(?<=\")[0-9]+(?= )", message_embed.fields[0].value).group()
                     points += int(get_point)
-                    mission_point_list[member] = points
 
                 elif f"{now.year}年{now.month}月" not in message_embed.fields[2].value:
                     break
