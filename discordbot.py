@@ -1913,7 +1913,7 @@ async def point_total(message):
                 elif f"{now.year}年{now.month}月" not in message_embed.fields[2].value:
                     break
             except IndexError:
-                break
+                pass
 
     # 集計結果
     rank = 0
