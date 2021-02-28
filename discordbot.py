@@ -1894,16 +1894,10 @@ async def point_total(message):
     for member in clan_member:
         points = 0
         mission_point_list[member] = points
-        for message in mission_log_list:
-            message_embed = message.embeds[0]
+        for mission_message in mission_log_list:
+            message_embed = mission_message.embeds[0]
             try:
                 if all([
-                    member.mention not in message.content,
-                    f"{now.year}年{now.month}月" in message_embed.fields[2].value
-                ]):
-                    pass
-
-                elif all([
                     member.id == mission_message.mentions[0].id,
                     f"{now.year}年{now.month}月" in message_embed.fields[2].value
                 ]):
