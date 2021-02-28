@@ -1925,7 +1925,7 @@ async def point_total(message):
             count = 0
 
         embed = discord.Embed(
-            title=f"{now.month}月の累計ポイントはこちらです》",
+            title=f"2月の累計ポイントはこちらです》",
             description=f"【クラン内ランキング】\n```py\n{rank}位\n```\n【累計ポイント】\n```py\n{point} pt\n```",
             color=0x00ffff
         )
