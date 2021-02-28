@@ -1940,7 +1940,7 @@ async def point_total(message):
         point_x = point
         point_rank_list.append(embed)
 
-    for embed in reverse(point_rank_list):
+    for embed in reversed(point_rank_list):
         await mission_total_channel.send(embed=embed)
 
     await asyncio.sleep(180)
