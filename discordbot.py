@@ -1878,8 +1878,17 @@ async def point_total(message):
     clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
     clan_member = clan_member_role.members
 
+    mission_log_list = []
     mission_point_list = {}
     point_rank_list = []
+
+    if re.search("[0-9]+年[0-9]+月", message.content):
+        y = int(re.search("[0-9]+(?=年)", message.content).group())
+        m = int(re.search("(?<=年)[0-9]+(?=月)", message.content).group())
+
+    else:
+        y = now.year
+        m = now.month
 
     # 集計アナウンス
     embed = discord.Embed(
@@ -1890,29 +1899,29 @@ async def point_total(message):
     await message.delete()
     delete_message = await message.channel.send(embed=embed)
 
-    mission_log_list = await mission_log_channel.history(limit=2000).flatten()
+    async for message in mission_log_channel.history(limit=5000):
+        message_embed = message.embeds[0]
+        if f"{y}年{m}月" in message_embed.fields[2].value:
+            mission_log_list.append(message)
+        elif any([
+            y > int(re.search("[0-9]+(?=年)", message_embed.fields[2].value).group()),
+            y > int(re.search("(?<=年)[0-9]+(?=月)", message_embed.fields[2].value).group())
+        ]):
+            break
+
     for member in clan_member:
         points = 0
         mission_point_list[member] = points
         for mission_message in mission_log_list:
             message_embed = mission_message.embeds[0]
-            try:
-                if all([
-                    member.id == mission_message.mentions[0].id,
-                    f"{now.year}年2月" in message_embed.fields[2].value,
-                    re.search("(?<=\")[0-9]+(?= )", message_embed.fields[0].value)
-                ]):
-                    get_point = re.search("(?<=\")[0-9]+(?= )", message_embed.fields[0].value).group()
-                    points += int(get_point)
-                elif all([
-                    member.id == mission_message.mentions[0].id,
-                    f"{now.year}年2月" in message_embed.fields[2].value,
-                    re.search("(?<=\")-[0-9]+(?= )", message_embed.fields[0].value)
-                ]):
-                    get_point = re.search("(?<=\")-[0-9]+(?= )", message_embed.fields[0].value).group()
-                    points += int(get_point)
-            except AttributeError:
-                pass
+
+            if all([
+                member.id == mission_message.mentions[0].id,
+                f"{y}年{m}月" in message_embed.fields[2].value,
+                re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value)
+            ]):
+                get_point = re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value).group()
+                points += int(get_point)
 
         mission_point_list[member] = points
 
