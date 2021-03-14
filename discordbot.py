@@ -1875,9 +1875,7 @@ async def point_total(message):
     mission_log_channel = guild.get_channel(811059306392715325)  # ミッションログ
     mission_total_channel = guild.get_channel(813091110401605652)  # 集計チャンネル
 
-    clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
-    clan_member = clan_member_role.members
-
+    clan_member = []
     mission_log_list = []
     mission_point_list = {}
     point_rank_list = []
@@ -1903,6 +1901,9 @@ async def point_total(message):
         message_embed = message.embeds[0]
         if f"{y}年{m}月" in message_embed.fields[2].value:
             mission_log_list.append(message)
+            member = guild.get_member(message.mentions[0].id)
+            if member not in clan_member:
+                clan_member.append(member)
         elif any([
             y > int(re.search("[0-9]+(?=年)", message_embed.fields[2].value).group()),
             y > int(re.search("(?<=年)[0-9]+(?=月)", message_embed.fields[2].value).group())
@@ -1939,7 +1940,7 @@ async def point_total(message):
             count = 0
 
         embed = discord.Embed(
-            title="2月の累計ポイントはこちらです》",
+            title=f"{y}年{m}月の累計ポイントはこちらです》",
             description=f"【クラン内ランキング】\n```py\n{rank}位\n```\n【累計ポイント】\n```py\n{point} pt\n```",
             color=0x00ffff
         )
@@ -1948,10 +1949,11 @@ async def point_total(message):
             icon_url=member.avatar_url,
         )
         point_x = point
-        point_rank_list.append(embed)
+        point_rank_list.append([member, embed])
 
-    for embed in reversed(point_rank_list):
-        await mission_total_channel.send(embed=embed)
+    for point_total_list in reversed(point_rank_list):
+        member, embed = point_total_list
+        await mission_total_channel.send(member.mention, embed=embed)
 
     await asyncio.sleep(180)
     embed = discord.Embed(
