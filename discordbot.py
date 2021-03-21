@@ -396,10 +396,10 @@ async def battle_log_add_information(payload):
     # ミッション達成チェック
     # 編成情報チェック
     if not reaction_message.embeds[0].fields:
-        clear_missions.append("m_009")
+        clear_missions.append("m_011")
     # スクショチェック
     if not reaction_message.embeds[0].image:
-        clear_missions.append("m_010")
+        clear_missions.append("m_012")
 
     if all([
         payload.emoji.name == add_information_reaction_name,
@@ -717,22 +717,23 @@ async def clan_battl_role_reset(now):
                     break
 
         # 凸漏れチェック
-        for role_id in clan_battle_attack_role_id:
-            members = guild.get_role(role_id).members
-            if members:
-                for member in members:
-                    if role_id == clan_battle_attack_role_id[0]:
-                        for count in range(1):
-                            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
-                    elif role_id == clan_battle_attack_role_id[1]:
-                        for count in range(3):
-                            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
-                    elif role_id == clan_battle_attack_role_id[2]:
-                        for count in range(2):
-                            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
-                    elif role_id == clan_battle_attack_role_id[3]:
-                        for count in range(1):
-                            await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+        if not clan_battle_tutorial_days:
+            for role_id in clan_battle_attack_role_id:
+                members = guild.get_role(role_id).members
+                if members:
+                    for member in members:
+                        if role_id == clan_battle_attack_role_id[0]:
+                            for count in range(1):
+                                await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+                        elif role_id == clan_battle_attack_role_id[1]:
+                            for count in range(3):
+                                await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+                        elif role_id == clan_battle_attack_role_id[2]:
+                            for count in range(2):
+                                await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
+                        elif role_id == clan_battle_attack_role_id[3]:
+                            for count in range(1):
+                                await cb_mission(clear_missions=["m_999"], user=member, clear_time=now)
 
         # クラバト終了処理
         if any([
@@ -1014,6 +1015,8 @@ async def clan_battl_call_reaction(payload):
     hp_fomat = "{:,}"
     ok_attack_text = ""
     ok_attack_check = False
+    la_mission = False
+    true_dmg = ""
     last_attack_text = ""
     carry_over_time_message = ""
     carry_over_time = ""
@@ -1248,8 +1251,11 @@ async def clan_battl_call_reaction(payload):
                     break
 
             # 残り体力計算
+            boss_hp_percentage = int(now_boss_data["now_boss_hp"]) / int(boss_hp[x][y]) * 100
+            if round(boss_hp_percentage, 2) <= 25.00:
+                la_mission = True
+
             last_boss_hp = int(now_boss_data["now_boss_hp"]) - int(boss_hp_check_message.content)
-            true_dmg = ""
             if 0 >= last_boss_hp:
                 last_hp = 0
                 now_hp = 0
@@ -1525,12 +1531,29 @@ async def clan_battl_call_reaction(payload):
             fast_attack_check = False
             clear_missions.append("m_001")
 
-        # 残飯処理
+        # ラスアタ
         if all([
             last_hp == 0,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
             clear_missions.append("m_002")
+
+        # 残飯処理
+        if all([
+            last_hp == 0,
+            la_mission,
+            not true_dmg,
+            payload.emoji.name == emoji_list["attack_end"]
+        ]):
+            clear_missions.append("m_003")
+
+        # 同時凸
+        if all([
+            last_hp == 0,
+            true_dmg,
+            payload.emoji.name == emoji_list["attack_end"]
+        ]):
+            clear_missions.append("m_004")
 
         # ラス凸
         if all([
@@ -1539,7 +1562,7 @@ async def clan_battl_call_reaction(payload):
             now.strftime('%H:%M') <= "23:59",
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_003")
+            clear_missions.append("m_005")
 
         # 朝活
         if all([
@@ -1556,7 +1579,7 @@ async def clan_battl_call_reaction(payload):
             ]),
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_004")
+            clear_missions.append("m_006")
 
         # 朝活マスター
         if all([
@@ -1568,7 +1591,7 @@ async def clan_battl_call_reaction(payload):
             not ok_role_check,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_005")
+            clear_missions.append("m_007")
 
         # 昼活
         if all([
@@ -1585,7 +1608,7 @@ async def clan_battl_call_reaction(payload):
             ]),
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_006")
+            clear_missions.append("m_008")
 
         # 昼活マスター
         if all([
@@ -1597,7 +1620,7 @@ async def clan_battl_call_reaction(payload):
             not ok_role_check,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_007")
+            clear_missions.append("m_009")
 
         # 早寝早起き
         if all([
@@ -1609,7 +1632,7 @@ async def clan_battl_call_reaction(payload):
             not ok_role_check,
             payload.emoji.name == emoji_list["attack_end"]
         ]):
-            clear_missions.append("m_008")
+            clear_missions.append("m_010")
 
         # ミッション達成処理
         if clear_missions:
@@ -1707,7 +1730,7 @@ async def cb_mission(clear_missions, user, clear_time):
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
             mission_logs.append(embed)
 
-        # 残飯処理
+        # ラスアタ
         if mission == "m_002":
             add_pt = 10
             embed = discord.Embed(
@@ -1718,8 +1741,30 @@ async def cb_mission(clear_missions, user, clear_time):
             embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
             mission_logs.append(embed)
 
-        # ラス凸
+        # 残飯処理
         if mission == "m_003":
+            add_pt = 15
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n残り25％以下の体力のボスをラスアタする\n（同時凸による処理は不可）\n```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            mission_logs.append(embed)
+
+        # 同時凸
+        if mission == "m_004":
+            add_pt = 20
+            embed = discord.Embed(
+                title="以下のミッションを達成しました。》",
+                description="```py\n同時凸する\n```",
+                color=0x00ffff
+            )
+            embed.add_field(name="【獲得ポイント】", value=f"```py\n\"{add_pt} pt\"\n```", inline=False)
+            mission_logs.append(embed)
+
+        # ラス凸
+        if mission == "m_005":
             add_pt = 100
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
@@ -1730,7 +1775,7 @@ async def cb_mission(clear_missions, user, clear_time):
             mission_logs.append(embed)
 
         # 朝活
-        if mission == "m_004":
+        if mission == "m_006":
             add_pt = 10
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
@@ -1741,7 +1786,7 @@ async def cb_mission(clear_missions, user, clear_time):
             mission_logs.append(embed)
 
         # 朝活マスター
-        if mission == "m_005":
+        if mission == "m_007":
             add_pt = 20
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
@@ -1752,7 +1797,7 @@ async def cb_mission(clear_missions, user, clear_time):
             mission_logs.append(embed)
 
         # 昼活
-        if mission == "m_006":
+        if mission == "m_008":
             add_pt = 5
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
@@ -1763,7 +1808,7 @@ async def cb_mission(clear_missions, user, clear_time):
             mission_logs.append(embed)
 
         # 昼活マスター
-        if mission == "m_007":
+        if mission == "m_009":
             add_pt = 10
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
@@ -1774,7 +1819,7 @@ async def cb_mission(clear_missions, user, clear_time):
             mission_logs.append(embed)
 
         # 早寝早起き
-        if mission == "m_008":
+        if mission == "m_010":
             add_pt = 5 * (20 - (int(now.hour) - 5))
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
@@ -1786,7 +1831,7 @@ async def cb_mission(clear_missions, user, clear_time):
 
         # バトルログ
         # 編成情報
-        if mission == "m_009":
+        if mission == "m_011":
             add_pt = 5
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
@@ -1797,7 +1842,7 @@ async def cb_mission(clear_missions, user, clear_time):
             mission_logs.append(embed)
 
         # スクショ
-        if mission == "m_010":
+        if mission == "m_012":
             add_pt = 5
             embed = discord.Embed(
                 title="以下のミッションを達成しました。》",
