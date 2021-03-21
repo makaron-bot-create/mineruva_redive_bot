@@ -1,4 +1,5 @@
 import os
+import traceback
 import discord
 from discord import Embed
 from discord.ext import tasks
@@ -131,6 +132,25 @@ regex_discord_message_url = (
     'https://(ptb.|canary.)?discord(app)?.com/channels/'
     '(?P<guild>[0-9]{18})/(?P<channel>[0-9]{18})/(?P<message>[0-9]{18})'
 )
+
+
+# エラーログ
+async def error_log(e_name, e_log):
+    now = datetime.datetime.now()
+    now_ymd = f"{now.year}年{now.month}月{now.day}日"
+    now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
+
+    guild = client.get_guild(599780162309062706)
+    error_log_channel = guild.get_channel(823188130252718100)  # エラーログ
+
+    embed = discord.Embed(
+        title=f"**{e_name}**",
+        description=f"```py\n{e_log}\n```",
+        color=0xff0000
+    )
+    embed.set_author(name="\U000026a0\U0000fe0f 例外が発生しました \U000026a0\U0000fe0f")
+    embed.set_footer(text=f"エラー発生日時｜{now_ymd} {now_hms}")
+    await error_log_channel.send(embed=embed)
 
 
 # クラバト開催日時
@@ -2476,104 +2496,119 @@ async def on_member_remove(member):
 # 時間処理
 @tasks.loop(seconds=30)
 async def loop():
-    global no_attack_role_reset
-    global clan_battle_tutorial_days
-    global now_boss_data
+    try:
+        global no_attack_role_reset
+        global clan_battle_tutorial_days
+        global now_boss_data
 
-    await client.wait_until_ready()
+        await client.wait_until_ready()
 
-    set_rollover_time = rollover_time
-    now = datetime.datetime.now()
+        set_rollover_time = rollover_time
+        now = datetime.datetime.now()
 
-    guild = client.get_guild(599780162309062706)
-    announce_channel = guild.get_channel(599784496866263050)  # 連絡事項
+        guild = client.get_guild(599780162309062706)
+        announce_channel = guild.get_channel(599784496866263050)  # 連絡事項
 
-    if "" != clan_battle_start_date and "" != clan_battle_end_date:
-        if all([
-            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
-            now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
-        ]):
-            clan_battle_tutorial_days = False
+        if "" != clan_battle_start_date and "" != clan_battle_end_date:
+            if all([
+                now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
+                now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
+            ]):
+                clan_battle_tutorial_days = False
+
+            else:
+                clan_battle_tutorial_days = True
 
         else:
-            clan_battle_tutorial_days = True
+            return
 
-    else:
-        return
-
-    if all([
-        now.day == 5,
-        now.strftime('%H:%M') == "00:00",
-        now.strftime('%H:%M:%S') <= "00:00:30"
-    ]):
-
-        t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-5 %H:%M'), "%Y-%m-%d %H:%M")
-        t_end_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-%d 00:00'), "%Y-%m-%d %H:%M")
-        announce_messeage = f"""
-<@&687433139345555456>
-本日5時よりクラバト開催前日までの期間中、凸管理システムの模擬操作期間となります。
-軽微なアップデートも行っているため、必ず全員一通り操作しておいてください。
-
-<@&687433546775789770>
-クラメン以外でもし触れてみたい人が居ましたら連絡ください。
-
-<#785864497583358012>
-こちらのチャンネルにクラバト期間中の操作法を記載しております。
-`必ずクラバト前までに実際に模擬操作して`慣れておいて下さい。
-《模擬操作は以下のチャンネルを使用します》
-（一番下の「凸管理チュートリアル」のカテゴリーです）
-
-<#750345732497735782> `（クラバト期間外専用チャンネル）`
-┗進行の相談はこちら
-<#750345928678047744> `（クラバト期間外専用チャンネル）`
-┗凸宣言はこちらから
-<#750345983661047949> `（クラバト期間外専用チャンネル）`
-┗凸終了後、ログが記録されます
-<#774871889843453962> `（クラバト期間外専用チャンネル）`
-┗持ち越しの状況です
-<#750346096156344450> `（クラバト期間外専用チャンネル）`
-┗1凸毎の残り凸状況のメンバーリストです
-<#750351148841566248> `（クラバト期間外専用チャンネル）`
-┗タスキルリアクションをすると書き込まれます。
-
-【模擬操作期間】
-```py
-《開始》
-┗{t_start_date.month}月{t_start_date.day}日 {t_start_date.hour}時{t_start_date.minute}分
-《終了》
-┗{t_end_date.month}月{t_end_date.day}日 {t_end_date.hour}時{t_end_date.minute}分
-```
-【クラバト開催予定日】
-```py
-《開始》
-┗{clan_battle_start_date.month}月{clan_battle_start_date.day}日 {clan_battle_start_date.hour}時{clan_battle_start_date.minute}分
-《終了》
-┗{clan_battle_end_date.month}月{clan_battle_end_date.day}日 {clan_battle_end_date.hour}時{clan_battle_end_date.minute}分
-```"""
-
-        await announce_channel.send(announce_messeage)
-
-    if any([
-        all([
-            now.day >= 5,
-            now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_date.strftime("%Y-%m-%d 00:00")
-        ]),
-        all([
-            now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
-            now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
-        ])
-    ]):
-
-        # クラバト初日設定
-        if any([
-            all([now.day == 5, now.strftime('%H:%M') == set_rollover_time]),
-            now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime('%Y-%m-%d %H:%M')
+        if all([
+            now.day == 5,
+            now.strftime('%H:%M') == "00:00",
+            now.strftime('%H:%M:%S') <= "00:00:30"
         ]):
 
-            await clan_battl_start_up()
+            t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-5 %H:%M'), "%Y-%m-%d %H:%M")
+            t_end_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-%d 00:00'), "%Y-%m-%d %H:%M")
+            announce_messeage = f"""
+    <@&687433139345555456>
+    本日5時よりクラバト開催前日までの期間中、凸管理システムの模擬操作期間となります。
+    軽微なアップデートも行っているため、必ず全員一通り操作しておいてください。
 
-        # 日付変更リセット
-        elif now.strftime('%H:%M') == set_rollover_time:
+    <@&687433546775789770>
+    クラメン以外でもし触れてみたい人が居ましたら連絡ください。
+
+    <#785864497583358012>
+    こちらのチャンネルにクラバト期間中の操作法を記載しております。
+    `必ずクラバト前までに実際に模擬操作して`慣れておいて下さい。
+    《模擬操作は以下のチャンネルを使用します》
+    （一番下の「凸管理チュートリアル」のカテゴリーです）
+
+    <#750345732497735782> `（クラバト期間外専用チャンネル）`
+    ┗進行の相談はこちら
+    <#750345928678047744> `（クラバト期間外専用チャンネル）`
+    ┗凸宣言はこちらから
+    <#750345983661047949> `（クラバト期間外専用チャンネル）`
+    ┗凸終了後、ログが記録されます
+    <#774871889843453962> `（クラバト期間外専用チャンネル）`
+    ┗持ち越しの状況です
+    <#750346096156344450> `（クラバト期間外専用チャンネル）`
+    ┗1凸毎の残り凸状況のメンバーリストです
+    <#750351148841566248> `（クラバト期間外専用チャンネル）`
+    ┗タスキルリアクションをすると書き込まれます。
+
+    【模擬操作期間】
+    ```py
+    《開始》
+    ┗{t_start_date.month}月{t_start_date.day}日 {t_start_date.hour}時{t_start_date.minute}分
+    《終了》
+    ┗{t_end_date.month}月{t_end_date.day}日 {t_end_date.hour}時{t_end_date.minute}分
+    ```
+    【クラバト開催予定日】
+    ```py
+    《開始》
+    ┗{clan_battle_start_date.month}月{clan_battle_start_date.day}日 {clan_battle_start_date.hour}時{clan_battle_start_date.minute}分
+    《終了》
+    ┗{clan_battle_end_date.month}月{clan_battle_end_date.day}日 {clan_battle_end_date.hour}時{clan_battle_end_date.minute}分
+    ```"""
+
+            await announce_channel.send(announce_messeage)
+
+        if any([
+            all([
+                now.day >= 5,
+                now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_date.strftime("%Y-%m-%d 00:00")
+            ]),
+            all([
+                now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
+                now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
+            ])
+        ]):
+
+            # クラバト初日設定
+            if any([
+                all([now.day == 5, now.strftime('%H:%M') == set_rollover_time]),
+                now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime('%Y-%m-%d %H:%M')
+            ]):
+
+                await clan_battl_start_up()
+
+            # 日付変更リセット
+            elif now.strftime('%H:%M') == set_rollover_time:
+
+                if now_attack_list:
+                    no_attack_role_reset = False
+                    return
+
+                else:
+                    await clan_battl_role_reset(now)
+                    no_attack_role_reset = True
+
+        # クラバト終了処理
+        if any([
+            now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime("%Y-%m-%d 00:00"),
+            now.strftime('%Y-%m-%d %H:%M') == clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
+        ]):
 
             if now_attack_list:
                 no_attack_role_reset = False
@@ -2583,22 +2618,11 @@ async def loop():
                 await clan_battl_role_reset(now)
                 no_attack_role_reset = True
 
-    # クラバト終了処理
-    if any([
-        now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime("%Y-%m-%d 00:00"),
-        now.strftime('%Y-%m-%d %H:%M') == clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
-    ]):
-
-        if now_attack_list:
-            no_attack_role_reset = False
-            return
-
         else:
-            await clan_battl_role_reset(now)
-            no_attack_role_reset = True
+            pass
 
-    else:
-        pass
+    except Exception as e:
+        await error_log(e_name=e.__class__.__name__, e_log=traceback.format_exc())
 
 loop.start()
 
@@ -2606,96 +2630,106 @@ loop.start()
 # リアクション操作
 @client.event
 async def on_raw_reaction_add(payload):
-    now = datetime.datetime.now()
+    try:
+        now = datetime.datetime.now()
 
-    # サーバー案内チャンネルチェック
-    if payload.channel_id == 749511208104755241:
-        await server_rule_reaction_check(payload)
+        # サーバー案内チャンネルチェック
+        if payload.channel_id == 749511208104755241:
+            await server_rule_reaction_check(payload)
 
-    # クラバト管理リアクション
-    if payload.message_id == now_clan_battl_message.id:
-        await clan_battl_call_reaction(payload)
+        # クラバト管理リアクション
+        if payload.message_id == now_clan_battl_message.id:
+            await clan_battl_call_reaction(payload)
 
-    await battle_log_add_information(payload)
+        await battle_log_add_information(payload)
 
-    # クラバトミッション
-    boss = 0
-    ok_emoji = client.get_emoji(682357586062082083)
-    channel = client.get_channel(payload.channel_id)
-    if payload.member.id == 490682682880163850:
-        if payload.emoji == ok_emoji:
-            reaction_message = await channel.fetch_message(payload.message_id)
-            for channel in boss_ch:
-                boss += 1
-                if payload.channel_id == channel:
-                    await cb_mission(clear_missions=[f"mb_00{boss}"], user=reaction_message.author, clear_time=now)
+        # クラバトミッション
+        boss = 0
+        ok_emoji = client.get_emoji(682357586062082083)
+        channel = client.get_channel(payload.channel_id)
+        if payload.member.id == 490682682880163850:
+            if payload.emoji == ok_emoji:
+                reaction_message = await channel.fetch_message(payload.message_id)
+                for channel in boss_ch:
+                    boss += 1
+                    if payload.channel_id == channel:
+                        await cb_mission(clear_missions=[f"mb_00{boss}"], user=reaction_message.author, clear_time=now)
 
-    # 不人気ボス投票
-    await boss_election(payload)
+        # 不人気ボス投票
+        await boss_election(payload)
+
+    except Exception as e:
+        await error_log(e_name=e.__class__.__name__, e_log=traceback.format_exc())
+
 
 # リアクション操作
 @client.event
 async def on_raw_reaction_remove(payload):
+    try:
+        # 凸宣言キャンセル
+        await clan_battl_clear_reaction(payload)
 
-    # 凸宣言キャンセル
-    await clan_battl_clear_reaction(payload)
+    except Exception as e:
+        await error_log(e_name=e.__class__.__name__, e_log=traceback.format_exc())
 
 
 @client.event
 async def on_message(message):
+    try:
+        # BOT無視
+        if message.author.bot:
+            return
 
-    # BOT無視
-    if message.author.bot:
-        return
+        # ロールの判定
+        userrole = False
+        for role in message.author.roles:
+            if role.id == 691179302024118282:
+                userrole = True
+                break
 
-    # ロールの判定
-    userrole = False
-    for role in message.author.roles:
-        if role.id == 691179302024118282:
-            userrole = True
-            break
+        # 管理者専用コマンド
+        if userrole is True:
+            r = message.content
+            if r.startswith("/ボス名登録\n"):
+                # ボスの登録
+                await boss_ch_neme(message)
 
-    # 管理者専用コマンド
-    if userrole is True:
-        r = message.content
-        if r.startswith("/ボス名登録\n"):
-            # ボスの登録
-            await boss_ch_neme(message)
+            # メンバーリスト取得
+            if r.startswith(("/list\n", "/list ")):
+                await role_member_list(message)
 
-        # メンバーリスト取得
-        if r.startswith(("/list\n", "/list ")):
-            await role_member_list(message)
+            if r.startswith(("/kick\n", "/kick ")):
+                await member_kick(message)
 
-        if r.startswith(("/kick\n", "/kick ")):
-            await member_kick(message)
+            if r.startswith("/集計"):
+                await point_total(message)
 
-        if r.startswith("/集計"):
-            await point_total(message)
+        # クラバトコマンド
+            if "/残り凸状況" in message.content:
+                no_attack_member_list_ch = message.channel
+                await clan_battl_no_attack_member_list(no_attack_member_list_ch)
+                await message.delete()
 
-    # クラバトコマンド
-        if "/残り凸状況" in message.content:
-            no_attack_member_list_ch = message.channel
-            await clan_battl_no_attack_member_list(no_attack_member_list_ch)
-            await message.delete()
+            if "/リセット" in message.content:
+                await clan_battl_start_up()
 
-        if "/リセット" in message.content:
-            await clan_battl_start_up()
+            if "/edit_boss" in message.content:
+                await clan_battl_edit_progress(message)
 
-        if "/edit_boss" in message.content:
-            await clan_battl_edit_progress(message)
+        # メッセージリンク展開
+        await dispand(message)
 
-    # メッセージリンク展開
-    await dispand(message)
+        # 持ち越し時間用ＴＬ改変
+        await ok_tl_edit(message)
 
-    # 持ち越し時間用ＴＬ改変
-    await ok_tl_edit(message)
+        # パンツ交換
+        if message.channel.id != 804272119982718978:
+            await pants_trade(message)
 
-    # パンツ交換
-    if message.channel.id != 804272119982718978:
-        await pants_trade(message)
+        # メッセージログ
+        await new_message(message)
 
-    # メッセージログ
-    await new_message(message)
-
+    except Exception as e:
+        await error_log(e_name=e.__class__.__name__, e_log=traceback.format_exc())
 
 client.run(TOKEN)
