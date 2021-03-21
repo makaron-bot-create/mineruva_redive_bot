@@ -1994,6 +1994,8 @@ async def boss_election(payload):
         if "不人気ボス" in message.content:
             reaction_message = message
             break
+    else:
+        return
 
     if payload.member.bot:
         return
