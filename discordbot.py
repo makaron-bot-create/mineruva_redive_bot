@@ -2755,7 +2755,6 @@ async def on_message(message):
                 for reactiones in number_emoji:
                     await message.add_reaction(reactiones)
 
-
         # クラバトコマンド
             if "/残り凸状況" in message.content:
                 no_attack_member_list_ch = message.channel
