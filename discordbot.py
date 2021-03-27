@@ -2751,6 +2751,11 @@ async def on_message(message):
             if r.startswith("/集計"):
                 await point_total(message)
 
+            if message.channel.id == 814132872045920257:
+                for reactiones in number_emoji:
+                    await message.add_reaction(reactiones)
+
+
         # クラバトコマンド
             if "/残り凸状況" in message.content:
                 no_attack_member_list_ch = message.channel
