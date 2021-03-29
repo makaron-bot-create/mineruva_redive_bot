@@ -2679,6 +2679,9 @@ loop.start()
 async def on_raw_reaction_add(payload):
     try:
         now = datetime.datetime.now()
+        guild = client.get_guild(599780162309062706)
+        y = 0 if clan_battle_tutorial_days is True else 1
+        battle_log_channel = guild.get_channel(int(clan_battle_channel_id[3][y]))  # バトルログ
 
         # サーバー案内チャンネルチェック
         if payload.channel_id == 749511208104755241:
@@ -2688,14 +2691,20 @@ async def on_raw_reaction_add(payload):
         if payload.message_id == now_clan_battl_message.id:
             await clan_battl_call_reaction(payload)
 
-        await battle_log_add_information(payload)
+        # バトルログ編集
+        if payload.channel_id == battle_log_channel.id:
+            await battle_log_add_information(payload)
 
         # クラバトミッション
         boss = 0
         ok_emoji = client.get_emoji(682357586062082083)
-        channel = client.get_channel(payload.channel_id)
-        if payload.member.id == 490682682880163850:
-            if payload.emoji == ok_emoji:
+        for channel in boss_ch:
+            if all([
+                payload.member.id == 490682682880163850,
+                payload.channel_id == channel,
+                payload.emoji == ok_emoji
+            ]):
+                channel = client.get_channel(payload.channel_id)
                 reaction_message = await channel.fetch_message(payload.message_id)
                 for channel in boss_ch:
                     boss += 1
@@ -2703,7 +2712,8 @@ async def on_raw_reaction_add(payload):
                         await cb_mission(clear_missions=[f"mb_00{boss}"], user=reaction_message.author, clear_time=now)
 
         # 不人気ボス投票
-        await boss_election(payload)
+        if payload.channel_id == 814132872045920257:
+            await boss_election(payload)
 
     except Exception as e:
         await error_log(e_name=e.__class__.__name__, e_log=traceback.format_exc())
