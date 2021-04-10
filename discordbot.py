@@ -10,7 +10,10 @@ import calendar
 import io
 import aiohttp
 import asyncio
+import math
 
+import matplotlib.pyplot as plt
+import numpy as np
 
 # BOTのトークン
 TOKEN = os.environ['DISCORD_BOT_TOKEN']
@@ -299,6 +302,49 @@ async def boss_description(boss):
 
 
 # クラバト凸管理 ###########################
+# 持ち越し時間算出
+async def ok_time_plt(message):
+    if "/持ち越し時間" not in message.content:
+        return
+
+    if re.search("(?<=/持ち越し時間 )[0-9]+", message.content):
+        now_hp = int(re.search("(?<=/持ち越し時間 )[0-9]+", message.content).group())
+    else:
+        now_hp = int(now_boss_data["now_boss_hp"]) // 10000
+
+    m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
+    add_damage = now_hp * 4.6
+    n = 2000
+    nx = now_hp * 4.28571428573 / 17
+    x = np.linspace(now_hp, add_damage, n)  # linspace(min, max, N) で範囲 min から max を N 分割します
+    y = 90 - (now_hp * 90 / x - 20)
+
+    def f(y):
+        if math.ceil(y) >= 90:
+            return 90
+        else:
+            return math.ceil(y)
+    
+    plt.figure(figsize=(25, 13), dpi=500)
+    plt.rcParams["font.size"] = 20
+    plt.plot(x, [f(y[k]) for k in range(n)])
+    plt.xlabel("dmage")
+    plt.ylabel("second")
+    plt.xticks(np.arange(now_hp, add_damage, nx))
+    plt.yticks(np.arange(20, 91, 5))
+    plt.minorticks_on()
+    plt.grid(which="major", color="black", alpha=1)
+    plt.grid(which="minor", color="gray", linestyle=":")
+
+    plt_image = io.BytesIO()
+    plt.savefig(plt_image, format="png", facecolor="azure", edgecolor="azure", bbox_inches='tight', pad_inches=0.5)
+
+    plt_image.seek(0)
+    plt_image_file = discord.File(plt_image, filename='image.png')
+    await message.delete()
+    await message.channel.send(m_content, file=plt_image_file)
+
+
 # スタートアップ
 async def clan_battl_start_up():
     global now_boss_data
@@ -2779,6 +2825,9 @@ async def on_message(message):
 
         # メッセージリンク展開
         await dispand(message)
+
+        # 持ち越し時間算出
+        await ok_time_plt(message)
 
         # 持ち越し時間用ＴＬ改変
         await ok_tl_edit(message)
