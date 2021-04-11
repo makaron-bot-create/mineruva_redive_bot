@@ -343,6 +343,7 @@ async def ok_time_plt(message):
     plt_image_file = discord.File(plt_image, filename='image.png')
     await message.delete()
     await message.channel.send(m_content, file=plt_image_file)
+    del plt_image
 
 
 # スタートアップ
