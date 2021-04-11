@@ -10,10 +10,7 @@ import calendar
 import io
 import aiohttp
 import asyncio
-import math
 
-import matplotlib.pyplot as plt
-import numpy as np
 
 # BOTのトークン
 TOKEN = os.environ['DISCORD_BOT_TOKEN']
@@ -302,50 +299,6 @@ async def boss_description(boss):
 
 
 # クラバト凸管理 ###########################
-# 持ち越し時間算出
-async def ok_time_plt(message):
-    if "/持ち越し時間" not in message.content:
-        return
-
-    if re.search("(?<=/持ち越し時間 )[0-9]+", message.content):
-        now_hp = int(re.search("(?<=/持ち越し時間 )[0-9]+", message.content).group())
-    else:
-        now_hp = int(now_boss_data["now_boss_hp"]) // 10000
-
-    m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
-    add_damage = now_hp * 4.6
-    n = 2000
-    nx = now_hp * 4.28571428573 / 17
-    x = np.linspace(now_hp, add_damage, n)  # linspace(min, max, N) で範囲 min から max を N 分割します
-    y = 90 - (now_hp * 90 / x - 20)
-
-    def f(y):
-        if math.ceil(y) >= 90:
-            return 90
-        else:
-            return math.ceil(y)
-
-    plt.figure(figsize=(25, 13), dpi=500)
-    plt.rcParams["font.size"] = 20
-    plt.plot(x, [f(y[k]) for k in range(n)])
-    plt.xlabel("dmage")
-    plt.ylabel("second")
-    plt.xticks(np.arange(now_hp, add_damage, nx))
-    plt.yticks(np.arange(20, 91, 5))
-    plt.minorticks_on()
-    plt.grid(which="major", color="black", alpha=1)
-    plt.grid(which="minor", color="gray", linestyle=":")
-
-    plt_image = io.BytesIO()
-    plt.savefig(plt_image, format="png", facecolor="azure", edgecolor="azure", bbox_inches='tight', pad_inches=0.5)
-
-    plt_image.seek(0)
-    plt_image_file = discord.File(plt_image, filename='image.png')
-    await message.delete()
-    await message.channel.send(m_content, file=plt_image_file)
-    del plt_image
-
-
 # スタートアップ
 async def clan_battl_start_up():
     global now_boss_data
@@ -2726,9 +2679,6 @@ loop.start()
 async def on_raw_reaction_add(payload):
     try:
         now = datetime.datetime.now()
-        guild = client.get_guild(599780162309062706)
-        y = 0 if clan_battle_tutorial_days is True else 1
-        battle_log_channel = guild.get_channel(int(clan_battle_channel_id[3][y]))  # バトルログ
 
         # サーバー案内チャンネルチェック
         if payload.channel_id == 749511208104755241:
@@ -2738,20 +2688,14 @@ async def on_raw_reaction_add(payload):
         if payload.message_id == now_clan_battl_message.id:
             await clan_battl_call_reaction(payload)
 
-        # バトルログ編集
-        if payload.channel_id == battle_log_channel.id:
-            await battle_log_add_information(payload)
+        await battle_log_add_information(payload)
 
         # クラバトミッション
         boss = 0
         ok_emoji = client.get_emoji(682357586062082083)
-        for channel in boss_ch:
-            if all([
-                payload.member.id == 490682682880163850,
-                payload.channel_id == channel,
-                payload.emoji == ok_emoji
-            ]):
-                channel = client.get_channel(payload.channel_id)
+        channel = client.get_channel(payload.channel_id)
+        if payload.member.id == 490682682880163850:
+            if payload.emoji == ok_emoji:
                 reaction_message = await channel.fetch_message(payload.message_id)
                 for channel in boss_ch:
                     boss += 1
@@ -2759,8 +2703,7 @@ async def on_raw_reaction_add(payload):
                         await cb_mission(clear_missions=[f"mb_00{boss}"], user=reaction_message.author, clear_time=now)
 
         # 不人気ボス投票
-        if payload.channel_id == 814132872045920257:
-            await boss_election(payload)
+        await boss_election(payload)
 
     except Exception as e:
         await error_log(e_name=e.__class__.__name__, e_log=traceback.format_exc())
@@ -2826,9 +2769,6 @@ async def on_message(message):
 
         # メッセージリンク展開
         await dispand(message)
-
-        # 持ち越し時間算出
-        await ok_time_plt(message)
 
         # 持ち越し時間用ＴＬ改変
         await ok_tl_edit(message)
