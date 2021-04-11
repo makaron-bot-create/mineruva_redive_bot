@@ -763,7 +763,10 @@ async def clan_battl_role_reset(now):
                     break
 
         # 凸漏れチェック
-        if not clan_battle_tutorial_days:
+        if any([
+            not clan_battle_tutorial_days,
+            now.strftime('%Y-%m-%d') == clan_battle_end_date.strftime('%Y-%m-%d')
+        ]):
             for role_id in clan_battle_attack_role_id:
                 members = guild.get_role(role_id).members
                 if members:
@@ -792,12 +795,11 @@ async def clan_battl_role_reset(now):
             await no_attack_role_remove()
             return
 
-        if not clan_battle_tutorial_days:
-            embed = discord.Embed(
-                description="残り凸情報のリセット処理中です。\nしばらくお待ちください。",
-                colour=0xffff00
-            )
-            reset_role_text = await edit_message.channel.send(embed=embed)
+    embed = discord.Embed(
+        description="残り凸情報のリセット処理中です。\nしばらくお待ちください。",
+        colour=0xffff00
+    )
+    reset_role_text = await edit_message.channel.send(embed=embed)
 
     clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
     clan_member = clan_member_role.members
