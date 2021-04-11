@@ -17,7 +17,7 @@ import numpy as np
 # BOTのトークン
 TOKEN = os.environ['DISCORD_BOT_TOKEN']
 # 接続に必要なオブジェクトを生成
-client=discord.client(intents=discord.Intents.all())
+client=discord.client()
 
 # オプション ################
 pants_url = [
