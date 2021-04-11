@@ -323,7 +323,7 @@ async def ok_time_plt(message):
             return 90
         else:
             return math.ceil(y)
-    
+
     plt.figure(figsize=(25, 13), dpi=500)
     plt.rcParams["font.size"] = 20
     plt.plot(x, [f(y[k]) for k in range(n)])
