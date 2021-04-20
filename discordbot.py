@@ -316,23 +316,22 @@ async def ok_time_plt(message):
     if re.search("(?<=/持ち越しグラフ )[0-9]+", message.content):
         now_hp = int(re.search("(?<=/持ち越しグラフ )[0-9]+", message.content).group())
     else:
-        now_hp = int(now_boss_data["now_boss_hp"])
+        now_hp = int(now_boss_data["now_boss_hp"]) // 10000
 
     m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
 
     index_x = int(now_boss_data["now_boss"])
     index_y = int(now_boss_data["now_boss_level"]) - 1
-    boss_max_hp = int(boss_hp[index_x][index_y])
+    boss_max_hp = math.ceil(int(boss_hp[index_x][index_y]) / 10000)
     if now_hp * 4.6 < boss_max_hp:
-        add_damage = math.ceil(now_hp / 10000) * 4.6
+        add_damage = now_hp * 4.6
         y_high = 91
         y_n = 5
-    else:
-        add_damage = math.ceil(boss_max_hp / 10000) * 4.6
-        y_high = math.ceil(90 - (math.ceil(now_hp / 10000) * 90 / add_damage - 20))
+    elif:
+        add_damage = boss_max_hp
+        y_high = math.ceil(90 - (now_hp * 90 / add_damage - 20))
         y_n = 2
 
-    now_hp = now_hp // 10000
     n = 1 / 10000
     nx = now_hp * 4.3 / 17
     x = np.arange(now_hp, add_damage, n)  # linspace(min, max, N) で範囲 min から max を N 分割します
