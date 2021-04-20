@@ -303,6 +303,10 @@ async def boss_description(boss):
 # クラバト凸管理 ###########################
 # 持ち越し時間算出
 async def ok_time_plt(message):
+    index_x = int(now_boss_data["now_boss"])
+    index_y = int(now_boss_data["now_boss_level"]) - 1
+    boss_max_hp = int(boss_hp[index_x][index_y]) / 10000
+
     if "/持ち越しグラフ" not in message.content:
         return
 
@@ -313,17 +317,15 @@ async def ok_time_plt(message):
 
     await message.delete()
     del_message = await message.channel.send(embed=embed)
-
     if re.search("(?<=/持ち越しグラフ )[0-9]+", message.content):
         now_hp = int(re.search("(?<=/持ち越しグラフ )[0-9]+", message.content).group())
     else:
         now_hp = int(now_boss_data["now_boss_hp"]) // 10000
 
-    m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
+    if now_hp > boss_max_hp:
+        now_hp = boss_max_hp
 
-    index_x = int(now_boss_data["now_boss"])
-    index_y = int(now_boss_data["now_boss_level"]) - 1
-    boss_max_hp = int(boss_hp[index_x][index_y]) / 10000
+    m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
 
     if now_hp * 4.6 <= boss_max_hp:
         add_damage = now_hp * 4.6
