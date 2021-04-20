@@ -321,7 +321,7 @@ async def ok_time_plt(message):
         boss_max_hp = 30000
     else:
         now_hp = int(now_boss_data["now_boss_hp"]) // 10000
-        if int(boss_hp[index_x][index_y]) > 30000:
+        if int(boss_hp[index_x][index_y]) * 4.5 > 30000:
             boss_max_hp = 30000
         else:
             boss_max_hp = int(boss_hp[index_x][index_y]) / 10000
