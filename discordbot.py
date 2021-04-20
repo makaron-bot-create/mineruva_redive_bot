@@ -310,7 +310,7 @@ async def ok_time_plt(message):
         description="持ち越しに必要なダメージのグラフを生成してます。\nしばらくお待ちください。",
         colour=0xffff00
     )
-    
+
     await message.delete()
     del_message = await message.channel.send(embed=embed)
     if re.search("(?<=/持ち越しグラフ )[0-9]+", message.content):
