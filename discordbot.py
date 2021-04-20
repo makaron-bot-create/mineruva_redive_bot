@@ -320,7 +320,7 @@ async def ok_time_plt(message):
 
     m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
     add_damage = now_hp * 4.6
-    n = 1 / 10000
+    n = 1 / 1000
     nx = now_hp * 4.3 / 17
     x = np.arange(now_hp, add_damage, n)  # linspace(min, max, N) で範囲 min から max を N 分割します
     y = 90 - (now_hp * 90 / x - 20)
@@ -331,7 +331,7 @@ async def ok_time_plt(message):
         else:
             return math.ceil(y)
 
-    plt.figure(figsize=(9, 4.25), dpi=100)
+    plt.figure(figsize=(18, 9.5), dpi=200)
     plt.rcParams["font.size"] = 20
     plt.plot(x, [f(y[k]) for k in range(len(x))])
     plt.xlabel("dmage")
