@@ -364,7 +364,7 @@ async def ok_time_plt(message):
     plt.grid(which="major", color="black", alpha=1)
     plt.grid(which="minor", color="gray", linestyle=":")
 
-    await asyncio.sleep(10)
+    await asyncio.sleep(2.5)
     plt_image = io.BytesIO()
     plt.savefig(plt_image, format="png", facecolor="azure", edgecolor="azure", bbox_inches='tight', pad_inches=0.5)
 
