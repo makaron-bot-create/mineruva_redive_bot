@@ -313,6 +313,7 @@ async def ok_time_plt(message):
 
     await message.delete()
     del_message = await message.channel.send(embed=embed)
+
     if re.search("(?<=/持ち越しグラフ )[0-9]+", message.content):
         now_hp = int(re.search("(?<=/持ち越しグラフ )[0-9]+", message.content).group())
     else:
@@ -323,6 +324,7 @@ async def ok_time_plt(message):
     index_x = int(now_boss_data["now_boss"])
     index_y = int(now_boss_data["now_boss_level"]) - 1
     boss_max_hp = int(boss_hp[index_x][index_y]) / 10000
+
     if now_hp * 4.6 <= boss_max_hp:
         add_damage = now_hp * 4.6
         nx = now_hp * 4.3 / 17
