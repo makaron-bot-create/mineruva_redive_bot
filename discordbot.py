@@ -316,11 +316,23 @@ async def ok_time_plt(message):
     if re.search("(?<=/持ち越しグラフ )[0-9]+", message.content):
         now_hp = int(re.search("(?<=/持ち越しグラフ )[0-9]+", message.content).group())
     else:
-        now_hp = int(now_boss_data["now_boss_hp"]) // 10000
+        now_hp = int(now_boss_data["now_boss_hp"])
 
     m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
-    add_damage = now_hp * 4.6
-    n = 1 / 1000
+
+    x = int(now_boss_data["now_boss"])
+    y = int(now_boss_data["now_boss_level"]) - 1
+    boss_max_hp = int(boss_hp[x][y])
+    if now_hp * 4.6 < 1.1 * 100000000: 
+        add_damage = math.ceil(now_hp / 10000) * 4.6
+        y_high = 91
+        y_n = 5
+    elif:
+        add_damage = boss_max_hp
+        y_high = math.ceil(90 - (math.ceil(now_hp / 10000) * 90 / add_damage - 20))
+        y_n = 2
+
+    n = 1 / 10000
     nx = now_hp * 4.3 / 17
     x = np.arange(now_hp, add_damage, n)  # linspace(min, max, N) で範囲 min から max を N 分割します
     y = 90 - (now_hp * 90 / x - 20)
@@ -337,7 +349,7 @@ async def ok_time_plt(message):
     plt.xlabel("dmage")
     plt.ylabel("second")
     plt.xticks(np.arange(now_hp, add_damage, nx))
-    plt.yticks(np.arange(20, 91, 5))
+    plt.yticks(np.arange(20, y_high, y_n))
     plt.minorticks_on()
     plt.grid(which="major", color="black", alpha=1)
     plt.grid(which="minor", color="gray", linestyle=":")
