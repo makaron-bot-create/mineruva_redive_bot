@@ -323,17 +323,18 @@ async def ok_time_plt(message):
     index_x = int(now_boss_data["now_boss"])
     index_y = int(now_boss_data["now_boss_level"]) - 1
     boss_max_hp = int(boss_hp[index_x][index_y]) / 10000
-    if now_hp * 4.6 < boss_max_hp:
+    if now_hp * 4.6 <= boss_max_hp:
         add_damage = now_hp * 4.6
+        nx = now_hp * 4.3 / 17
         y_high = 91
         y_n = 5
-    else:
+    elif now_hp * 4.6 > boss_max_hp:
         add_damage = boss_max_hp
+        nx = boss_max_hp * 1.25 / 17
         y_high = math.ceil(90 - (now_hp * 90 / add_damage - 20))
         y_n = 2
 
     n = 1 / 10000
-    nx = now_hp * 4.3 / 17
     x = np.arange(now_hp, add_damage, n)  # linspace(min, max, N) で範囲 min から max を N 分割します
     y = 90 - (now_hp * 90 / x - 20)
 
