@@ -306,7 +306,13 @@ async def ok_time_plt(message):
     if "/持ち越しグラフ" not in message.content:
         return
 
+    embed = discord.Embed(
+        description="持ち越しに必要なダメージのグラフを生成してます。\nしばらくお待ちください。",
+        colour=0xffff00
+    )
+
     await message.delete()
+    del_message = await message.channel.send(embed=embed)
     if re.search("(?<=/持ち越しグラフ )[0-9]+", message.content):
         now_hp = int(re.search("(?<=/持ち越しグラフ )[0-9]+", message.content).group())
     else:
@@ -336,12 +342,14 @@ async def ok_time_plt(message):
     plt.grid(which="major", color="black", alpha=1)
     plt.grid(which="minor", color="gray", linestyle=":")
 
+    await asyncio.sleep(10)
     plt_image = io.BytesIO()
     plt.savefig(plt_image, format="png", facecolor="azure", edgecolor="azure", bbox_inches='tight', pad_inches=0.5)
 
     plt_image.seek(0)
     plt_image_file = discord.File(plt_image, filename='image.png')
 
+    await del_message.delete()
     await message.channel.send(m_content, file=plt_image_file)
     del plt_image
 
