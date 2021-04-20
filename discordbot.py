@@ -306,7 +306,7 @@ async def ok_time_plt(message):
     if "/持ち越し時間" not in message.content:
         return
 
-    if re.search("(?<=/持ち越し時間 )[0-9]+", message.content):
+    if re.search("(?<=/持ち越しグラフ )[0-9]+", message.content):
         now_hp = int(re.search("(?<=/持ち越し時間 )[0-9]+", message.content).group())
     else:
         now_hp = int(now_boss_data["now_boss_hp"]) // 10000
