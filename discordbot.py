@@ -313,7 +313,6 @@ async def ok_time_plt(message):
         description="持ち越しに必要なダメージのグラフを生成してます。\nしばらくお待ちください。",
         colour=0xffff00
     )
-    m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
 
     await message.delete()
     del_message = await message.channel.send(embed=embed)
@@ -323,6 +322,8 @@ async def ok_time_plt(message):
     else:
         now_hp = int(now_boss_data["now_boss_hp"]) // 10000
         boss_max_hp = int(boss_hp[index_x][index_y]) / 10000
+
+    m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
 
     if now_hp * 4.6 <= boss_max_hp:
         add_damage = now_hp * 4.6
