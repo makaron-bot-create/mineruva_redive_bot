@@ -303,11 +303,11 @@ async def boss_description(boss):
 # クラバト凸管理 ###########################
 # 持ち越し時間算出
 async def ok_time_plt(message):
-    if "/持ち越し時間" not in message.content:
+    if "/持ち越しグラフ" not in message.content:
         return
 
     if re.search("(?<=/持ち越しグラフ )[0-9]+", message.content):
-        now_hp = int(re.search("(?<=/持ち越し時間 )[0-9]+", message.content).group())
+        now_hp = int(re.search("(?<=/持ち越しグラフ )[0-9]+", message.content).group())
     else:
         now_hp = int(now_boss_data["now_boss_hp"]) // 10000
 
