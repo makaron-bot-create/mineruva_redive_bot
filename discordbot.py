@@ -327,7 +327,7 @@ async def ok_time_plt(message):
         add_damage = now_hp * 4.6
         y_high = 91
         y_n = 5
-    elif:
+    eles:
         add_damage = boss_max_hp
         y_high = math.ceil(90 - (now_hp * 90 / add_damage - 20))
         y_n = 2
