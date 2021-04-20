@@ -341,6 +341,9 @@ async def ok_time_plt(message):
     plt.minorticks_on()
     plt.grid(which="major", color="black", alpha=1)
     plt.grid(which="minor", color="gray", linestyle=":")
+    # メモリー解放
+    plt.clf()
+    plt.close()
 
     await asyncio.sleep(10)
     plt_image = io.BytesIO()
