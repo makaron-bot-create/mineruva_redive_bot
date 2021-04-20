@@ -323,11 +323,11 @@ async def ok_time_plt(message):
     x = int(now_boss_data["now_boss"])
     y = int(now_boss_data["now_boss_level"]) - 1
     boss_max_hp = int(boss_hp[x][y])
-    if now_hp * 4.6 < 1.1 * 100000000: 
+    if now_hp * 4.6 < 1.1 * 100000000:
         add_damage = math.ceil(now_hp / 10000) * 4.6
         y_high = 91
         y_n = 5
-    elif:
+    else:
         add_damage = boss_max_hp
         y_high = math.ceil(90 - (math.ceil(now_hp / 10000) * 90 / add_damage - 20))
         y_n = 2
