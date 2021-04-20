@@ -322,7 +322,7 @@ async def ok_time_plt(message):
 
     index_x = int(now_boss_data["now_boss"])
     index_y = int(now_boss_data["now_boss_level"]) - 1
-    boss_max_hp = math.ceil(int(boss_hp[index_x][index_y]) / 10000)
+    boss_max_hp = int(boss_hp[index_x][index_y]) / 10000
     if now_hp * 4.6 < boss_max_hp:
         add_damage = now_hp * 4.6
         y_high = 91
