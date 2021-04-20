@@ -318,22 +318,22 @@ async def ok_time_plt(message):
     del_message = await message.channel.send(embed=embed)
     if re.search("(?<=/持ち越しグラフ )[0-9]+", message.content):
         now_hp = int(re.search("(?<=/持ち越しグラフ )[0-9]+", message.content).group())
-        boss_max_hp = 30000
+        boss_max_hp = 2500
     else:
         now_hp = int(now_boss_data["now_boss_hp"]) // 10000
         if int(boss_hp[index_x][index_y]) * 4.5 > 30000:
-            boss_max_hp = 30000
+            boss_max_hp = 2500
         else:
             boss_max_hp = int(boss_hp[index_x][index_y]) / 10000
 
     m_content = f"ボスの残り「`{now_hp} 万`」を同時凸したときのダメージと持ち越せる時間をグラフにしました。"
 
-    if now_hp * 4.6 <= boss_max_hp:
+    if now_hp * 4.5 <= boss_max_hp:
         add_damage = now_hp * 4.6
         nx = now_hp * 4.3 / 17
         y_high = 91
         y_n = 5
-    elif now_hp * 4.6 > boss_max_hp:
+    elif now_hp * 4.5 > boss_max_hp:
         add_damage = boss_max_hp
         nx = add_damage / 17
         y_high = math.ceil(90 - (now_hp * 90 / add_damage - 20))
