@@ -336,8 +336,11 @@ async def ok_time_plt(message):
     elif now_hp * 4.5 > boss_max_hp:
         add_damage = boss_max_hp
         nx = add_damage / 17
-        y_high = math.ceil(90 - (now_hp * 90 / add_damage - 20))
-        y_n = 2
+        y_high = math.ceil(90 - (now_hp * 90 / add_damage - 20)) + 5
+        if y_high <= 50:
+            y_n = 5
+        else:
+            y_n = 2
 
     n = 1 / 1000
     x = np.arange(now_hp, add_damage, n)  # linspace(min, max, N) で範囲 min から max を N 分割します
