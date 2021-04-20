@@ -339,7 +339,7 @@ async def ok_time_plt(message):
         y_high = math.ceil(90 - (now_hp * 90 / add_damage - 20))
         y_n = 2
 
-    n = 1 / 10000
+    n = 1 / 1000
     x = np.arange(now_hp, add_damage, n)  # linspace(min, max, N) で範囲 min から max を N 分割します
     y = 90 - (now_hp * 90 / x - 20)
 
