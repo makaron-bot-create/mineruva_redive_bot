@@ -239,10 +239,6 @@ async def boss_ch_neme(message):
         boss_names += channel.mention + "\n"
         x += 1
 
-    for channel_id in boss_ch:
-        channel = client.get_channel(channel_id)
-        boss_name.append(re.sub(r"[0-9]ボス》", "", channel.name))
-
     await message.delete()
     await message.channel.send(boss_names)
 
