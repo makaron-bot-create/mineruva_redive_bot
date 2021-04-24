@@ -800,7 +800,10 @@ async def clan_battl_role_reset(now):
         # 凸漏れチェック
         if any([
             not clan_battle_tutorial_days,
-            now.strftime('%Y-%m-%d') == clan_battle_end_date.strftime('%Y-%m-%d')
+            all([
+                clan_battle_tutorial_days,
+                now.strftime('%Y-%m-%d') == clan_battle_end_date.strftime('%Y-%m-%d')
+            ])
         ]):
             for role_id in clan_battle_attack_role_id:
                 members = guild.get_role(role_id).members
