@@ -239,6 +239,10 @@ async def boss_ch_neme(message):
         boss_names += channel.mention + "\n"
         x += 1
 
+    for channel_id in boss_ch:
+        channel = client.get_channel(channel_id)
+        boss_name.append(re.sub(r"[0-9]ボス》", "", channel.name))
+
     await message.delete()
     await message.channel.send(boss_names)
 
@@ -295,6 +299,7 @@ async def boss_description(boss):
         inline=False)
 
     embed.set_thumbnail(url=boss_text_message.attachments[0].proxy_url)
+    boss_img_url.append(boss_text_message.attachments[0].proxy_url)
     if len(message.attachments) == 2:
         embed.set_image(url=boss_text_message.attachments[1].proxy_url)
 
