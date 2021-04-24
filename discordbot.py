@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 import japanize_matplotlib
 import numpy as np
 
+print(type(japanize_matplotlib))
+
 # BOTのトークン
 TOKEN = os.environ['DISCORD_BOT_TOKEN']
 # 接続に必要なオブジェクトを生成
