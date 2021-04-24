@@ -1,2 +1,3 @@
 discord.py[voice]
 matplotlib
+japanize_matplotlib
