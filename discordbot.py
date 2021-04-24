@@ -12,6 +12,7 @@ import aiohttp
 import asyncio
 import math
 import matplotlib.pyplot as plt
+import japanize_matplotlib
 import numpy as np
 
 # BOTのトークン
@@ -356,8 +357,8 @@ async def ok_time_plt(message):
     plt.figure(figsize=(18, 9.5), dpi=200)
     plt.rcParams["font.size"] = 20
     plt.plot(x, [f(y[k]) for k in range(len(x))])
-    plt.xlabel("dmage")
-    plt.ylabel("second")
+    plt.xlabel("ダメージ")
+    plt.ylabel("持ち越し時間 （ 秒 ）")
     plt.xticks(np.arange(now_hp, add_damage, nx))
     plt.yticks(np.arange(20, y_high, y_n))
     plt.minorticks_on()
