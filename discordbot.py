@@ -2050,16 +2050,19 @@ async def point_total(message):
 
     async for message in mission_log_channel.history(limit=5000):
         message_embed = message.embeds[0]
-        if f"{y}年{m}月" in message_embed.fields[2].value:
-            mission_log_list.append(message)
-            member = guild.get_member(message.mentions[0].id)
-            if member not in clan_member:
-                clan_member.append(member)
-        elif any([
-            y > int(re.search("[0-9]+(?=年)", message_embed.fields[2].value).group()),
-            y > int(re.search("(?<=年)[0-9]+(?=月)", message_embed.fields[2].value).group())
-        ]):
-            break
+        member = guild.get_member(message.mentions[0].id)
+        if member:
+            if f"{y}年{m}月" in message_embed.fields[2].value:
+                mission_log_list.append(message)
+                member = guild.get_member(message.mentions[0].id)
+                if member:
+                if member not in clan_member:
+                    clan_member.append(member)
+            elif any([
+                y > int(re.search("[0-9]+(?=年)", message_embed.fields[2].value).group()),
+                y > int(re.search("(?<=年)[0-9]+(?=月)", message_embed.fields[2].value).group())
+            ]):
+                break
 
     for member in clan_member:
         points = 0
