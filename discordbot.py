@@ -2054,8 +2054,6 @@ async def point_total(message):
         if member:
             if f"{y}年{m}月" in message_embed.fields[2].value:
                 mission_log_list.append(message)
-                member = guild.get_member(message.mentions[0].id)
-                if member:
                 if member not in clan_member:
                     clan_member.append(member)
             elif any([
