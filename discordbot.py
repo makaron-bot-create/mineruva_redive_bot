@@ -2050,8 +2050,8 @@ async def point_total(message):
 
     async for message in mission_log_channel.history(limit=5000):
         message_embed = message.embeds[0]
-        member = guild.get_member(message.mentions[0].id)
-        if member:
+        if message.mentions[0].id:
+            member = guild.get_member(message.mentions[0].id)
             if f"{y}年{m}月" in message_embed.fields[2].value:
                 mission_log_list.append(message)
                 if member not in clan_member:
