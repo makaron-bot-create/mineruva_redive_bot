@@ -2193,7 +2193,7 @@ async def message_time_delete(delete_message, delete_time):
 async def role_member_list(message):
     role = message.role_mentions[0].name
     role_m = message.role_mentions[0].mention
-    member_list = guild.get_member(message.role_mentions[0].id)
+    member_list = message.role_mentions[0].members
     # 《.display_name》ニックネームの取得
     member_names = '\n'.join([member.display_name for member in member_list])
 
@@ -2203,7 +2203,7 @@ async def role_member_list(message):
     embed.add_field(name="【メンバーリスト】", value=member_names, inline=False)
     # 直前のメッセージを削除
     await message.delete()
-    await message.channel_0.send(embed=embed)
+    await message.channel.send(embed=embed)
 
 
 # 持ち越し時間用ＴＬ改変
