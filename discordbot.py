@@ -2193,7 +2193,7 @@ async def message_time_delete(delete_message, delete_time):
 async def role_member_list(message):
     role = message.role_mentions[0].name
     role_m = message.role_mentions[0].mention
-    member_list = message.role_mentions[0].members
+    member_list = guild.get_member(message.role_mentions[0].id)
     # 《.display_name》ニックネームの取得
     member_names = '\n'.join([member.display_name for member in member_list])
 
