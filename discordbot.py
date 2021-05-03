@@ -458,6 +458,7 @@ async def clan_battl_edit_progress(message):
 # 編成登録
 async def battle_log_add_information(payload):
     guild = client.get_guild(599780162309062706)
+    message_log_channel = client.get_channel(741851542503817226)  # メッセージログチャンネル
     add_information_reaction_name = "\U0001f4dd"  # メモ絵文字
     channel = guild.get_channel(payload.channel_id)
 
@@ -551,25 +552,33 @@ async def battle_log_add_information(payload):
             else:
                 break
 
-        embed = reaction_message.embeds[0]
+        battle_log_embed = reaction_message.embeds[0]
         if battle_log_check_message.content:
             if reaction_message.embeds[0].fields:
-                embed.set_field_at(
+                battle_log_embed.set_field_at(
                     0,
                     name="【編成情報】",
                     value=battle_log_check_message.content,
                     inline=False
                 )
             else:
-                embed.add_field(
+                battle_log_embed.add_field(
                     name="【編成情報】",
                     value=battle_log_check_message.content,
                     inline=False
                 )
 
+        # メッセージログからバトルログスクショを引き出す
+        async for message in message_log_channel.history(limit=50):
+            if message.embeds:
+                embed = message.embeds[0]
+                if "書き込み" == embed.fields[0].value:
+                    if battle_log_check_message.id == int(embed.fields[6].value):
+                        battle_log_imge = embed.image.proxy_url
+
         if battle_log_check_message.attachments:
-            embed.set_image(
-                url=battle_log_check_message.attachments[0].proxy_url
+            battle_log_embed.set_image(
+                url=battle_log_imge
             )
 
         # リアクションリセット
@@ -579,7 +588,7 @@ async def battle_log_add_information(payload):
                     if user == payload.member:
                         await reaction.remove(user)
 
-        await reaction_message.edit(embed=embed)
+        await reaction_message.edit(embed=battle_log_embed)
 
         # ミッション達成処理
         if clear_missions:
@@ -805,6 +814,8 @@ async def clan_battl_role_reset(now):
                 now.strftime('%Y-%m-%d') == clan_battle_end_date.strftime('%Y-%m-%d')
             ])
         ]):
+            await no_attack_member_list()
+
             for role_id in clan_battle_attack_role_id:
                 members = guild.get_role(role_id).members
                 if members:
@@ -860,6 +871,44 @@ async def clan_battl_role_reset(now):
     await clan_battl_no_attack_member_list(no_attack_member_list_ch)
     await clan_battle_event()
     await reset_role_text.delete()
+
+
+# 終了時状況
+async def no_attack_member_list():
+    guild = client.get_guild(599780162309062706)
+    no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][1]))  # 残り凸状況
+
+    now_lap = now_boss_data["now_lap"]
+    now_boss_level = now_boss_data["now_boss_level"]
+    boss_name_index = int(now_boss_data["now_boss"])
+
+    now_hp = "{:,}".format(int(now_boss_data["now_boss_hp"]))
+    x = int(now_boss_data["now_boss"])
+    y = int(now_boss_data["now_boss_level"]) - 1
+    boss_max_hp = "{:,}".format(int(boss_hp[x][y]))
+
+    async for message in no_attack_member_list_ch.history(limit=1):
+        message_embed = message.embeds[0]
+
+    description_text = f"""
+{now_lap}週目 ・ {now_boss_level}段階目
+{boss_name[boss_name_index]}
+{now_hp}/{boss_max_hp}
+━━━━━━━━━━━━━━━━━━━
+{message_embed.embeds[0].description}"""
+
+    embed = discord.Embed(
+        title=message_embed.embeds[0].title,
+        description=description_text,
+        color=0x00b4ff
+    )
+
+    if message_embed.embeds[0].fields:
+        for embed_field in message_embed.embeds[0].fields[0]:
+            embed.add_field(embed_field)
+
+    channel = guild.get_channel(793193683343114251)  # 凸漏れ記録
+    await channel.send(embed=embed)
 
 
 # 残り凸ロール全削除
@@ -2309,9 +2358,27 @@ def compose_embed(message):
     return embed
 
 # メッセージログ
+# ファイル
+async def img_file_list(message):
+    img_files = []
+    n = 0
+    async with aiohttp.ClientSession() as session:
+        for img_url in message.attachments:
+            async with session.get(img_url.proxy_url) as resp:
+
+                if resp.status != 200:
+                    return await message.channel.send('Could not download file...')
+
+                data = io.BytesIO(await resp.read())
+                img_files.append(discord.File(data, f'image_{n}.png'))
+                n += 1
+
+        return img_files
+
+
 # 書き込み
 async def new_message(message):
-
+    img_files = None
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
@@ -2338,12 +2405,13 @@ async def new_message(message):
             x += 1
 
         embed.set_image(
-            url=message.attachments[0].proxy_url
+            url="attachment://image_0.png"
         )
 
+        img_files = await img_file_list(message)
         embed.add_field(name="添付ファイル一覧》", value="\n".join(img_urls), inline=False)
 
-    await channel.send(embed=embed)
+    await channel.send(files=img_files, embed=embed)
 
 
 # メッセージ編集
