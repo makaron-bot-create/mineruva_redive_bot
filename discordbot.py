@@ -458,7 +458,6 @@ async def clan_battl_edit_progress(message):
 # 編成登録
 async def battle_log_add_information(payload):
     guild = client.get_guild(599780162309062706)
-    message_log_channel = client.get_channel(741851542503817226)  # メッセージログチャンネル
     add_information_reaction_name = "\U0001f4dd"  # メモ絵文字
     channel = guild.get_channel(payload.channel_id)
 
