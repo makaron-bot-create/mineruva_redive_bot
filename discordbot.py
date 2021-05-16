@@ -544,6 +544,8 @@ async def battle_log_add_information(payload):
             return
 
         await channel.set_permissions(payload.member, overwrite=None)
+        add_message = await new_message(battle_log_check_message)
+
         await asyncio.sleep(1.5)
         async for message in channel.history(limit=10):
             if not message.embeds:
@@ -569,12 +571,10 @@ async def battle_log_add_information(payload):
                 )
 
         # メッセージログからバトルログスクショを引き出す
-        async for message in message_log_channel.history(limit=50):
-            if message.embeds:
-                embed = message.embeds[0]
-                if "書き込み" == embed.fields[0].value:
-                    if battle_log_check_message.id == int(embed.fields[6].value):
-                        battle_log_imge = embed.image.proxy_url
+        embed = add_message.embeds[0]
+        if "書き込み" == embed.fields[0].value:
+            if battle_log_check_message.id == int(embed.fields[6].value):
+                battle_log_imge = embed.image.proxy_url
 
         if battle_log_check_message.attachments:
             battle_log_embed.set_image(
@@ -2411,7 +2411,8 @@ async def new_message(message):
         img_files = await img_file_list(message)
         embed.add_field(name="添付ファイル一覧》", value="\n".join(img_urls), inline=False)
 
-    await channel.send(files=img_files, embed=embed)
+    add_message = await channel.send(files=img_files, embed=embed)
+    return add_message
 
 
 # メッセージ編集
