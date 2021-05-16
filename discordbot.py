@@ -2948,7 +2948,8 @@ async def on_message(message):
             await pants_trade(message)
 
         # メッセージログ
-        await new_message(message)
+        if message.channel.id != 750345983661047949 or message.channel.id != 772305554009620480:
+            await new_message(message)
 
     except Exception as e:
         await error_log(e_name=e.__class__.__name__, e_log=traceback.format_exc())
