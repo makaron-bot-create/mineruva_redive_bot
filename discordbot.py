@@ -2797,7 +2797,7 @@ async def loop():
                     (clan_battle_end_date - datetime.datetime.now()).total_seconds() > 60
                 ])
             ]):
-                next_time = datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()
+                next_time = (datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()
             # クラバト模擬最終日処理
             elif (clan_battle_start_date - datetime.datetime.now()).total_seconds() <= 60:
                 next_time = (clan_battle_start_date - datetime.datetime.now()).total_seconds()
