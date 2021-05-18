@@ -2797,16 +2797,16 @@ async def loop():
                     (clan_battle_end_date - datetime.datetime.now()).total_seconds() > 60
                 ])
             ]):
-                next_time = (datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()
+                next_time = datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()
             # クラバト模擬最終日処理
-            elif (clan_battle_start_date - datetime.datetime.now()).total_seconds() <= 60:
+            elif 0 < (clan_battle_start_date - datetime.datetime.now()).total_seconds() <= 60:
                 next_time = (clan_battle_start_date - datetime.datetime.now()).total_seconds()
             # クラバト最終日処理
-            elif (clan_battle_end_date - datetime.datetime.now()).total_seconds() <= 60:
+            elif 0 < (clan_battle_end_date - datetime.datetime.now()).total_seconds() <= 60:
                 next_time = (clan_battle_end_date - datetime.datetime.now()).total_seconds()
 
             # 更新時間まで待機
-            if next_time <= 60:
+            if 0 < next_time <= 60:
                 await asyncio.sleep(next_time)
                 now = datetime.datetime.now()
 
