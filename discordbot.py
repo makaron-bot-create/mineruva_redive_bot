@@ -53,7 +53,7 @@ clan_battle_days = 5
 clan_battle_start_date = ""
 clan_battle_end_date = ""
 boss_img_url = ["BOSS_1", "BOSS_2", "BOSS_3", "BOSS_4", "BOSS_5"]
-boss_lv = [1, 4, 11, 35, 45]
+boss_lv = [1, 4, 11, 30, 45]
 boss_hp = [
     [6000000, 6000000, 10000000, 18000000, 85000000],
     [8000000, 8000000, 11000000, 19000000, 90000000],
