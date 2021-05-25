@@ -813,7 +813,6 @@ async def clan_battl_role_reset(now):
                 now.strftime('%Y-%m-%d') == clan_battle_end_date.strftime('%Y-%m-%d')
             ])
         ]):
-            await no_attack_member_list()
 
             for role_id in clan_battle_attack_role_id:
                 members = guild.get_role(role_id).members
