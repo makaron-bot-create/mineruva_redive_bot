@@ -419,13 +419,13 @@ async def clan_battl_edit_progress(message):
     elif 4 <= int(now_boss_data["now_lap"]) < 11:
         now_boss_data["now_boss_level"] = 2
 
-    elif 11 <= int(now_boss_data["now_lap"]) < 35:
+    elif 11 <= int(now_boss_data["now_lap"]) < 31:
         now_boss_data["now_boss_level"] = 3
 
-    elif 35 <= int(now_boss_data["now_lap"]) < 45:
+    elif 31 <= int(now_boss_data["now_lap"]) < 41:
         now_boss_data["now_boss_level"] = 4
 
-    elif 45 <= int(now_boss_data["now_lap"]):
+    elif 41 <= int(now_boss_data["now_lap"]):
         now_boss_data["now_boss_level"] = 5
 
     now_lap = now_boss_data["now_lap"]
@@ -1480,13 +1480,13 @@ async def clan_battl_call_reaction(payload):
                     elif 4 <= int(now_boss_data["now_lap"]) < 11:
                         now_boss_data["now_boss_level"] = 2
 
-                    elif 11 <= int(now_boss_data["now_lap"]) < 35:
+                    elif 11 <= int(now_boss_data["now_lap"]) < 31:
                         now_boss_data["now_boss_level"] = 3
 
-                    elif 35 <= int(now_boss_data["now_lap"]) < 45:
+                    elif 31 <= int(now_boss_data["now_lap"]) < 41:
                         now_boss_data["now_boss_level"] = 4
 
-                    elif 45 <= int(now_boss_data["now_lap"]):
+                    elif 41 <= int(now_boss_data["now_lap"]):
                         now_boss_data["now_boss_level"] = 5
 
                 x = int(now_boss_data["now_boss"])
@@ -2608,13 +2608,13 @@ async def on_ready():
     elif 4 <= int(now_boss_data["now_lap"]) < 11:
         now_boss_data["now_boss_level"] = 2
 
-    elif 11 <= int(now_boss_data["now_lap"]) < 35:
+    elif 11 <= int(now_boss_data["now_lap"]) < 31:
         now_boss_data["now_boss_level"] = 3
 
-    elif 35 <= int(now_boss_data["now_lap"]) < 45:
+    elif 31 <= int(now_boss_data["now_lap"]) < 41:
         now_boss_data["now_boss_level"] = 4
 
-    elif 45 <= int(now_boss_data["now_lap"]):
+    elif 41 <= int(now_boss_data["now_lap"]):
         now_boss_data["now_boss_level"] = 5
 
     async for message in channel_0.history(limit=20):
