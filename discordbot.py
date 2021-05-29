@@ -1774,19 +1774,7 @@ async def clan_battl_call_reaction(payload):
         # クロスデイcheck
         if not no_attack_role_reset:
             if not now_attack_list:
-
-                if any([
-                    all([
-                        now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime("%Y-%m-%d 00:00"),
-                        now.strftime('%Y-%m-%d %H:%M') < clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
-                    ]),
-                    now.strftime('%Y-%m-%d %H:%M') >= clan_battle_end_date.strftime('%Y-%m-%d %H:%M')
-                ]):
-
-                    await no_attack_role_remove()
-
-                else:
-                    await clan_battl_role_reset(now)
+                await clan_battl_role_reset(now)
 
         if any([
                 payload.emoji.name == emoji_list["attack_p"],
