@@ -194,6 +194,7 @@ async def member_kick(message):
     global kick_cmd
     kick_cmd = True
     user = message.raw_mentions[0]
+    guild = client.get_guild(599780162309062706)
 
     now = datetime.datetime.now()
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
@@ -212,8 +213,9 @@ async def member_kick(message):
     embed.add_field(name="ユーザーID》", value=kick_user.id, inline=False)
     embed.add_field(name="サーバー追放日時》", value=f"{now_ymd} {now_hms}", inline=False)
 
-    await kick_user.kick()
+    await message.channel.send(f"{guild.get_role(687433139345555456).mention}\n管理者によりキックコマンドが実行されました。", embed=embed)
     await channel.send(embed=embed)
+    await kick_user.kick()
 
 
 # ボスの登録
