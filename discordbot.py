@@ -331,7 +331,6 @@ async def boss_description(boss):
     if len(message.attachments) == 2:
         embed.set_image(url=boss_text_message.attachments[1].proxy_url)
 
-
     for url, boss in zip(boss_img_url, boss_list.values()):
         boss["boss_img_url"] = url
 
@@ -937,8 +936,8 @@ async def no_attack_member_list():
     description_text = [top_text]
     for i, embed_fields, boss_no, boss in zip(range(5), message_embed.fields, boss_list, boss_list.values()):
         now_hp, boss_max_hp = boss_hp(boss_no, boss_level)
-        boss_data =f"\n┗━ {now_hp}/{boss_max_hp}"
-        text =f"{embed_fields.name}{boss_data}"
+        boss_data = f"\n┗━ {now_hp}/{boss_max_hp}"
+        text = f"{embed_fields.name}{boss_data}"
         description_text.append(text)
 
     embed = discord.Embed(
@@ -996,7 +995,6 @@ async def clan_battle_event(new_lap_check):
     now_ymd = f"{now.year}年{now.month}月{now.day}日"
     now_hms = f"{now.hour}時{now.minute}分{now.second}秒"
     cb_day = (datetime.date(now.year, now.month, now.day) - datetime.date(start_y, start_m, start_d) + timedelta(days=1)).days
-    boss_name = []
 
     if cb_day <= 0:
         if any([
@@ -1034,7 +1032,7 @@ async def clan_battle_event(new_lap_check):
 
     # メッセージを書きます
     attack_members = []
-    embed_title=f"【{now.month}月度クランバトル {cb_day_text}】"
+    embed_title = f"【{now.month}月度クランバトル {cb_day_text}】"
     description_text = f"""
 残り凸数》{attack_n}凸
 持ち越し》{OK_n}人
@@ -1197,10 +1195,7 @@ async def clan_battl_call_reaction(payload):
     cb_day = (datetime.date(now.year, now.month, now.day) - datetime.date(start_y, start_m, start_d) + timedelta(days=1)).days
 
     reaction_change = False
-    hp_fomat = "{:,}"
     ok_attack_text = ""
-    carryover_attack_check = False
-    la_mission = False
     boss_no_message = ""
     message_1 = ""
 
@@ -1212,9 +1207,7 @@ async def clan_battl_call_reaction(payload):
     channel_0 = guild.get_channel(int(clan_battle_channel_id[0][ch_id_index_y]))  # 進捗状況
     channel_1 = guild.get_channel(int(clan_battle_channel_id[1][ch_id_index_y]))  # 凸相談
     channel_2 = guild.get_channel(int(clan_battle_channel_id[2][ch_id_index_y]))  # タスキル状況
-    channel_3 = guild.get_channel(int(clan_battle_channel_id[3][ch_id_index_y]))  # バトルログ
     channel_4 = guild.get_channel(int(clan_battle_channel_id[4][ch_id_index_y]))  # 持ち越しメモ
-    no_attack_member_list_ch = guild.get_channel(int(clan_battle_channel_id[5][ch_id_index_y]))  # 残り凸状況
 
     edit_message = await channel_0.fetch_message(now_clan_battl_message.id)
     channel = guild.get_channel(payload.channel_id)
@@ -1494,7 +1487,6 @@ async def clan_battl_end_reaction(payload):
     global fast_attack_check
 
     guild = client.get_guild(599780162309062706)
-    clan_member_role = guild.get_role(687433139345555456)  # クランメンバーロール
     ch_id_index_y = 0 if clan_battle_tutorial_days is True else 1
     channel_0 = guild.get_channel(int(clan_battle_channel_id[0][ch_id_index_y]))  # 進捗状況
     channel_1 = guild.get_channel(int(clan_battle_channel_id[1][ch_id_index_y]))  # 凸相談
@@ -1509,7 +1501,6 @@ async def clan_battl_end_reaction(payload):
     add_damage = ""
     true_dmg = ""
     la_mission = False
-    del_message_list = []
     message_1 = ""
 
     if payload.member.bot:
@@ -2840,7 +2831,6 @@ async def on_ready():
         boss_list[boss]["boss_name"] = name
         boss_list[boss]["boss_img_url"] = img_url
         boss_list[boss]["boss_hp"] = hp
-
 
     text_2 = f"{clan_battle_start_date.strftime('%Y-%m-%d %H:%M')}\n{clan_battle_end_date.strftime('%Y-%m-%d %H:%M')}"
     await channel_bot_log.send(f"ミネルヴァ起動しました。\n\n{text_1}\n{text_2}\n\n{boss_names}")
