@@ -2333,13 +2333,16 @@ async def point_total(message):
         for mission_message in mission_log_list:
             message_embed = mission_message.embeds[0]
 
-            if all([
-                member.id == mission_message.mentions[0].id,
-                f"{y}年{m}月" in message_embed.fields[2].value,
-                re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value)
-            ]):
-                get_point = re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value).group()
-                points += int(get_point)
+            try:
+                if all([
+                    member.id == mission_message.mentions[0].id,
+                    f"{y}年{m}月" in message_embed.fields[2].value,
+                    re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value)
+                ]):
+                    get_point = re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value).group()
+                    points += int(get_point)
+            except AttributeError:
+                pass
 
         mission_point_list[member] = points
 
