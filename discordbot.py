@@ -2319,8 +2319,13 @@ async def point_total(message):
         if f"{y}年{m}月" in message_embed.fields[2].value:
             mission_log_list.append(message)
             member = guild.get_member(message.mentions[0].id)
-            if member not in clan_member:
+
+            if all([
+                member,
+                member not in clan_member
+            ]):
                 clan_member.append(member)
+
         elif any([
             y > int(re.search("[0-9]+(?=年)", message_embed.fields[2].value).group()),
             y > int(re.search("(?<=年)[0-9]+(?=月)", message_embed.fields[2].value).group())
@@ -2333,16 +2338,13 @@ async def point_total(message):
         for mission_message in mission_log_list:
             message_embed = mission_message.embeds[0]
 
-            try:
-                if all([
-                    member.id == mission_message.mentions[0].id,
-                    f"{y}年{m}月" in message_embed.fields[2].value,
-                    re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value)
-                ]):
-                    get_point = re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value).group()
-                    points += int(get_point)
-            except AttributeError:
-                pass
+            if all([
+                member.id == mission_message.mentions[0].id,
+                f"{y}年{m}月" in message_embed.fields[2].value,
+                re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value)
+            ]):
+                get_point = re.search("(?<=\")[0-9]+(?= )|(?<=\")-[0-9]+(?= )", message_embed.fields[0].value).group()
+                points += int(get_point)
 
         mission_point_list[member] = points
 
@@ -2351,28 +2353,25 @@ async def point_total(message):
     point_x = 0
     count = 0
     for member, point in sorted(mission_point_list.items(), key=lambda i: i[1], reverse=True):
-        try:
-            rank += 1
-            if point_x == point:
-                rank -= 1
-                count += 1
-            elif point_x != point:
-                rank += count
-                count = 0
+        rank += 1
+        if point_x == point:
+            rank -= 1
+            count += 1
+        elif point_x != point:
+            rank += count
+            count = 0
 
-            embed = discord.Embed(
-                title=f"{y}年{m}月の累計ポイントはこちらです》",
-                description=f"【クラン内ランキング】\n```py\n{rank}位\n```\n【累計ポイント】\n```py\n{point} pt\n```",
-                color=0x00ffff
-            )
-            embed.set_author(
-                name=member.display_name,
-                icon_url=member.avatar_url,
-            )
-            point_x = point
-            point_rank_list.append([member, embed])
-        except AttributeError:
-            pass
+        embed = discord.Embed(
+            title=f"{y}年{m}月の累計ポイントはこちらです》",
+            description=f"【クラン内ランキング】\n```py\n{rank}位\n```\n【累計ポイント】\n```py\n{point} pt\n```",
+            color=0x00ffff
+        )
+        embed.set_author(
+            name=member.display_name,
+            icon_url=member.avatar_url,
+        )
+        point_x = point
+        point_rank_list.append([member, embed])
 
     for point_total_list in reversed(point_rank_list):
         member, embed = point_total_list
