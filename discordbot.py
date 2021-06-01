@@ -2934,12 +2934,12 @@ async def loop():
             return
 
         if all([
-            now.day == 5,
+            now.day == 2,
             now.strftime('%H:%M') == "00:00",
             now.strftime('%H:%M:%S') <= "00:00:30"
         ]):
 
-            t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-5 %H:%M'), "%Y-%m-%d %H:%M")
+            t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-2 %H:%M'), "%Y-%m-%d %H:%M")
             t_end_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-%d 00:00'), "%Y-%m-%d %H:%M")
             messeage = await data_channel.fetch_message(840613809932206100)
             announce_messeage = f"""
@@ -2964,7 +2964,7 @@ async def loop():
         # クラバト日付リセット
         if any([
             all([
-                now.day >= 5,
+                now.day >= 2,
                 now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_date.strftime("%Y-%m-%d 00:00")
             ]),
             all([
@@ -2975,7 +2975,7 @@ async def loop():
 
             # 初日～通常更新
             if any([
-                now.day >= 5,
+                now.day >= 2,
                 all([
                     now.strftime('%Y-%m-%d %H:%M') <= clan_battle_end_date.strftime('%Y-%m-%d %H:%M'),
                     (clan_battle_start_date - datetime.datetime.now()).total_seconds() > 60,
@@ -2995,7 +2995,12 @@ async def loop():
                 await asyncio.sleep(next_time)
                 now = datetime.datetime.now()
 
-                await clan_battl_start_up(new_lap_check=True)
+            # クラバト初日処理
+            if any([
+                now.strftime('%Y-%m-%d %H:%M') == datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-2 05:00'), "%Y-%m-%d %H:%M"),
+                now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime("%Y-%m-%d %H:%M'")
+            ]):
+                await clan_battl_start_up(now, new_lap_check=True)
 
             # 日付変更リセット
             elif now.strftime('%H:%M') == set_rollover_time:
