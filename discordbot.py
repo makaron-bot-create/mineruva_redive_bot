@@ -437,12 +437,11 @@ async def ok_time_plt(message):
 
 
 # スタートアップ
-async def clan_battl_start_up(new_lap_check):
+async def clan_battl_start_up(now, new_lap_check):
     global boss_lap
     global boss_level
     global boss_list
 
-    now = datetime.datetime.now()
     boss_lap = 1
     boss_level = 1
     for boss, boss_data in zip(boss_list, boss_list.values()):
@@ -812,7 +811,7 @@ async def clan_battl_role_reset(now, new_lap_check):
     if not no_attack_role_reset:
         no_attack_role_reset = True
 
-    if now_clan_battl_message:
+    if now_clan_battl_message and not new_lap_check:
         edit_message = await channel_0.fetch_message(now_clan_battl_message.id)
         embed = edit_message.embeds[0]
 
@@ -889,12 +888,6 @@ async def clan_battl_role_reset(now, new_lap_check):
             await no_attack_role_remove()
             return
 
-    embed = discord.Embed(
-        description="残り凸情報のリセット処理中です。\nしばらくお待ちください。",
-        colour=0xffff00
-    )
-    reset_role_text = await channel_0.send(embed=embed)
-
     clan_member_role = guild.get_role(687433139345555456)   # クラメンロール
     clan_member = clan_member_role.members
     for member in clan_member:
@@ -915,7 +908,6 @@ async def clan_battl_role_reset(now, new_lap_check):
     await channel.send(f"クランメンバーに「未3凸」ロールを付与しました。\n{now}")
     await clan_battl_no_attack_member_list(no_attack_member_list_ch)
     await clan_battle_event(new_lap_check)
-    await reset_role_text.delete()
 
 
 # 終了時状況
@@ -2762,8 +2754,8 @@ async def on_ready():
     global boss_level
     global boss_list
 
-    boss_name = []
-    boss_img_url = []
+    boss_names = []
+    boss_img_urls = []
     boss_hp_list = []
     guild = client.get_guild(599780162309062706)
     channel_bot_log = guild.get_channel(741851480868519966)  # 動作ログ
@@ -2787,17 +2779,17 @@ async def on_ready():
 
     for channel_id in boss_ch:
         channel = client.get_channel(channel_id)
-        boss_name.append(re.sub(r"[0-9]ボス》", "", channel.name))
+        boss_names.append(re.sub(r"[0-9]ボス》", "", channel.name))
 
     # ボス名取得
-    boss_names = "【現在のボス名】"
-    for name in boss_name:
-        boss_names += f"\n{name}"
+    boss_name = "【現在のボス名】"
+    for name in boss_names:
+        boss_name += f"\n{name}"
 
         # ボスサムネ取得
         async for message in boss_data_channel.history():
             if f"\n{name}\n" in message.content:
-                boss_img_url.append(message.attachments[0].proxy_url)
+                boss_img_urls.append(message.attachments[0].proxy_url)
                 break
 
     # 最新の凸情報取
@@ -2832,13 +2824,17 @@ async def on_ready():
             await message.delete()
 
     # ボス情報の書き込み
-    for boss, boss_data, name, hp, img_url in zip(boss_list, boss_list.values(), boss_name, boss_hp_list, boss_img_url):
+    for boss, name, img_url in zip(boss_list, boss_names, boss_img_urls):
         boss_list[boss]["boss_name"] = name
         boss_list[boss]["boss_img_url"] = img_url
-        boss_list[boss]["boss_hp"] = hp
+
+    # ボスHP
+    if not boss_hp_list:
+        for boss, hp in zip(boss_list, boss_hp_list):
+            boss_list[boss]["boss_hp"] = hp
 
     text_2 = f"{clan_battle_start_date.strftime('%Y-%m-%d %H:%M')}\n{clan_battle_end_date.strftime('%Y-%m-%d %H:%M')}"
-    await channel_bot_log.send(f"ミネルヴァ起動しました。\n\n{text_1}\n{text_2}\n\n{boss_names}")
+    await channel_bot_log.send(f"ミネルヴァ起動しました。\n\n{text_1}\n{text_2}\n\n{boss_name}")
 
 
 @client.event
@@ -2920,6 +2916,9 @@ async def loop():
         data_channel = guild.get_channel(744177273053118535)  # 連絡事項データー
         announce_channel = guild.get_channel(599784496866263050)  # 連絡事項
 
+        y = 0 if clan_battle_tutorial_days is True else 1
+        channel_0 = guild.get_channel(int(clan_battle_channel_id[0][y]))  # 進捗状況
+
         if "" != clan_battle_start_date and "" != clan_battle_end_date:
             if all([
                 now.strftime('%Y-%m-%d %H:%M') >= clan_battle_start_date.strftime('%Y-%m-%d %H:%M'),
@@ -2934,12 +2933,12 @@ async def loop():
             return
 
         if all([
-            now.day == 2,
+            now.day == 3,
             now.strftime('%H:%M') == "00:00",
             now.strftime('%H:%M:%S') <= "00:00:30"
         ]):
 
-            t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-2 %H:%M'), "%Y-%m-%d %H:%M")
+            t_start_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-03 %H:%M'), "%Y-%m-%d %H:%M")
             t_end_date = datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-%d 00:00'), "%Y-%m-%d %H:%M")
             messeage = await data_channel.fetch_message(840613809932206100)
             announce_messeage = f"""
@@ -2964,7 +2963,7 @@ async def loop():
         # クラバト日付リセット
         if any([
             all([
-                now.day >= 2,
+                now.day >= 3,
                 now.strftime('%Y-%m-%d %H:%M') < clan_battle_start_date.strftime("%Y-%m-%d 00:00")
             ]),
             all([
@@ -2975,14 +2974,30 @@ async def loop():
 
             # 初日～通常更新
             if any([
-                now.day >= 2,
+                all([
+                    now.day >= 3,
+                    now.strftime('%Y-%m-%d %H:%M') <= clan_battle_end_date.strftime('%Y-%m-%d %H:%M'),
+                    (datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds() > 60,
+                ]),
+                all([
+                    now.day >= 2,
+                    (datetime.datetime.strptime(clan_battle_start_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds() > 60,
+                ]),
                 all([
                     now.strftime('%Y-%m-%d %H:%M') <= clan_battle_end_date.strftime('%Y-%m-%d %H:%M'),
                     (clan_battle_start_date - datetime.datetime.now()).total_seconds() > 60,
                     (clan_battle_end_date - datetime.datetime.now()).total_seconds() > 60
                 ])
             ]):
+
                 next_time = (datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()
+
+            # 模擬操作初日
+            if 0 < (datetime.datetime.strptime(now.strftime(f"%Y-%m-03 {rollover_time}:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds() <= 60:
+                next_time = (datetime.datetime.strptime(now.strftime(f"%Y-%m-03 {rollover_time}:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()
+            # 模擬操作最終日
+            elif 0 < (datetime.datetime.strptime(clan_battle_start_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds() <= 60:
+                next_time = (datetime.datetime.strptime(clan_battle_start_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()
             # クラバト模擬最終日処理
             elif 0 < (clan_battle_start_date - datetime.datetime.now()).total_seconds() <= 60:
                 next_time = (clan_battle_start_date - datetime.datetime.now()).total_seconds()
@@ -2997,10 +3012,18 @@ async def loop():
 
             # クラバト初日処理
             if any([
-                now.strftime('%Y-%m-%d %H:%M') == datetime.datetime.strptime(clan_battle_start_date.strftime('%Y-%m-2 05:00'), "%Y-%m-%d %H:%M"),
-                now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime("%Y-%m-%d %H:%M'")
+                now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime(f'%Y-%m-03 {rollover_time}'),
+                now.strftime('%Y-%m-%d %H:%M') == clan_battle_start_date.strftime("%Y-%m-%d %H:%M")
             ]):
+
+                embed = discord.Embed(
+                    description="残り凸情報のリセット処理中です。\nしばらくお待ちください。",
+                    colour=0xffff00
+                )
+                reset_role_text = await channel_0.send(embed=embed)
+
                 await clan_battl_start_up(now, new_lap_check=True)
+                await reset_role_text.delete()
 
             # 日付変更リセット
             elif now.strftime('%H:%M') == set_rollover_time:
@@ -3011,7 +3034,14 @@ async def loop():
                         return
 
                 else:
+                    embed = discord.Embed(
+                        description="残り凸情報のリセット処理中です。\nしばらくお待ちください。",
+                        colour=0xffff00
+                    )
+                    reset_role_text = await channel_0.send(embed=embed)
+
                     await clan_battl_role_reset(now, new_lap_check=False)
+                    await reset_role_text.delete()
                     no_attack_role_reset = True
 
         # クラバト終了処理
@@ -3145,6 +3175,7 @@ async def on_message(message):
                 await message.delete()
 
             if "/リセット" in message.content:
+                now = datetime.datetime.now()
                 await clan_battl_start_up(new_lap_check=True)
 
             if "/edit_boss" in message.content:
