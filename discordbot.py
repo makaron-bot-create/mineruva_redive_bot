@@ -3176,7 +3176,7 @@ async def on_message(message):
 
             if "/リセット" in message.content:
                 now = datetime.datetime.now()
-                await clan_battl_start_up(new_lap_check=True)
+                await clan_battl_start_up(now, new_lap_check=True)
 
             if "/edit_boss" in message.content:
                 await clan_battl_edit_progress(message)
