@@ -3024,6 +3024,7 @@ async def loop():
 
                 await clan_battl_start_up(now, new_lap_check=True)
                 await reset_role_text.delete()
+                await asyncio.sleep(60)
 
             # 日付変更リセット
             elif now.strftime('%H:%M') == set_rollover_time:
@@ -3043,6 +3044,7 @@ async def loop():
                     await clan_battl_role_reset(now, new_lap_check=False)
                     await reset_role_text.delete()
                     no_attack_role_reset = True
+                    await asyncio.sleep(60)
 
         # クラバト終了処理
         if any([
@@ -3058,6 +3060,7 @@ async def loop():
             else:
                 await clan_battl_role_reset(now)
                 no_attack_role_reset = True
+                await asyncio.sleep(60)
 
         else:
             pass
