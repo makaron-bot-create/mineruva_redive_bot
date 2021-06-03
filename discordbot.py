@@ -1617,9 +1617,9 @@ async def clan_battl_end_reaction(payload):
             # ラスアタ入力、省略
             elif done_task_type == "wait_reaction":
                 reaction, user = task.result()
+                add_damage = int(attack_boss["boss_hp"])
                 last_boss_hp = 0
-
-        await announce_message_1.delete()
+                await announce_message_1.delete()
 
         if 0 >= last_boss_hp:
             last_boss_hp = 0
