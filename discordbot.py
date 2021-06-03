@@ -632,15 +632,15 @@ async def battle_log_add_information(payload):
                 )
 
         # メッセージログからバトルログスクショを引き出す
-        embed = add_message.embeds[0]
-        if "書き込み" == embed.fields[0].value:
-            if battle_log_check_message.id == int(embed.fields[6].value):
-                battle_log_imge = embed.image.proxy_url
-
         if battle_log_check_message.attachments:
-            battle_log_embed.set_image(
-                url=battle_log_imge
-            )
+            embed = add_message.embeds[0]
+            if "書き込み" == embed.fields[0].value:
+                if battle_log_check_message.id == int(embed.fields[6].value):
+                    battle_log_imge = embed.image.proxy_url
+
+                battle_log_embed.set_image(
+                    url=battle_log_imge
+                )
 
         # リアクションリセット
         for reaction in reaction_message.reactions:
