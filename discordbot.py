@@ -1622,12 +1622,12 @@ async def clan_battl_end_reaction(payload):
                 await announce_message_1.delete()
 
         if 0 >= last_boss_hp:
+            true_dmg = "" if last_boss_hp == 0 else f"\n　　({hp_fomat.format(int(attack_boss['boss_hp']))})"
             last_boss_hp = 0
             now_hp = 0
             carryover_attack_check = True
-            true_dmg = "" if last_boss_hp == 0 else f"\n　　({hp_fomat.format(int(attack_boss['boss_hp']))})"
-            if not carryover_role_check:
 
+            if not carryover_role_check:
                 time_input_announce_message = await channel_0.send(f"""
 {payload.member.mention}》
 持ち越し時間を入力してください、持ち越しメモに反映します。
