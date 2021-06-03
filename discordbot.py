@@ -649,7 +649,7 @@ async def battle_log_add_information(payload):
                     if user == payload.member:
                         await reaction.remove(user)
 
-        await reaction_message.edit(embed=embed)
+        await reaction_message.edit(embed=battle_log_embed)
 
         # ミッション達成処理
         if clear_missions:
