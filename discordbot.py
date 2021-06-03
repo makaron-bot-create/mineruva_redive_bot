@@ -66,25 +66,25 @@ boss_list = {
     "boss_2": {
         "boss_name": "boss_2",
         "boss_img_url": "url",
-        "boss_hp": 6000000,
+        "boss_hp": 8000000,
         "boss_max_hp": [8000000, 8000000, 11000000, 19000000, 90000000]
     },
     "boss_3": {
         "boss_name": "boss_3",
         "boss_img_url": "url",
-        "boss_hp": 6000000,
+        "boss_hp": 10000000,
         "boss_max_hp": [10000000, 10000000, 16000000, 22000000, 95000000]
     },
     "boss_4": {
         "boss_name": "boss_4",
         "boss_img_url": "url",
-        "boss_hp": 6000000,
+        "boss_hp": 12000000,
         "boss_max_hp": [12000000, 12000000, 18000000, 23000000, 100000000]
     },
     "boss_5": {
         "boss_name": "boss_5",
         "boss_img_url": "url",
-        "boss_hp": 6000000,
+        "boss_hp": 15000000,
         "boss_max_hp": [15000000, 15000000, 22000000, 26000000, 110000000]
     }
 }
@@ -1737,7 +1737,7 @@ async def clan_battl_end_reaction(payload):
             await payload.member.add_roles(carryover_attak_role)
 
         # ダメージログ
-        dmg = "{:,}".format(int(add_damage)) if add_damage is True else ""
+        dmg = "{:,}".format(int(add_damage))
         battle_log = f"""
 {now_boss_lap}週目・{now_boss_level}段階目
 {boss_list[boss_no]["boss_name"]}
@@ -2829,7 +2829,7 @@ async def on_ready():
         boss_list[boss]["boss_img_url"] = img_url
 
     # ボスHP
-    if not boss_hp_list:
+    if boss_hp_list:
         for boss, hp in zip(boss_list, boss_hp_list):
             boss_list[boss]["boss_hp"] = hp
 
