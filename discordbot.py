@@ -1476,6 +1476,7 @@ async def clan_battl_end_reaction(payload):
     global boss_lap
     global boss_level
     global boss_list
+    global no_attack_role_reset
     global fast_attack_check
 
     guild = client.get_guild(599780162309062706)
@@ -2016,6 +2017,7 @@ async def clan_battl_end_reaction(payload):
 
             else:
                 await clan_battl_role_reset(now)
+                no_attack_role_reset = True
 
     # 不要なメッセージの削除
     if not clan_battle_tutorial_days:
@@ -3058,7 +3060,7 @@ async def loop():
                     return
 
             else:
-                await clan_battl_role_reset(now)
+                await clan_battl_role_reset(now, new_lap_check=False)
                 no_attack_role_reset = True
                 await asyncio.sleep(60)
 
