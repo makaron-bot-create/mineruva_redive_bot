@@ -372,7 +372,7 @@ async def attack_call_check(payload, reaction_message):
 
 # 持ち越し時間算出
 async def ok_time_plt(message):
-    if "/持ち越しグラフ [0-9]+" not in message.content:
+    if not re.search("/持ち越しグラフ [0-9]+", message.content):
         return
 
     embed = discord.Embed(
