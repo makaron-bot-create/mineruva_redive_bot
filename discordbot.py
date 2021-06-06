@@ -89,6 +89,7 @@ boss_list = {
     }
 }
 
+carryover_list = {}
 now_attack_list = {
     "boss_1": {},
     "boss_2": {},
@@ -1068,10 +1069,16 @@ async def clan_battle_event(new_lap_check):
 # キャンセルしたメンバーの削除
 def attack_member_del(member):
     global now_attack_list
+    global carryover_list
+
     for boss_no, member_list in zip(now_attack_list, now_attack_list.values()):
         if member_list.get(member):
             del member_list[member]
             break
+
+    if member in carryover_list:
+        del carryover_list[member]
+
     return boss_no
 
 
@@ -1172,6 +1179,7 @@ async def clan_battl_clear_reaction(payload):
 # 凸宣言リアクションイベント
 async def clan_battl_call_reaction(payload):
     global boss_list
+    global carryover_list
     global now_attack_list
     global now_clan_battl_message
     global now_boss_data
@@ -1190,6 +1198,8 @@ async def clan_battl_call_reaction(payload):
     ok_attack_text = ""
     boss_no_message = ""
     message_1 = ""
+    messages = []
+    carryover_messages = {}
 
     reset_reaction = ["\U00002705", "\U0000274c"]
 
@@ -1267,20 +1277,77 @@ async def clan_battl_call_reaction(payload):
                 delete_time = 10
                 await message_time_delete(delete_message, delete_time)
 
-        if carryover_role_check:
-            # 持ち越し時間
-            async for message in channel_4.history():
-                if payload.member.mention in message.content:
-                    carry_over_time = re.search(r"[0-9]:[0-9]{2}", message.content).group()
-                    break
-
-            ok_attack_text = f"__**（持ち越し凸）{carry_over_time}**__"
-
         # 凸宣言リアクション
         if any([
             payload.emoji.name == emoji_list["attack_p"],
             payload.emoji.name == emoji_list["attack_m"]
         ]):
+
+            if carryover_role_check:
+                # 持ち越し時間
+                async for message in channel_4.history():
+                    if payload.member.mention in message.content:
+                        messages.append(message)
+
+            # 持ち越し選択
+            if messages:
+                messages.reverse()
+                for reaction, message in zip(number_emoji, messages):
+                    carryover_messages[reaction] = message
+
+                message_content = f"{payload.member.mention}》\n以下の持ち越し情報があります。"
+                embed = discord.Embed(
+                    description=f"使用する持ち越し、または通常凸する場合は該当するリアクションを押してください。",
+                    color=0xffff00
+                )
+                for reaction, carryover_message in zip(carryover_messages.keys(), carryover_messages.values()):
+                    embed.add_field(name=f"{reaction}》リアクション", value=carryover_message.content, inline=False)
+
+                carryover_list_message = await channel_0.send(message_content, embed=embed)
+                for reactione in carryover_messages.keys():
+                    await carryover_list_message.add_reaction(reactione)
+
+                # 残り凸ロールチェック
+                for role in payload.member.roles:
+                    if any([
+                        role.id == clan_battle_attack_role_id[1],
+                        role.id == clan_battle_attack_role_id[2],
+                        role.id == clan_battle_attack_role_id[3]
+                    ]):
+                        embed.add_field(name=f"{reset_reaction[1]}》リアクション", value="持ち越し凸を使用せず、通常凸する場合。", inline=False)
+                        await carryover_list_message.edit(embed=embed)
+                        await carryover_list_message.add_reaction(reset_reaction[1])
+                        break
+
+                def role_reset_check(reaction, user):
+
+                    return all([
+                        reaction.message.id == carryover_list_message.id,
+                        user.id == payload.member.id,
+                        not user.bot
+                    ])
+
+                try:
+                    reaction, user = await client.wait_for('reaction_add', check=role_reset_check, timeout=30)
+
+                except asyncio.TimeoutError:
+                    for reaction in reaction_message.reactions:
+                        async for user in reaction.users():
+                            if user == payload.member:
+                                await reaction.remove(user)
+
+                    await carryover_list_message.delete()
+                    return
+
+                # 持ち越し情報
+                if reaction.emoji != reset_reaction[1]:
+                    carryover_message = carryover_messages[reaction.emoji]
+                    carryover_list[payload.member] = carryover_message
+                    carry_over_time = re.search(r"[0-9]:[0-9]{2}", carryover_message.content).group()
+                    ok_attack_text = f"__**（持ち越し凸）{carry_over_time}**__"
+
+                await carryover_list_message.delete()
+
             # 物理リアクション
             if payload.emoji.name == emoji_list["attack_p"]:
                 attack_type = "物理編成"
@@ -1359,7 +1426,6 @@ async def clan_battl_call_reaction(payload):
                         reaction.message.id == boss_no_message.id,
                         user.id == payload.member.id,
                         not user.bot
-
                     ])
 
                 try:
@@ -1476,6 +1542,7 @@ async def clan_battl_end_reaction(payload):
     global boss_lap
     global boss_level
     global boss_list
+    global carryover_list
     global no_attack_role_reset
     global fast_attack_check
 
@@ -1628,7 +1695,7 @@ async def clan_battl_end_reaction(payload):
             now_hp = 0
             carryover_attack_check = True
 
-            if not carryover_role_check:
+            if payload.member not in carryover_list:
                 time_input_announce_message = await channel_0.send(f"""
 {payload.member.mention}》
 持ち越し時間を入力してください、持ち越しメモに反映します。
@@ -1693,13 +1760,13 @@ async def clan_battl_end_reaction(payload):
 
             if all([
                 carryover_attack_check,
-                not carryover_role_check
+                payload.member not in carryover_list
             ]):
                 last_attack_text = f"\n┣ラスアタ》\n┃┗__**持ち越し時間 ＝ {carry_over_time}**__"
 
             elif all([
                 carryover_attack_check,
-                carryover_role_check
+                payload.member in carryover_list
             ]):
                 last_attack_text = "\n┣ラスアタ》\n┃┗__**持ち越し不可**__"
 
@@ -1713,21 +1780,17 @@ async def clan_battl_end_reaction(payload):
             else:
                 boss_lap += 1
 
-        for role in payload.member.roles:
-            if role.id == int(clan_battle_attack_role_id[0]):
-                carryover_role_check = True
-                attak_role = guild.get_role(int(clan_battle_attack_role_id[0]))
+        # 持ち越しメッセージの削除
+        if payload.member in carryover_list:
+            await carryover_list[payload.member].delete()
 
-                # 持ち越しメッセージの削除
-                async for message in channel_4.history():
-                    if payload.member.mention in message.content:
-                        carry_over_time = re.search(r"[0-9]:[0-9]{2}", message.content).group()
-
-                        await message.delete()
-                        break
-
-                await payload.member.remove_roles(attak_role)
+        # 持ち越し残りチェック
+        async for message in channel_4.history():
+            if payload.member.mention in message.content:
                 break
+        else:
+            attak_role = guild.get_role(int(clan_battle_attack_role_id[0]))
+            await payload.member.remove_roles(attak_role)
 
         if all([
             carryover_attack_check,
@@ -1790,7 +1853,7 @@ async def clan_battl_end_reaction(payload):
                     if user == payload.member:
                         await reaction.remove(user)
 
-        if not carryover_role_check:
+        if payload.member not in carryover_list:
             await add_attack_role(member=payload.member)
 
         embed_end = discord.Embed(
@@ -1808,6 +1871,9 @@ async def clan_battl_end_reaction(payload):
 
         if carryover_time_message:
             await channel_4.send(last_attack_message)
+
+        if payload.member in carryover_list:
+            del carryover_list[payload.member]
 
     # 埋め込み情報の編集
     attack_3 = len(guild.get_role(clan_battle_attack_role_id[1]).members) * 3
