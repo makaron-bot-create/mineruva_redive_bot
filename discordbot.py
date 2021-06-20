@@ -2780,6 +2780,7 @@ async def loop():
             await announce_channel.send(announce_messeage)
 
         # クラバト日付リセット
+        next_time = 0
         if any([
             all([
                 now.day >= 3,
