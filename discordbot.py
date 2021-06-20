@@ -1788,7 +1788,6 @@ async def clan_battl_call_reaction(payload):
 
                     await clan_battl_role_reset(now)
 
-
                 else:
                     await no_attack_role_remove()
 
