@@ -2798,34 +2798,34 @@ async def loop():
                 all([
                     now.day >= 2,
                     now.strftime('%Y-%m-%d %H:%M') <= clan_battle_end_date.strftime('%Y-%m-%d %H:%M'),
-                    0 < (datetime.datetime.now() - datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}:00"), '%Y-%m-%d %H:%M:%S')).total_seconds() <= 60,
+                    0 < abs((datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()) <= 60,
                 ]),
                 # 模擬終了処理
                 all([
                     now.day >= 2,
-                    0 < (datetime.datetime.now() - datetime.datetime.strptime(clan_battle_start_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S')).total_seconds() > 60,
+                    0 < abs((datetime.datetime.strptime(clan_battle_start_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()) > 60,
                 ]),
                 # クラバト終了
-                0 < (datetime.datetime.now() - datetime.datetime.strptime(clan_battle_end_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S')).total_seconds() <= 60
+                0 < abs((datetime.datetime.strptime(clan_battle_end_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()) <= 60
             ]):
 
-                next_time = (datetime.datetime.now() - datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}:00"), '%Y-%m-%d %H:%M:%S')).total_seconds()
+                next_time = abs((datetime.datetime.strptime(now.strftime(f"%Y-%m-%d {rollover_time}:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds())
 
             # 模擬操作初日
-            if 0 < (datetime.datetime.now() - datetime.datetime.strptime(now.strftime(f"%Y-%m-03 {rollover_time}:00"), '%Y-%m-%d %H:%M:%S')).total_seconds() <= 60:
-                next_time = (datetime.datetime.now() - datetime.datetime.strptime(now.strftime(f"%Y-%m-03 {rollover_time}:00"), '%Y-%m-%d %H:%M:%S')).total_seconds()
+            if 0 < abs((datetime.datetime.strptime(now.strftime(f"%Y-%m-03 {rollover_time}:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()) <= 60:
+                next_time = abs((datetime.datetime.strptime(now.strftime(f"%Y-%m-03 {rollover_time}:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds())
             # 模擬操作最終日
-            elif 0 < (datetime.datetime.now() - datetime.datetime.strptime(clan_battle_start_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S')).total_seconds() <= 60:
-                next_time = (datetime.datetime.now() - datetime.datetime.strptime(clan_battle_start_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S')).total_seconds()
+            elif 0 < abs((datetime.datetime.strptime(clan_battle_start_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds()) <= 60:
+                next_time = abs((datetime.datetime.strptime(clan_battle_start_date.strftime("%Y-%m-%d 00:00:00"), '%Y-%m-%d %H:%M:%S') - datetime.datetime.now()).total_seconds())
             # クラバト模擬最終日処理
-            elif 0 < (datetime.datetime.now() - clan_battle_start_date).total_seconds() <= 60:
-                next_time = (datetime.datetime.now() - clan_battle_start_date).total_seconds()
+            elif 0 < abs((clan_battle_start_date - datetime.datetime.now()).total_seconds()) <= 60:
+                next_time = abs((clan_battle_start_date - datetime.datetime.now()).total_seconds())
             # クラバト初日
-            elif 0 < (datetime.datetime.now() - clan_battle_start_date).total_seconds() <= 60:
-                next_time = (datetime.datetime.now() - clan_battle_start_date).total_seconds()
+            elif 0 < abs((clan_battle_start_date - datetime.datetime.now()).total_seconds()) <= 60:
+                next_time = abs((clan_battle_start_date - datetime.datetime.now()).total_seconds())
             # クラバト最終日処理
-            elif 0 < (datetime.datetime.now() - clan_battle_end_date).total_seconds() <= 60:
-                next_time = (datetime.datetime.now() - clan_battle_end_date).total_seconds()
+            elif 0 < abs((clan_battle_end_date - datetime.datetime.now()).total_seconds()) <= 60:
+                next_time = abs((clan_battle_end_date - datetime.datetime.now()).total_seconds())
 
             # 更新時間まで待機
             if 0 < next_time <= 60:
