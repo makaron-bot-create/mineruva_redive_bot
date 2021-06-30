@@ -133,11 +133,9 @@ __凸前宣言__
 __(もう一度押すとキャンセル）__
 ┣{emoji_list["attack_p"]} 》物理編成
 ┗{emoji_list["attack_m"]} 》魔法編成
-
 __オプション__
 ┣{emoji_list["T_kill"]} 》タスキル使用
 ┗{emoji_list["SOS"]} 》救援要請
-
 __凸終了宣言__
 __リアクション後に、「与えたダメージ」と「持ち越し時間」の入力があります。__
 ┗{emoji_list["attack_end"]} 》本戦終了"""
@@ -150,6 +148,25 @@ timeouterror_text = """
 再度、リアクションをお願いします。
 \"\"\"
 ```"""
+
+boss_edit_message = (
+    r"""/edit_boss
+(?P<now_lap>[0-9]+)
+(?P<boss_no>[1-5])
+(?P<boss_hp>[0-9]+)"""
+)
+
+timeline_format = (
+    r"""クランモード (?P<boss_lvels>[1-5])段階目 (?P<boss_name>.*)
+(?P<add_damage>[0-9]*)ダメージ
+バトル時間 .*
+バトル日時 (?P<time_stamp>.*)
+----
+◆パーティ編成
+(?P<use_party>(.|\n)*)
+----
+◆ユニオンバースト発動時間"""
+)
 
 #############################
 # メッセージリンク検知
@@ -549,10 +566,8 @@ async def battle_log_add_information(payload):
         battle_log_announce_message = await channel.send(f"""
 {payload.member.mention}》
 リアクションしたログに編成情報を反映します。
-
 ①ログのスクショ
 ②コメント
-
 ※①か②のどちらか、または①と②両方の書き込みができます。""")
 
         def battle_log_message_check(message):
@@ -1692,7 +1707,6 @@ async def clan_battl_end_reaction(payload):
                 time_input_announce_message = await channel_0.send(f"""
 {payload.member.mention}》
 持ち越し時間を入力してください、持ち越しメモに反映します。
-
 ※入力は全て「半角」にて「__**1:30～0:21**__」の範囲でお願いします。
 【記入例】
 1:30
@@ -2810,6 +2824,7 @@ async def on_ready():
     global clan_battle_start_date
     global clan_battle_end_date
     global now_clan_battl_message
+    global now_boss_data
     global boss_lap
     global boss_level
     global boss_list
@@ -2965,6 +2980,7 @@ async def loop():
     try:
         global no_attack_role_reset
         global clan_battle_tutorial_days
+        global now_boss_data
 
         await client.wait_until_ready()
 
