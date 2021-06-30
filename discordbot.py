@@ -1818,6 +1818,7 @@ async def clan_battl_call_reaction(payload):
 async def cb_mission(clear_missions, user, clear_time):
     guild = client.get_guild(599780162309062706)
     y = 0 if clan_battle_tutorial_days is True else 1
+    y = 1
     mission_log_channel = guild.get_channel(int(clan_battle_channel_id[6][y]))  # ミッション情報
 
     now = clear_time
