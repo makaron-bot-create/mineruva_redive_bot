@@ -151,25 +151,6 @@ timeouterror_text = """
 \"\"\"
 ```"""
 
-boss_edit_message = (
-    r"""/edit_boss
-(?P<now_lap>[0-9]+)
-(?P<boss_no>[1-5])
-(?P<boss_hp>[0-9]+)"""
-)
-
-timeline_format = (
-    r"""クランモード (?P<boss_lvels>[1-5])段階目 (?P<boss_name>.*)
-(?P<add_damage>[0-9]*)ダメージ
-バトル時間 .*
-バトル日時 (?P<time_stamp>.*)
-----
-◆パーティ編成
-(?P<use_party>(.|\n)*)
-----
-◆ユニオンバースト発動時間"""
-)
-
 #############################
 # メッセージリンク検知
 regex_discord_message_url = (
@@ -2829,7 +2810,6 @@ async def on_ready():
     global clan_battle_start_date
     global clan_battle_end_date
     global now_clan_battl_message
-    global now_boss_data
     global boss_lap
     global boss_level
     global boss_list
@@ -2985,7 +2965,6 @@ async def loop():
     try:
         global no_attack_role_reset
         global clan_battle_tutorial_days
-        global now_boss_data
 
         await client.wait_until_ready()
 
