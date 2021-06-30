@@ -1082,7 +1082,7 @@ async def clan_battle_event(new_lap_check):
 def attack_member_del(member):
     global now_attack_list
     global carryover_list
-    
+
     for boss_no, member_list in zip(now_attack_list, now_attack_list.values()):
         if member_list.get(member):
             del member_list[member]
