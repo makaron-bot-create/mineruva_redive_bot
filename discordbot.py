@@ -558,7 +558,7 @@ async def battle_log_add_information(payload):
 
     # ミッション達成チェック
     # 編成情報チェック
-    if not reaction_message.embeds[0].fields:        
+    if not reaction_message.embeds[0].fields:
         clear_missions.append("m_011")
     elif reaction_message.embeds[0].fields[0]:
         if reaction_message.embeds[0].fields[0].name != "【バトル詳細】":
@@ -1653,20 +1653,18 @@ async def clan_battl_end_reaction(payload):
         await announce_message_1.add_reaction("\U00002705")
 
         def attack_dmg_message_check(message):
-            if message.content.isdecimal():
-                check_damage = int(message.content)
-            elif tl_data.search(message.content):
-                for add_attack_data in re.finditer(timeline_format, message.content):
-                    check_damage = add_attack_data["add_damage"]
-            else:
-                
-                return False
-
-            return all([
+            if all([
+                any([
+                    message.content.isdecimal(),
+                    tl_data.search(message.content)
+                ]),
                 message.channel == channel_0,
                 message.author.id == payload.user_id,
                 not message.author.bot
-            ])
+            ]):
+                return True
+            else:
+                return False
 
         def last_attack_reaction_check(reaction, user):
             return all([
