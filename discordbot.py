@@ -149,6 +149,13 @@ timeouterror_text = """
 \"\"\"
 ```"""
 
+message_error_text = (
+    """提出されたTLが正しくありません。
+もう一度確認してください。
+
+※現在のボスHPに対して「与えたダメージが大きい」可能性があります。"""
+)
+
 boss_edit_message = (
     r"""/edit_boss
 (?P<now_lap>[0-9]+)
@@ -167,6 +174,8 @@ timeline_format = (
 ----
 ◆ユニオンバースト発動時間"""
 )
+
+tl_data = re.compile(timeline_format)
 
 #############################
 # メッセージリンク検知
@@ -549,8 +558,12 @@ async def battle_log_add_information(payload):
 
     # ミッション達成チェック
     # 編成情報チェック
-    if not reaction_message.embeds[0].fields:
+    if not reaction_message.embeds[0].fields:        
         clear_missions.append("m_011")
+    elif reaction_message.embeds[0].fields[0]:
+        if reaction_message.embeds[0].fields[0].name != "【バトル詳細】":
+            clear_missions.append("m_011")
+
     # スクショチェック
     if not reaction_message.embeds[0].image:
         clear_missions.append("m_012")
@@ -627,15 +640,38 @@ async def battle_log_add_information(payload):
         battle_log_embed = reaction_message.embeds[0]
         if battle_log_check_message.content:
             if reaction_message.embeds[0].fields:
-                battle_log_embed.set_field_at(
-                    0,
-                    name="【編成情報】",
-                    value=battle_log_check_message.content,
-                    inline=False
-                )
+                field_index = len(reaction_message.embeds[0].fields) - 1
+                if all([
+                    reaction_message.embeds[0].fields[0].name == "【バトル編成情報】",
+                    len(reaction_message.embeds[0].fields) == 1
+                ]):
+                    battle_log_embed.insert_field_at(
+                        1,
+                        name="【バトル詳細】",
+                        value=battle_log_check_message.content,
+                        inline=False
+                    )
+                elif any([
+                    all([
+                        reaction_message.embeds[0].fields[0].name == "【バトル編成情報】",
+                        len(reaction_message.embeds[0].fields) == 2
+                    ]),
+                    all([
+                        reaction_message.embeds[0].fields[0].name == "【バトル詳細】",
+                        len(reaction_message.embeds[0].fields) == 1
+                    ])
+                ]):
+
+                    battle_log_embed.set_field_at(
+                        field_index,
+                        name="【バトル詳細】",
+                        value=battle_log_check_message.content,
+                        inline=False
+                    )
+
             else:
                 battle_log_embed.add_field(
-                    name="【編成情報】",
+                    name="【バトル詳細】",
                     value=battle_log_check_message.content,
                     inline=False
                 )
@@ -1566,6 +1602,9 @@ async def clan_battl_end_reaction(payload):
     carryover_role_check = False
     carryover_time_message = ""
     last_attack_text = ""
+    time_stamp = ""
+    use_party = ""
+    damage = ""
     add_damage = ""
     true_dmg = ""
     la_mission = False
@@ -1599,7 +1638,8 @@ async def clan_battl_end_reaction(payload):
         await channel_0.set_permissions(payload.member, send_messages=True)
         m_content = f"""
 {payload.member.mention}》
-ボスに与えたダメージを「半角数字」のみで入力してください。
+「`バトルTLの提出`」および、ボスに与えたダメージを「`半角数字`」のみで入力してください。
+
 ※ボスを倒した場合は「__{hp_fomat.format(int(attack_boss['boss_hp']))}__」以上で入力してください。
 ※ボスの最大HP「__{hp_fomat.format(int(attack_boss['boss_max_hp'][boss_level - 1]))}__」以上は入力できません。
 """
@@ -1614,13 +1654,15 @@ async def clan_battl_end_reaction(payload):
 
         def attack_dmg_message_check(message):
             if message.content.isdecimal():
-                damage = int(message.content)
+                check_damage = int(message.content)
+            elif tl_data.search(message.content):
+                for add_attack_data in re.finditer(timeline_format, message.content):
+                    check_damage = add_attack_data["add_damage"]
             else:
+                
                 return False
 
             return all([
-                message.content.isdecimal(),
-                int(damage) <= int(attack_boss['boss_max_hp'][boss_level - 1]),
                 message.channel == channel_0,
                 message.author.id == payload.user_id,
                 not message.author.bot
@@ -1675,11 +1717,65 @@ async def clan_battl_end_reaction(payload):
             # 現在の周回数
             now_boss_lap = boss_lap
             now_boss_level = boss_level
-            # ダメージの直接入力
+            # ダメージの直接入力 TL提出
             if done_task_type == "wait_message":
+                # TLテキストチェック
                 boss_hp_check_message = task.result()
-                last_boss_hp = int(attack_boss["boss_hp"]) - int(boss_hp_check_message.content)
-                add_damage = int(boss_hp_check_message.content)
+                if not task.result():
+                    embed = discord.Embed(
+                        title="TLテキストエラー",
+                        description=message_error_text,
+                        colour=0xff0000
+                    )
+                    await announce_message_1.delete()
+                    await channel_0.set_permissions(payload.member, overwrite=None)
+                    timeout_message = await channel_0.send(payload.member.mention, embed=embed)
+                    # 凸宣言リアクションリセット
+                    for reaction in reaction_message.reactions:
+                        # 凸終了宣言リアクションリセット
+                        if reaction.emoji == emoji_list["attack_end"]:
+                            async for user in reaction.users():
+                                if user == payload.member:
+                                    await reaction.remove(user)
+
+                    await asyncio.sleep(10)
+                    await timeout_message.delete()
+                    return
+
+                if boss_hp_check_message.content.isdecimal():
+                    damage = boss_hp_check_message.content
+                # TL提出
+                elif tl_data.search(boss_hp_check_message.content):
+                    for add_attack_data in re.finditer(timeline_format, boss_hp_check_message.content):
+                        time_stamp = datetime.datetime.strptime(add_attack_data["time_stamp"], '%Y/%m/%d %H:%M')
+                        use_party = add_attack_data["use_party"]
+                        damage = add_attack_data["add_damage"]
+
+                # 残りHP入力チェック
+                if int(damage) > int(attack_boss['boss_max_hp'][boss_level - 1]):
+                    await boss_hp_check_message.delete()
+                    embed = discord.Embed(
+                        title="TLテキストエラー",
+                        description=message_error_text,
+                        colour=0xff0000
+                    )
+                    await announce_message_1.delete()
+                    await channel_0.set_permissions(payload.member, overwrite=None)
+                    timeout_message = await channel_0.send(payload.member.mention, embed=embed)
+                    # 凸宣言リアクションリセット
+                    for reaction in reaction_message.reactions:
+                        # 凸終了宣言リアクションリセット
+                        if reaction.emoji == emoji_list["attack_end"]:
+                            async for user in reaction.users():
+                                if user == payload.member:
+                                    await reaction.remove(user)
+
+                    await asyncio.sleep(10)
+                    await timeout_message.delete()
+                    return
+
+                last_boss_hp = int(attack_boss["boss_hp"]) - int(damage)
+                add_damage = int(damage)
                 async for message in channel_0.history(limit=20):
                     if any([
                         message.id == announce_message_1.id,
@@ -1823,6 +1919,11 @@ async def clan_battl_end_reaction(payload):
             color=0x00b4ff
         )
         embed.set_thumbnail(url=boss_list[boss_no]["boss_img_url"])
+
+        # バトル編成
+        if tl_data.search(boss_hp_check_message.content):
+            embed.add_field(name="【バトル編成情報】", value=f"```py\n{use_party}\n```", inline=False)
+            embed.set_footer(text=f"バトル時間 ┃ {time_stamp.year}年{time_stamp.month}月{time_stamp.day}日 {time_stamp.hour}時{time_stamp.minute}分")
 
         if carryover_time_message:
             attak_type = re.sub(r"[《》]", "", now_attack_list[boss_no][payload.member])
