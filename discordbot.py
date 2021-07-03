@@ -1919,9 +1919,12 @@ async def clan_battl_end_reaction(payload):
         embed.set_thumbnail(url=boss_list[boss_no]["boss_img_url"])
 
         # バトル編成
-        if tl_data.search(boss_hp_check_message.content):
-            embed.add_field(name="【バトル編成情報】", value=f"```py\n{use_party}\n```", inline=False)
-            embed.set_footer(text=f"バトル時間 ┃ {time_stamp.year}年{time_stamp.month}月{time_stamp.day}日 {time_stamp.hour}時{time_stamp.minute}分")
+        try:
+            if tl_data.search(boss_hp_check_message.content):
+                embed.add_field(name="【バトル編成情報】", value=f"```py\n{use_party}\n```", inline=False)
+                embed.set_footer(text=f"バトル時間 ┃ {time_stamp.year}年{time_stamp.month}月{time_stamp.day}日 {time_stamp.hour}時{time_stamp.minute}分")
+        except ArithmeticError:
+            pass
 
         if carryover_time_message:
             attak_type = re.sub(r"[《》]", "", now_attack_list[boss_no][payload.member])
