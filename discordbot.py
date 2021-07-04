@@ -127,6 +127,8 @@ number_emoji = [
     "\U00000035\U0000fe0f\U000020e3"
 ]
 
+reset_reaction = ["\U00002705", "\U0000274c"]
+
 # 絵文字ヘルプ
 help_emoji = f"""
 __凸前宣言__
@@ -166,13 +168,16 @@ boss_edit_message = (
 timeline_format = (
     r"""クランモード (?P<boss_lvels>[1-5])段階目 (?P<boss_name>.*)
 (?P<add_damage>[0-9]*)ダメージ
-バトル時間 .*
+バトル時間 (?P<battle_time>.*)
 バトル日時 (?P<time_stamp>.*)
 ----
 ◆パーティ編成
 (?P<use_party>(.|\n)*)
 ----
-◆ユニオンバースト発動時間"""
+◆ユニオンバースト発動時間
+(?P<battle_start_time>.*) バトル開始
+(.|\n)*
+(?P<battle_end_time>.*) バトル終了"""
 )
 
 tl_data = re.compile(timeline_format)
@@ -211,6 +216,21 @@ def get_clanbattle_date(year, month):
     clan_battle_start_date = f"{get_data - datetime.timedelta(days=clan_battle_days)} {rollover_time}"
     clan_battle_end_date = f"{get_data} 00:00"
     return clan_battle_start_date, clan_battle_end_date
+
+
+# 持ち越し時間計算
+def carryover_time(boss_hp, add_damage, battle_time, battle_end_time):
+    battle_total_time = int((battle_time - datetime.datetime.strptime(battle_time.strftime('%Y-%m-%d 00:00:00'), '%Y-%m-%d %H:%M:%S')).total_seconds())
+    battle_end_time = int((battle_end_time - datetime.datetime.strptime(battle_end_time.strftime('%Y-%m-%d 00:00:00'), '%Y-%m-%d %H:%M:%S')).total_seconds())
+
+    if boss_hp == add_damage:
+        carryover_total_time = battle_end_time + 20
+    else:
+        # 持ち越し時間 ＝ （1 - ボス残り ／ 与えたダメージ） × 戦闘時間 ＋ 残り時間 + ボーナス秒数（20秒）
+        carryover_total_time = math.ceil((1 - int(boss_hp) / int(add_damage)) * battle_total_time + battle_end_time) + 20
+
+    carryover_total_time = datetime.datetime.strptime(battle_time.strftime('%Y-%m-%d 00:00:00'), '%Y-%m-%d %H:%M:%S') + datetime.timedelta(seconds=int(carryover_total_time))
+    return f"{carryover_total_time.minute}:{str(carryover_total_time.second).zfill(2)}"
 
 
 # パンツ交換
@@ -1245,8 +1265,6 @@ async def clan_battl_call_reaction(payload):
     messages = []
     carryover_messages = {}
 
-    reset_reaction = ["\U00002705", "\U0000274c"]
-
     guild = client.get_guild(599780162309062706)
     clan_member_role = guild.get_role(687433139345555456)  # クランメンバーロール
     ch_id_index_y = 0 if clan_battle_tutorial_days is True else 1
@@ -1603,6 +1621,8 @@ async def clan_battl_end_reaction(payload):
     carryover_time_message = ""
     last_attack_text = ""
     time_stamp = ""
+    battle_time = ""
+    battle_end_time = ""
     use_party = ""
     damage = ""
     add_damage = ""
@@ -1748,6 +1768,8 @@ async def clan_battl_end_reaction(payload):
                         time_stamp = datetime.datetime.strptime(add_attack_data["time_stamp"], '%Y/%m/%d %H:%M')
                         use_party = add_attack_data["use_party"]
                         damage = add_attack_data["add_damage"]
+                        battle_time = datetime.datetime.strptime(add_attack_data["battle_time"], '%M:%S')
+                        battle_end_time = datetime.datetime.strptime(add_attack_data["battle_end_time"], '%M:%S')
 
                 # 残りHP入力チェック
                 if int(damage) > int(attack_boss['boss_max_hp'][boss_level - 1]):
@@ -1792,12 +1814,63 @@ async def clan_battl_end_reaction(payload):
                 await announce_message_1.delete()
 
         if 0 >= last_boss_hp:
+            if battle_time and battle_end_time:
+                carry_over_time = carryover_time(
+                    boss_hp=int(attack_boss["boss_hp"]),
+                    add_damage=add_damage,
+                    battle_time=battle_time,
+                    battle_end_time=battle_end_time
+                )
+
+                embed = discord.Embed(
+                    description=f"持ち越し時間「{carry_over_time}」\n\n※上記の持ち越し時間が正しい場合は「{reset_reaction[0]}」を、間違ってる場合は「{reset_reaction[1]}」を押してください。",
+                    color=0xffff00
+                )
+
+                reset_message = await channel_0.send(embed=embed)
+                for reactiones in reset_reaction:
+                    await reset_message.add_reaction(reactiones)
+
+                def role_reset_check(reaction, user):
+                    return all([
+                        any([
+                            reaction.emoji == reset_reaction[0],
+                            reaction.emoji == reset_reaction[1]
+                        ]),
+                        reaction.message.id == reset_message.id,
+                        user.id == payload.member.id,
+                        not user.bot
+                    ])
+
+                try:
+                    reaction, user = await client.wait_for('reaction_add', check=role_reset_check, timeout=30)
+
+                except asyncio.TimeoutError:
+                    for reaction in reaction_message.reactions:
+                        async for user in reaction.users():
+                            if user == payload.member:
+                                await reaction.remove(user)
+
+                    await reset_message.delete()
+                    return
+
+                if reaction.emoji == reset_reaction[0]:
+                    await reset_message.delete()
+
+                elif reaction.emoji == reset_reaction[1]:
+                    carry_over_time = ""
+                    await reset_message.delete()
+
             true_dmg = "" if last_boss_hp == 0 else f"\n　　({hp_fomat.format(int(attack_boss['boss_hp']))})"
             last_boss_hp = 0
             now_hp = 0
             carryover_attack_check = True
 
-            if payload.member not in carryover_list:
+            if all([
+                not carry_over_time,
+                payload.member not in carryover_list
+            ]):
+
                 time_input_announce_message = await channel_0.send(f"""
 {payload.member.mention}》
 持ち越し時間を入力してください、持ち越しメモに反映します。
