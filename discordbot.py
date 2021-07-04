@@ -1761,6 +1761,7 @@ async def clan_battl_end_reaction(payload):
                     return
 
                 if boss_hp_check_message.content.isdecimal():
+                    time_stamp = datetime.datetime.now()
                     damage = boss_hp_check_message.content
                 # TL提出
                 elif tl_data.search(boss_hp_check_message.content):
@@ -1990,6 +1991,7 @@ async def clan_battl_end_reaction(payload):
             color=0x00b4ff
         )
         embed.set_thumbnail(url=boss_list[boss_no]["boss_img_url"])
+        embed.set_footer(text=f"バトル時間 ┃ {time_stamp.year}年{time_stamp.month}月{time_stamp.day}日 {time_stamp.hour}時{time_stamp.minute}分")
 
         # バトル編成
         try:
