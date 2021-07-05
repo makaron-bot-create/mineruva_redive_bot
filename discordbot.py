@@ -1627,6 +1627,7 @@ async def clan_battl_end_reaction(payload):
     damage = ""
     add_damage = ""
     true_dmg = ""
+    carry_over_time = ""
     la_mission = False
     message_1 = ""
 
