@@ -2753,7 +2753,12 @@ async def ok_tl_edit(message):
         for time_before, time_after in zip(tl_times, edit_tl_times):
             timeline = timeline.replace(time_before, time_after)
 
-        tl_message = f"持ち越し時間「{ok_time_sec}秒」のTLに編集しました。\n```py\n{timeline}\n```"
+        if ok_time_sec == 0:
+            edit_text = "TL中の「00:00」形式を「0:00」形式に編集しました。"
+        else:
+            edit_text = f"持ち越し時間「{ok_time_sec}秒」のTLに編集しました。"
+
+        tl_message = f"{edit_text}\n```py\n{timeline}\n```"
         tl_message = re.sub(r"(?=0:00 )", "\n━━━━━━━━━━━━  バトル終了  ━━━━━━━━━━━━\n\n", tl_message, 1)
         await message.channel.send(tl_message)
 
