@@ -2737,8 +2737,8 @@ async def tl_edit(message):
 
     timeline = message.content
     if re.match(r"/tl [0-9]{1,2}", timeline):
-        ok_time_sec = (re.search(r"[0-9]{1,2}", timeline)).group()
-        timeline = re.sub(r"^/tl [0-9]{2}\n", "", timeline)
+        ok_time_sec = int((re.search(r"[0-9]{1,2}", timeline)).group())
+        timeline = re.sub(r"^/tl [0-9]{1,2}\n", "", timeline)
         timeline = re.sub(r"[0](?=[0-1]:[0-9]{2})", "", timeline)
 
         if ok_time_sec == 0:
