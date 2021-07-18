@@ -2723,53 +2723,38 @@ async def role_member_list(message):
 
 # 持ち越し時間用ＴＬ改変
 async def ok_tl_edit(message):
-    r = message.content
-    if r.startswith(r"/tl "):
-        tl = r.split("\n", 1)
-        ok_time_sec = re.sub(r"\D", "", tl[0])
-        tl.pop(0)
+    # 時間の編集
+    def edit_time(tl_time, ok_time):
+        tl_time = datetime.datetime.strptime(tl_time, '%M:%S')
+        tl_time_after = tl_time - datetime.timedelta(seconds=int(ok_time))
+
+        if 90 >= int((tl_time_after - datetime.datetime.strptime(tl_time_after.strftime('%Y-%m-%d 00:00:00'), '%Y-%m-%d %H:%M:%S')).total_seconds()) >= 0:
+            tl_time_after = tl_time - datetime.timedelta(seconds=int(ok_time))
+        else:
+            tl_time_after = datetime.datetime.strptime(tl_time_after.strftime('%Y-%m-%d 00:00:00'), '%Y-%m-%d %H:%M:%S')
+
+        return f"{tl_time_after.minute}:{str(tl_time_after.second).zfill(2)}"  # 「0:00」形式
+
+    timeline = message.content
+    if re.match(r"/tl [0-9]{2}", timeline):
+        ok_time_sec = (re.search(r"[0-9]{2}", timeline)).group()
+        timeline = re.sub(r"^/tl [0-9]{2}\n", "", timeline)
+        timeline = re.sub(r"[0](?=[0-1]:[0-9]{2})", "", timeline)
 
         # 持ち越しTL計算
         ok_time = 90 - int(ok_time_sec)
-        tl_times = []
-        ok_tl_edit = []
-        time_min = []
-        ok_tl_sec = []
-
         # テキストの記載時間のリスト化
-        for tl_time in re.findall(r"[0-9]:[0-9]{2}", tl[0]):
-            tl_times.append(tl_time)
-
-        # 「分」値抽出
-        for tl_m in re.findall(r"[0-9]:", tl[0]):
-            tl_m = tl_m.replace(':', '')
-            tl_min = int(tl_m)
-            time_min.append(tl_min)
-
-        # 「秒」値抽出、秒数化
-        for tl_x, tl_y in zip(re.findall(r":[0-9]{2}", tl[0]), time_min):
-            tl_x = tl_x.replace(':', '')
-            tl_sec = int(tl_x) + (int(tl_y) * 60)
-            ok_tl_sec.append(tl_sec)
-
-        # 持ち越しTL修正
-        for times in ok_tl_sec:
-            edit_time_sec = times - ok_time if times - ok_time >= 0 else 0
-            edit_time = edit_time_sec // 60 if edit_time_sec // 60 >= 0 else 0
-            edit_time_sec = edit_time_sec - 60 if edit_time_sec >= 60 else edit_time_sec
-            # 0:00形式に直す
-            edit_t = f"{edit_time}:{str(edit_time_sec).zfill(2)}"
-            ok_tl_edit.append(edit_t)
+        tl_times = list(filter(None, re.findall(r"[0-1]:[0-9]{2}(?= .*)", timeline)))
+        edit_tl_times = [edit_time(tl_time, ok_time) for tl_time in tl_times]
 
         # リストのリバース
         tl_times.reverse()
-        ok_tl_edit.reverse()
-        tl_1 = tl[0]
-        for time_x, time_y in zip(tl_times, ok_tl_edit):
-            tl_2 = tl_1.replace(time_x, time_y)
-            tl_1 = tl_2
+        edit_tl_times.reverse()
+        for time_before, time_after in zip(tl_times, edit_tl_times):
+            timeline = timeline.replace(time_before, time_after)
 
-        tl_message = f"持ち越し時間「{ok_time_sec}秒」のTLに改変しました。\n\n{tl_1}"
+        tl_message = f"持ち越し時間「{ok_time_sec}秒」のTLに編集しました。\n```py\n{timeline}\n```"
+        tl_message = re.sub(r"(?=0:00 )", "\n━━━━━━━━━━━━  バトル終了  ━━━━━━━━━━━━\n\n", tl_message, 1)
         await message.channel.send(tl_message)
 
 
