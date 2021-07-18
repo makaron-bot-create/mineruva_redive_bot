@@ -3440,9 +3440,6 @@ async def on_message(message):
         # ＴＬ編集
         await tl_edit(message)
 
-        # 持ち越し時間用ＴＬ改変
-        await ok_tl_edit(message)
-
         # パンツ交換
         if message.channel.id != 804272119982718978:
             await pants_trade(message)
