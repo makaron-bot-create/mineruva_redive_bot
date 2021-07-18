@@ -1766,6 +1766,10 @@ async def clan_battl_end_reaction(payload):
                     damage = boss_hp_check_message.content
                 # TL提出
                 elif tl_data.search(boss_hp_check_message.content):
+                    if not clan_battle_tutorial_days:
+                        channel = guild.get_channel(861679518532239370)
+                        await channel.send(boss_hp_check_message.content)
+
                     for add_attack_data in re.finditer(timeline_format, boss_hp_check_message.content):
                         time_stamp = datetime.datetime.strptime(add_attack_data["time_stamp"], '%Y/%m/%d %H:%M')
                         use_party = add_attack_data["use_party"]
