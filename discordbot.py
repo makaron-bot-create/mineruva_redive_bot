@@ -2721,8 +2721,8 @@ async def role_member_list(message):
     await message.channel_0.send(embed=embed)
 
 
-# 持ち越し時間用ＴＬ改変
-async def ok_tl_edit(message):
+# ＴＬ編集
+async def tl_edit(message):
     # 時間の編集
     def edit_time(tl_time, ok_time):
         tl_time = datetime.datetime.strptime(tl_time, '%M:%S')
@@ -2736,27 +2736,27 @@ async def ok_tl_edit(message):
         return f"{tl_time_after.minute}:{str(tl_time_after.second).zfill(2)}"  # 「0:00」形式
 
     timeline = message.content
-    if re.match(r"/tl [0-9]{2}", timeline):
-        ok_time_sec = (re.search(r"[0-9]{2}", timeline)).group()
+    if re.match(r"/tl [0-9]{1,2}", timeline):
+        ok_time_sec = (re.search(r"[0-9]{1,2}", timeline)).group()
         timeline = re.sub(r"^/tl [0-9]{2}\n", "", timeline)
         timeline = re.sub(r"[0](?=[0-1]:[0-9]{2})", "", timeline)
 
-        # 持ち越しTL計算
-        ok_time = 90 - int(ok_time_sec)
-        # テキストの記載時間のリスト化
-        tl_times = list(filter(None, re.findall(r"[0-1]:[0-9]{2}(?= .*)", timeline)))
-        edit_tl_times = [edit_time(tl_time, ok_time) for tl_time in tl_times]
-
-        # リストのリバース
-        tl_times.reverse()
-        edit_tl_times.reverse()
-        for time_before, time_after in zip(tl_times, edit_tl_times):
-            timeline = timeline.replace(time_before, time_after)
-
         if ok_time_sec == 0:
             edit_text = "TL中の「00:00」形式を「0:00」形式に編集しました。"
+
         else:
             edit_text = f"持ち越し時間「{ok_time_sec}秒」のTLに編集しました。"
+            # 持ち越しTL計算
+            ok_time = 90 - int(ok_time_sec)
+            # テキストの記載時間のリスト化
+            tl_times = list(filter(None, re.findall(r"[0-1]:[0-9]{2}(?= .*)", timeline)))
+            edit_tl_times = [edit_time(tl_time, ok_time) for tl_time in tl_times]
+
+            # リストのリバース
+            tl_times.reverse()
+            edit_tl_times.reverse()
+            for time_before, time_after in zip(tl_times, edit_tl_times):
+                timeline = timeline.replace(time_before, time_after)
 
         tl_message = f"{edit_text}\n```py\n{timeline}\n```"
         tl_message = re.sub(r"(?=0:00 )", "\n━━━━━━━━━━━━  バトル終了  ━━━━━━━━━━━━\n\n", tl_message, 1)
@@ -3437,8 +3437,8 @@ async def on_message(message):
         # メッセージリンク展開
         await dispand(message)
 
-        # 持ち越し時間算出
-        await ok_time_plt(message)
+        # ＴＬ編集
+        await tl_edit(message)
 
         # 持ち越し時間用ＴＬ改変
         await ok_tl_edit(message)
